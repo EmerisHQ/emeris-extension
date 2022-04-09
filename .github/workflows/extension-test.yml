@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
-      - run: yarn
+      - run: yarn --frozen-lockfile
         
       - name: build artifacts
         run: |
