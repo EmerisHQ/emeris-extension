@@ -20,6 +20,9 @@ jobs:
           node-version: '16'
           cache: 'yarn'
       - run: yarn --frozen-lockfile
+      
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
         
       - name: build artifacts
         run: |
