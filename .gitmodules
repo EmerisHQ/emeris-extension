@@ -1,0 +1,3 @@
+[submodule "demeris"]
+	path = demeris
+	url = git@github.com:EmerisHQ/demeris.git
