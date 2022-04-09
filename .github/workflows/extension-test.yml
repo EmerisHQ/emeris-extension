@@ -33,3 +33,12 @@ jobs:
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
       - run: npm run test:e2e
+        env: 
+          EXTENSION_ID: 'majdpimiaehlcejkaoeedbhdiklflkng'
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
