@@ -26,8 +26,5 @@ jobs:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
-  Extension-Test-E2E:
-    needs: Extension-Build
-    runs-on: self-hosted
-    steps:
+
       - run: npm run test:e2e
