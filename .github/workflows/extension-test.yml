@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
+      - run: yarn
+        
       - name: build artifacts
         run: |
           NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
