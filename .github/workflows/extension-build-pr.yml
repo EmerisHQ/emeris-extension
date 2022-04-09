@@ -28,25 +28,22 @@ jobs:
       - run: yarn
 
       - name: build artifacts
-        run: |          
-          npx ci
+        run: |
+          npm ci
           NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
+      - run: echo "PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')" >> $GITHUB_ENV
       - uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
           directory: ./dist
-          filename: release.zip
-      - name: Pull request artifacts
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: gavv/pull-request-artifacts@v1.0.0
+          filename: preview-${{ env.PR_NUMBER }}.zip
+      - uses: actions/upload-artifact@v3
         with:
-          commit: ${{ github.event.pull_request.head.sha }}
-          repo-token: ${{ github.token }}
-          artifacts-branch: artifacts
-          artifacts: |
-            ./dist/release.zip
+          name: preview-${{ env.PR_NUMBER }}.zip
+          path: ./dist/preview-${{ env.PR_NUMBER }}.zip
+          retention-days: 10
