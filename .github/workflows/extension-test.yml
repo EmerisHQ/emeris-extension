@@ -32,7 +32,7 @@ jobs:
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
-      - run: npm run test:e2e
+      - run: xvfb-run npm run test:e2e
         env: 
           EXTENSION_ID: 'majdpimiaehlcejkaoeedbhdiklflkng'
           DISPLAY: '1.0'
