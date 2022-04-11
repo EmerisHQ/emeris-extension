@@ -3,7 +3,7 @@ on:
   pull_request
 jobs:
   Extension-Build:
-    runs-on: mcr.microsoft.com/playwright:v1.20.0-focal
+    runs-on: self-hosted
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
