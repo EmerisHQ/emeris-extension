@@ -35,6 +35,7 @@ jobs:
       - run: npm run test:e2e
         env: 
           EXTENSION_ID: 'majdpimiaehlcejkaoeedbhdiklflkng'
+          DISPLAY: '1.0'
 
       - uses: actions/upload-artifact@v2
         if: always()
