@@ -3,7 +3,7 @@ on:
   pull_request
 jobs:
   Extension-Build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-          cache: 'yarn'
+          # cache: 'yarn'
       - run: yarn --frozen-lockfile
       
       - name: Install Playwright
