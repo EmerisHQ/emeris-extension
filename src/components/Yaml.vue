@@ -4,6 +4,7 @@
 
 <script>
 import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles somewhere
+import 'prismjs';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
 
