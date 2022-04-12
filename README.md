@@ -6,15 +6,11 @@ Browser extension to hold keys and sign transactions for Emeris as well as other
 
 1. `git clone https://github.com/EmerisHQ/emeris-extension.git`
 2. `cd emeris-extension`
-3. `rm -rf demeris`
-4. `git clone https://github.com/EmerisHQ/demeris.git`
-5. `cd demeris`
-6. `git checkout <demeris commit hash that you you see in the demeris folder here: https://github.com/EmerisHQ/emeris-extension >`
-7. `cd ../`
-8. `yarn install`
-9. `yarn run build`
-10. Go to `chrome://extensions` and ensure you are in Developer mode
-11. Drag the `dist` folder into this screen to install the Emeris Extension
+3. `git submodule init & git submodule update`
+4. `yarn install`
+5. `yarn run dev`
+6. Go to `chrome://extensions` and ensure you are in Developer mode
+7. Drag the `dist` folder into this screen to install the Emeris Extension
 
 Unfortunately right now there is no hot-reloading. After every change, the extension will have to build again. The best you can do is to run
 
