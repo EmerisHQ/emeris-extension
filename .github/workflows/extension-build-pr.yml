@@ -53,6 +53,11 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
+          
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'yarn'
 
       - run: echo "PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')" >> $GITHUB_ENV
       - uses: actions/download-artifact@v3
