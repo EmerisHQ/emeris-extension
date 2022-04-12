@@ -66,14 +66,6 @@ jobs:
       
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
-        
-      - name: build artifacts
-        run: |
-          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
-        env:
-          # Put in secrets
-          VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
-          VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
       - name: Run headless test
         uses: GabrielBB/xvfb-action@v1
