@@ -1,4 +1,4 @@
-name: Extension Build
+name: Extension PR
 on: 
   pull_request:
     paths:
@@ -46,3 +46,40 @@ jobs:
           name: preview-${{ env.PR_NUMBER }}.zip
           path: ./dist/preview-${{ env.PR_NUMBER }}.zip
           retention-days: 10
+  
+  Extension-Test:
+    needs: Extension-Build
+    runs-on: self-hosted
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - run: echo "PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')" >> $GITHUB_ENV
+      - uses: actions/download-artifact@v3
+        with:
+          name: preview-${{ env.PR_NUMBER }}.zip
+      
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+        
+      - name: build artifacts
+        run: |
+          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
+        env:
+          # Put in secrets
+          VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
+          VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
+
+      - name: Run headless test
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npx playwright test
+        env: 
+          EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
