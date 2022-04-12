@@ -1,11 +1,6 @@
-name: Extension Build
+name: Extension Test
 on: 
-  pull_request:
-    paths:
-      - "**"
-defaults:
-  run:
-    working-directory: ./
+  pull_request
 jobs:
   Extension-Build:
     runs-on: self-hosted
@@ -19,30 +14,34 @@ jobs:
           ssh-private-key: ${{ secrets.DEMERIS_SSH_PRIVATE_KEY }}
 
       - run: git submodule init && git submodule update
-          
+
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
           cache: 'yarn'
       - run: yarn --frozen-lockfile
-
+      
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+        
       - name: build artifacts
         run: |
-          npm ci
           NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
-      - run: echo "PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')" >> $GITHUB_ENV
-      - uses: thedoctor0/zip-release@master
+      - name: Run headless test
+        uses: GabrielBB/xvfb-action@v1
         with:
-          type: 'zip'
-          directory: ./dist
-          filename: preview-${{ env.PR_NUMBER }}.zip
-      - uses: actions/upload-artifact@v3
+          run: npm run test:e2e
+        env: 
+          EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
+
+      - uses: actions/upload-artifact@v2
+        if: always()
         with:
-          name: preview-${{ env.PR_NUMBER }}.zip
-          path: ./dist/preview-${{ env.PR_NUMBER }}.zip
-          retention-days: 10
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
