@@ -64,3 +64,13 @@ window.emeris.signAndBroadcastTransaction
 Fees are currently ignored.
 
 Other message formats can be found here: https://github.com/EmerisHQ/emeris-libraries/blob/develop/packages/types/src/EmerisTransactions.ts
+
+## Test E2E
+
+Run:
+
+`EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek npx playwright test`
+
+For individual test runs (replace the string with the test name):
+
+`EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek npx playwright test -g "Create Account"`

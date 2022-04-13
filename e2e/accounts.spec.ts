@@ -60,6 +60,7 @@ test.describe('Account Create', () => {
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
 
+    await expect(page.locator('.words')).not.toHaveText('');
     const mnemonic2 = await page.locator('.word > span').allTextContents();
 
     expect(mnemonic.join(' ')).toEqual(mnemonic2.join(' '));
@@ -104,6 +105,7 @@ test.describe('Account Create', () => {
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
 
+    await expect(page.locator('.words')).not.toHaveText('');
     const mnemonic2 = await page.locator('.word > span').allTextContents();
 
     expect(mnemonic).toEqual(mnemonic2.join(' '));
