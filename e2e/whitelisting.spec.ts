@@ -30,5 +30,8 @@ test.describe('Whitelisting', () => {
           return window.emeris.supportedChains();
         }),
     ).not.toBe(false);
+
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
+    await expect(page.locator('text=app.emeris.com')).toBeVisible();
   });
 });
