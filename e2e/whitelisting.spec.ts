@@ -32,6 +32,6 @@ test.describe('Whitelisting', () => {
     ).not.toBe(false);
 
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
-    await expect(page.locator('text=app.emeris.com')).toBeVisible();
+    await expect(page.locator('text=https://app.emeris.com').first()).toBeVisible();
   });
 });
