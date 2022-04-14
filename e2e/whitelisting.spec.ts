@@ -3,9 +3,10 @@ import { expect } from '@playwright/test';
 import { test } from './extension-setup';
 
 test.describe('Whitelisting', () => {
-  test('Request page enabling', async ({ page, context }) => {
+  test('Request page whitelisting', async ({ page, context }) => {
     await page.goto(`https://app.emeris.com`);
 
+    // negative test
     expect(
       await page.evaluate(() => {
         return window.emeris.supportedChains();
@@ -14,7 +15,7 @@ test.describe('Whitelisting', () => {
 
     const [popup] = await Promise.all([
       // It is important to call waitForEvent before click to set up waiting.
-      context.waitForEvent('page'),
+      context.waitForEvent('page'), // the background worker opens a new page which is the popup
       // Opens popup.
       page.evaluate(() => {
         window.emeris.enable();
@@ -22,6 +23,7 @@ test.describe('Whitelisting', () => {
     ]);
     await popup.click('text=Accept');
 
+    // positive test
     expect(
       async () =>
         await page.evaluate(() => {
