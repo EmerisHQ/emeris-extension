@@ -33,5 +33,18 @@ test.describe('Whitelisting', () => {
 
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
     await expect(page.locator('text=https://app.emeris.com').first()).toBeVisible();
+
+    // disconnect page
+    await page.click('text=disconnect');
+    await page.click('text=Remove');
+
+    // check if disconnected
+    await expect(page.locator('text=https://app.emeris.com')).not.toBeVisible();
+    await page.goto(`https://app.emeris.com`);
+    expect(
+      await page.evaluate(() => {
+        return window.emeris.supportedChains();
+      }),
+    ).toBe(false); // TODO the response should be a thrown error imo
   });
 });
