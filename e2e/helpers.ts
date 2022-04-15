@@ -27,6 +27,14 @@ export const importAccount = async (page) => {
 export const enableWebsite = async (context, page) => {
   await page.goto(`https://www.google.com/`);
 
+  while (
+    await page.evaluate(() => {
+      return !window.emeris;
+    })
+  ) {
+    await page.waitForTimeout(500);
+  }
+
   const [popup] = await Promise.all([
     // It is important to call waitForEvent before click to set up waiting.
     context.waitForEvent('page'), // the background worker opens a new page which is the popup
