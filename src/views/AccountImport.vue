@@ -3,18 +3,19 @@
     <Header title="Import account">
       <a
         :style="{
-          opacity: !mnemonic || invalidChar || unknownWords.length > 0 ? 0.6 : 1,
+          opacity: !mnemonic || hasInvalidChar || unknownWords.length > 0 ? 0.6 : 1,
         }"
         @click="toHdPath"
         >Advanced</a
       >
     </Header>
     <div class="form" @keyup.enter="submit">
+      <h1>1</h1>
       <span style="margin-top: 16px; margin-bottom: 16px">Enter your recovery phrase</span>
       <div style="margin-bottom: 16px">
         <MnemonicInput v-model="mnemonic" placeholder="Your recovery phrase" />
       </div>
-      <span v-if="invalidChar" class="form-info error">Invalid character used</span>
+      <span v-if="hasInvalidChar" class="form-info error">Invalid character used</span>
       <span v-if="mnemonic && unknownWords.length > 0" class="form-info error"
         >Unknown words found: {{ unknownWords.join(', ') }}</span
       >
@@ -45,75 +46,76 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
-import Button from '@/components/ui/Button.vue';
-import Header from '@@/components/Header.vue';
-import MnemonicInput from '@@/components/MnemonicInput.vue';
-import Modal from '@@/components/Modal.vue';
-import Slideout from '@@/components/Slideout.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates } from '@@/types';
 import wordlist from '@@/wordlists/english.json';
 
-// bring input in standard format
+const store = useStore();
+const router = useRouter();
+
 const mnemonicFormat = (mnemonic) => mnemonic.trim().replace(/\s/, ' ');
 
-export default defineComponent({
-  name: 'Import Account',
-  components: { MnemonicInput, Header, Button, Modal, Slideout },
-  data: () => ({
-    mnemonic: undefined,
-    invalidRecoveryPhraseWarning: false,
-    infoOpen: false,
-    invalidChar: false,
-    unknownWords: [],
-  }),
-  watch: {
-    mnemonic(mnemonic) {
-      this.invalidChar = !/^[a-z\s]*$/.test(mnemonic);
+const mnemonic = ref(undefined);
+const invalidRecoveryPhraseWarning = ref(false);
+const infoOpen = ref(false);
+const hasInvalidChar = ref(false);
+const unknownWords = ref([]);
 
-      const wordList = mnemonicFormat(this.mnemonic).split(' ');
-      this.unknownWords = wordList.filter((word) => !wordlist.includes(word));
+const submit = () => {
+  if (!hasInvalidChar.value && unknownWords.value.length === 0) {
+    storeNewAccount();
+    router.push({ path: '/accountCreate' });
+  }
+};
 
-      this.storeNewAccount();
-    },
-  },
-  async mounted() {
-    const hasPassword = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
+const toHdPath = () => {
+  if (!hasInvalidChar.value && unknownWords.value.length === 0) {
+    storeNewAccount();
+    router.push('/accountImportHdPath?previous=/accountImport');
+  }
+};
 
-    if (!hasPassword) {
-      this.$router.push({ path: '/passwordCreate', query: { returnTo: this.$route.fullPath } });
-    }
+const storeNewAccount = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
+    ...store.state.extension.newAccount,
+    accountMnemonic: mnemonicFormat(mnemonic.value),
+    setupState: AccountCreateStates.COMPLETE,
+    route: '/accountImport',
+  });
+};
 
-    const newAccount = await this.$store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
-    this.mnemonic = newAccount.accountMnemonic;
+const getNewAccount = async () => {
+  const newAccount = await store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
 
-    this.storeNewAccount();
-  },
-  methods: {
-    storeNewAccount() {
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
-        ...this.$store.state.extension.newAccount,
-        accountMnemonic: mnemonicFormat(this.mnemonic),
-        setupState: AccountCreateStates.COMPLETE,
-        route: '/accountImport',
-      });
-    },
-    submit() {
-      if (!this.invalidChar && this.unknownWords.length === 0) {
-        this.storeNewAccount();
-        this.$router.push({ path: '/accountCreate' });
-      }
-    },
-    toHdPath() {
-      if (!this.invalidChar && this.unknownWords.length === 0) {
-        this.storeNewAccount();
-        this.$router.push('/accountImportHdPath?previous=/accountImport');
-      }
-    },
-  },
+  mnemonic.value = newAccount.accountMnemonic;
+
+  storeNewAccount();
+};
+
+watch(mnemonic, (newValue) => {
+  if (newValue) {
+    hasInvalidChar.value = !/^[a-z\s]*$/.test(newValue);
+
+    const wordList = mnemonicFormat(newValue).split(' ');
+    unknownWords.value = wordList.filter((word) => !wordlist.includes(word));
+
+    storeNewAccount();
+  }
+});
+
+onMounted(() => {
+  const hasPassword = store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
+
+  if (!hasPassword) {
+    router.push({ path: '/passwordCreate', query: { returnTo: this.$route.fullPath } });
+  }
+
+  getNewAccount();
 });
 </script>
 <style lang="scss" scoped>
