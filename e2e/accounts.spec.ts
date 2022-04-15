@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultMnemonic, importAccount } from './helpers';
+import { defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers';
 
 test.describe('Account Create', () => {
   test('Create Account', async ({ page }) => {
