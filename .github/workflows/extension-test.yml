@@ -2,7 +2,7 @@ name: Extension Test
 on: 
   pull_request
 jobs:
-  Extension-Build:
+  Extension-Test:
     runs-on: self-hosted
     steps:
       - name: Check out repository code
