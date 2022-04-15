@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
+import { enableWebsite } from './helpers';
 
 test.describe('Whitelisting', () => {
   test('Request page whitelisting', async ({ page, context }) => {
