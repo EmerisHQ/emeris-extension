@@ -24,9 +24,7 @@ export const importAccount = async (page) => {
   await page.click('text=Continue');
 };
 
-export const enableWebsite = async (context, page) => {
-  await page.goto(`https://www.google.com/`);
-
+export const emerisLoaded = async (page) => {
   while (
     await page.evaluate(() => {
       return !window.emeris;
@@ -34,6 +32,12 @@ export const enableWebsite = async (context, page) => {
   ) {
     await page.waitForTimeout(500);
   }
+};
+
+export const enableWebsite = async (context, page) => {
+  await page.goto(`https://www.google.com/`);
+
+  await emerisLoaded(page);
 
   const [popup] = await Promise.all([
     // It is important to call waitForEvent before click to set up waiting.

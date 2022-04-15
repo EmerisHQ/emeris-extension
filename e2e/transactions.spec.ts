@@ -1,13 +1,14 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultCosmosAddress, enableWebsite, importAccount } from './helpers';
+import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from './helpers';
 
 test.describe('Transactions', () => {
   test('Send', async ({ context, page }) => {
     await enableWebsite(context, page);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
+    await emerisLoaded(page);
 
     // when the transaction popup shows, click accept
     context.waitForEvent('page').then(async (popup) => {

@@ -1,11 +1,12 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { enableWebsite } from './helpers';
+import { emerisLoaded, enableWebsite } from './helpers';
 
 test.describe('Whitelisting', () => {
   test('Request page whitelisting', async ({ page, context }) => {
     await page.goto(`https://www.google.com/`);
+    await emerisLoaded(page);
 
     // negative test
     expect(
