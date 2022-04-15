@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
+import { defaultMnemonic, importAccount } from './helpers';
 
 test.describe('Account Create', () => {
   test('Create Account', async ({ page }) => {
@@ -71,31 +72,14 @@ test.describe('Account Create', () => {
   });
 
   test('Import Account', async ({ page }) => {
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
-
-    // Test import
-    await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
-    await page.click('text=Import Account >> visible=true');
-    await page.fill('[placeholder="Enter a password"]', '123456A$');
-    await page.fill('[placeholder="Confirm password"]', '123456A$');
-    await page.click('text=Continue');
-
-    const mnemonic =
-      'frog radio wisdom pottery position depart machine turn seek audit tank cloth brave engine card amused napkin blossom exile gravity mesh siege fruit quick';
-    await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
-    await page.click('[type=submit]');
-
-    await page.fill('[placeholder="Account Name"]', 'Test Account Imported');
-    await page.click('text=Continue');
-
-    await page.click('text=Continue');
+    await importAccount(page);
 
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
 
     // test if address shows correctly
     await page.click('text=Receive assets');
     await page.click('text=Atom');
-    await expect(page.locator('text=cosmos1')).toHaveText('cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9');
+    await expect(page.locator('text=cosmos1')).toHaveText(defaultCosmosAddress);
 
     // test if seed shows correctly
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/backup`);
@@ -108,7 +92,7 @@ test.describe('Account Create', () => {
     await expect(page.locator('.words')).not.toHaveText('');
     const mnemonic2 = await page.locator('.word > span').allTextContents();
 
-    expect(mnemonic).toEqual(mnemonic2.join(' '));
+    expect(defaultMnemonic).toEqual(mnemonic2.join(' '));
 
     // test if account shows in list
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
