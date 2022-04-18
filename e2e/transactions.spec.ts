@@ -61,34 +61,36 @@ test.describe('Transactions', () => {
       await popup.click('text=Accept');
     });
 
-    expect(
-      async () =>
-        await page.evaluate((defaultCosmosAddress) => {
-          return window.emeris.signAndBroadcastTransaction({
-            chainId: 'cosmos-hub',
-            signingAddress: defaultCosmosAddress,
-            messages: [
+    let error;
+    await page
+      .evaluate((defaultCosmosAddress) => {
+        return window.emeris.signAndBroadcastTransaction({
+          chainId: 'cosmos-hub',
+          signingAddress: defaultCosmosAddress,
+          messages: [
+            {
+              type: 'transfer',
+              data: {
+                amount: { denom: 'uatom', amount: 1 },
+                chain_name: 'cosmos-hub',
+                from_address: defaultCosmosAddress,
+                to_address: defaultCosmosAddress,
+              },
+            },
+          ],
+          fee: {
+            gas: '200000',
+            amount: [
               {
-                type: 'transfer',
-                data: {
-                  amount: { denom: 'uatom', amount: 1 },
-                  chain_name: 'cosmos-hub',
-                  from_address: defaultCosmosAddress,
-                  to_address: defaultCosmosAddress,
-                },
+                amount: 2000,
+                denom: 'uatom',
               },
             ],
-            fee: {
-              gas: '200000',
-              amount: [
-                {
-                  amount: 2000,
-                  denom: 'uatom',
-                },
-              ],
-            },
-          });
-        }, defaultCosmosAddress),
-    ).toThrow();
+          },
+        });
+      }, defaultCosmosAddress)
+      .catch((err) => (error = err));
+
+    await expect(error.message).toContain('unknown address'); // this is an error from chain showing, that the tx is relayed until the execution layer of the chain
   });
 });
