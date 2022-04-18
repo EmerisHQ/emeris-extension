@@ -10,7 +10,6 @@
       >
     </Header>
     <div class="form" @keyup.enter="submit">
-      <h1>1</h1>
       <span style="margin-top: 16px; margin-bottom: 16px">Enter your recovery phrase</span>
       <div style="margin-bottom: 16px">
         <MnemonicInput v-model="mnemonic" placeholder="Your recovery phrase" />
