@@ -50,6 +50,11 @@ import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
+import Button from '@/components/ui/Button.vue';
+import Header from '@@/components/Header.vue';
+import MnemonicInput from '@@/components/MnemonicInput.vue';
+import Modal from '@@/components/Modal.vue';
+import Slideout from '@@/components/Slideout.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates } from '@@/types';
 import wordlist from '@@/wordlists/english.json';
