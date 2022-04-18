@@ -36,9 +36,22 @@ async function setup() {
       return;
     }
     event.data.data.origin = event.origin;
-    const response = await sendMessage(event.data.data);
+    try {
+      const response = await sendMessage(event.data.data);
 
-    window.postMessage({ type: 'fromEmerisExtension', data: response }, event.origin);
+      window.postMessage({ type: 'fromEmerisExtension', data: response }, event.origin);
+    } catch (err) {
+      window.postMessage(
+        {
+          type: 'fromEmerisExtension',
+          data: {
+            id: event.data.data.id,
+            err,
+          },
+        },
+        event.origin,
+      );
+    }
   });
 }
 setup();
