@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account">
+    <Header title="Import account" :back-to="headerGoBackUrl">
       <a
         :style="{
           opacity: !mnemonic || hasInvalidChar || unknownWords.length > 0 ? 0.6 : 1,
@@ -46,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from '@vue/reactivity';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
@@ -56,6 +57,7 @@ import MnemonicInput from '@@/components/MnemonicInput.vue';
 import Modal from '@@/components/Modal.vue';
 import Slideout from '@@/components/Slideout.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
+import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 import wordlist from '@@/wordlists/english.json';
 
@@ -101,7 +103,15 @@ const getNewAccount = async () => {
   storeNewAccount();
 };
 
-watch(mnemonic, (newValue) => {
+const hasAccount = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getAccount] ? true : false;
+});
+
+const headerGoBackUrl = computed(() => {
+  return hasAccount.value ? '/portfolio' : '/welcome';
+});
+
+watch(mnemonic, (newValue: string) => {
   if (newValue) {
     hasInvalidChar.value = !/^[a-z\s]*$/.test(newValue);
 
@@ -116,7 +126,7 @@ onMounted(() => {
   const hasPassword = store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
 
   if (!hasPassword) {
-    router.push({ path: '/passwordCreate', query: { returnTo: this.$route.fullPath } });
+    router.push({ path: '/passwordCreate', query: { returnTo: '/accountImport' } });
   }
 
   getNewAccount();
