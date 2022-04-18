@@ -14,9 +14,13 @@ Browser extension to hold keys and sign transactions for Emeris as well as other
 8. Go to `chrome://extensions` and ensure you are in Developer mode
 9. Drag the `dist` folder into this screen to install the Emeris Extension
 
-Unfortunately right now there is no hot-reloading. After every change, the extension will have to build again. The best you can do is to run
+## Most efficient way of doing development
 
-`yarn run build --watch`
+Unfortunately right now there is no hot-reloading. After every change, the extension will have to build again.
+The best you can do is to run `yarn run dev:watch`.
+When you make a change, the extension will rebuild. Wait for that to be done and open the extension again.
+
+(dev:watch includes two scripts that run independent to boost build time. The first builds the views the second the node based scripts)
 
 ## Usage
 

@@ -19,6 +19,7 @@ export default () => {
   return defineConfig({
     css: { preprocessorOptions: { scss: { charset: false } } },
     build: {
+      emptyOutDir: false,
       chunkSizeWarningLimit: 1000,
       sourcemap: process.env.NODE_ENV != 'production' ? 'inline' : false,
       rollupOptions: {
