@@ -1,10 +1,6 @@
-import ChainConfig from '@emeris/chain-config';
 import { EmerisBase as Base } from '@emeris/types';
 import { EmerisTransactions } from '@emeris/types';
 import { v4 as uuidv4 } from 'uuid';
-const chainConfig = new ChainConfig(process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1');
-
-import { AccountData, StdSignDoc } from '@cosmjs/amino';
 
 import {
   ApproveOriginRequest,
@@ -127,43 +123,6 @@ export class ProxyEmeris implements IEmeris {
     };
     const response = await this.sendRequest(request as HasWalletRequest);
     return response.data as boolean;
-  }
-
-  getCosmJsOfflineAminoSigner() {
-    return {
-      async getAccounts(): Promise<() => AccountData[]> {
-        // @ts-ignore
-        return []; // TODO needed? what addresses un pk are returned here anyway for which chain
-      },
-      signAmino(signingAddress: string, cosmosSignDoc: StdSignDoc) {
-        return this.signRawCosmosTransaction({ signingAddress, cosmosSignDoc });
-      },
-    };
-  }
-
-  async signRawCosmosTransaction({
-    cosmosSignDoc,
-    signingAddress,
-  }: {
-    cosmosSignDoc: StdSignDoc;
-    signingAddress: string;
-  }) {
-    const chains = await chainConfig.getChains();
-    const mappedChain = chains.find((chain) => cosmosSignDoc.chain_id === chain.node_info.chain_id);
-    if (!mappedChain)
-      throw new Error('Chain ' + cosmosSignDoc.chain_id + ' is not supported by the Emeris Extension right now.');
-    return this.signTransaction({
-      messages: signingAddress.msgs.map((msg) => ({
-        type: 'custom',
-        data: {
-          raw: msg,
-        },
-      })),
-      chainId: chains.find((chain) => cosmosSignDoc.chain_id === chain.node_info.chain_id).chain_name,
-      signingAddress,
-      // @ts-ignore
-      fee: cosmosSignDoc.fee,
-    });
   }
 
   async signTransaction({
