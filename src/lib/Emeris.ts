@@ -489,4 +489,30 @@ export class Emeris implements IEmeris {
     browser.runtime.sendMessage({ type: 'toPopup', data: { action: 'update' } });
     return true;
   }
+  async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
+    request.id = uuidv4();
+    const chainIds = request.data.chainIds;
+    if (typeof chainIds === 'string') {
+      Object.values(chainConfig).forEach((config) => {
+        if (config.chainId !== chainIds) {
+          return false;
+        }
+      });
+    } else if (Array.isArray(chainIds)) {
+      chainIds.forEach((chainId) => {
+        Object.values(chainConfig).forEach((config) => {
+          if (config.chainId !== chainId) {
+            return false;
+          }
+        });
+      });
+    } else {
+      return false;
+    }
+    const enabled = (await this.forwardToPopup(request)).accept as boolean;
+    if (enabled) {
+      await this.storage.addWhitelistedWebsite(request.origin);
+    }
+    return enabled;
+  }
 }

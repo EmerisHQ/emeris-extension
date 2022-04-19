@@ -10,9 +10,13 @@ export interface Request {
   origin?: string; // set by Emeris
   data?: Record<string, unknown>;
 }
-export type ApproveOriginRequest = Request & {
-  action: 'enable';
-};
+export type ApproveOriginRequest =
+  | (Request & {
+      action: 'enable';
+    })
+  | (Request & {
+      action: 'keplrEnable';
+    });
 export type GetRawTransactionRequest = Request & {
   action: 'getRawTransaction';
   data: EmerisTransactions.TransactionSignRequest & {

@@ -65,7 +65,7 @@ export default defineComponent({
       // if there are pending requests show those first
       else if (pending.length > 0) {
         switch (pending[0].action) {
-          case 'enable':
+          case 'enable' || 'keplrEnable':
             this.$router.push({ path: '/whitelist' });
             break;
           case 'signTransaction':

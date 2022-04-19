@@ -21,6 +21,7 @@ import { AbstractTxResult } from '@@/types/transactions';
 
 export class ProxyEmeris implements IEmeris {
   loaded: boolean;
+  keplr: object;
   private queuedRequests: Map<
     string,
     Record<'resolver', (value: ExtensionRequest | PromiseLike<ExtensionRequest>) => void>
@@ -170,6 +171,15 @@ export class ProxyEmeris implements IEmeris {
     const request = {
       action: 'enable',
       data: {},
+    };
+    const response = await this.sendRequest(request as ApproveOriginRequest);
+    return response.data as boolean;
+  }
+
+  async keplrEnable(chainIds: string | string[]): Promise<boolean> {
+    const request = {
+      action: 'keplrEnable',
+      data: { chainIds },
     };
     const response = await this.sendRequest(request as ApproveOriginRequest);
     return response.data as boolean;

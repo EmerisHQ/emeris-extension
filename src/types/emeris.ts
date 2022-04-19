@@ -52,4 +52,7 @@ export interface IEmeris {
         }
       | SignAndBroadcastTransactionRequest,
   ) => Promise<AbstractTxResult>;
+  keplr?: {
+    enable?: (arg?: ApproveOriginRequest) => Promise<boolean>;
+  };
 }
