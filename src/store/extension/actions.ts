@@ -107,6 +107,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
         commit(MutationTypes.SET_WALLET, wallet as EmerisWallet);
       }
     } catch (e) {
+      console.log(e);
       throw new Error('Extension:GetWallet failed');
     }
     return getters['getWallet'];
