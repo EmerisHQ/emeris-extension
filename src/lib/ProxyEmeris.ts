@@ -24,7 +24,10 @@ export class ProxyEmeris implements IEmeris {
   keplr: object;
   private queuedRequests: Map<
     string,
-    Record<'resolver', (value: ExtensionRequest | PromiseLike<ExtensionRequest>) => void>
+    {
+      resolver: (any) => void;
+      rejecter: (err: Error) => void;
+    }
   >;
   constructor() {
     this.loaded = true;
@@ -45,7 +48,13 @@ export class ProxyEmeris implements IEmeris {
     if (!request) {
       return;
     }
-    request.resolver(event.data.data);
+
+    if (event.data.data.err) {
+      request.rejecter(event.data.data.err);
+    } else {
+      request.resolver(event.data.data);
+    }
+
     this.queuedRequests.delete(event.data.data.id);
   }
   private async sendRequest(request: ExtensionRequest): Promise<ExtensionResponse> {
@@ -56,13 +65,14 @@ export class ProxyEmeris implements IEmeris {
       data: { id: requestId, ...request },
     };
 
-    let resolver;
+    let resolver, rejecter;
 
-    const response: Promise<ExtensionResponse> = new Promise((resolve) => {
+    const response: Promise<ExtensionResponse> = new Promise((resolve, reject) => {
       resolver = resolve;
+      rejecter = reject;
     });
 
-    this.queuedRequests.set(requestId, { resolver });
+    this.queuedRequests.set(requestId, { resolver, rejecter });
     window.postMessage(fullRequest, window.location.origin);
 
     return await response;

@@ -1,3 +1,6 @@
+/* eslint-disable max-lines-per-function */
+/* eslint-disable max-lines */
+
 import { AminoMsg } from '@cosmjs/amino';
 import TxMapper from '@emeris/mapper';
 // @ts-ignore
@@ -452,15 +455,25 @@ export class Emeris implements IEmeris {
     if (!broadcastable) throw new Error('User canceled the transactions');
 
     // @ts-ignore doesn't accept SignAndBroadcastTransactionRequest inheriting from SignTransactionRequest
-    const response = await axios.post(
-      (process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1') + '/tx/' + request.data.chainId,
-      {
-        tx_bytes: Buffer.from(broadcastable, 'hex').toString('base64'),
-        // @ts-ignore doesn't accept SignAndBroadcastTransactionRequest inheriting from SignTransactionRequest
-        address: request.data.signingAddress,
-      },
-      { adapter },
-    );
+    const response = await axios
+      .post(
+        (process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1') + '/tx/' + request.data.chainId,
+        {
+          tx_bytes: Buffer.from(broadcastable, 'hex').toString('base64'),
+          // @ts-ignore doesn't accept SignAndBroadcastTransactionRequest inheriting from SignTransactionRequest
+          address: request.data.signingAddress,
+        },
+        { adapter },
+      )
+      .catch((error) => {
+        if (error.response) {
+          const causeRegexp = /^.+, .+, (.+)/gm; // format of Cosmos SDK errors
+          const cause = causeRegexp.exec(error.response.data.cause)[1];
+          throw new Error('Transaction failed: ' + cause);
+        } else {
+          throw error;
+        }
+      });
 
     return response;
   }
