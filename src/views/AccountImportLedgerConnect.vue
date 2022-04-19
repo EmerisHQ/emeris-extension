@@ -21,12 +21,13 @@
 <script lang="ts">
 import { stringToPath } from '@cosmjs/crypto';
 import { LedgerSigner } from '@cosmjs/ledger-amino';
+import ChainConfig from '@emeris/chain-config';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 import TransportWebUsb from '@ledgerhq/hw-transport-webusb';
 import { defineComponent } from 'vue';
 
 import { keyHashfromAddress } from '@/utils/basic';
-import chainConfigs from '@@/chain-config';
+const chainConfig = new ChainConfig(process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1');
 import Header from '@@/components/Header.vue';
 import { getHdPath } from '@@/lib/libraries/cosmjs';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
@@ -51,9 +52,9 @@ export default defineComponent({
       const newAccount = await this.$store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
 
       // TODO put all in cosmos library and handle different hd paths?
-      const chainConfig = chainConfigs['cosmos-hub'];
+      const chain = await chainConfig.getChain('cosmos-hub');
       const path = stringToPath(
-        getHdPath(chainConfig, {
+        getHdPath(chain, {
           hdPath: newAccount.hdPath,
         }),
       );

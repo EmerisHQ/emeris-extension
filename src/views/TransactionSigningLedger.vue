@@ -15,10 +15,13 @@
 </template>
 
 <script lang="ts">
+import ChainConfig from '@emeris/chain-config';
 import { defineComponent } from 'vue';
 
 import { keyHashfromAddress } from '@/utils/basic';
-import config from '@@/chain-config';
+const chainConfig = new ChainConfig(process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1');
+import { Chain } from '@emeris/types/lib/EmerisAPI';
+
 import libs from '@@/lib/libraries';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
@@ -42,7 +45,7 @@ export default defineComponent({
       if (!signingWallet) throw new Error('The requested signing address is not active in the extension');
       if (!signingWallet.isLedger) throw new Error('The requested signing address is not stored as a Ledger account.');
 
-      const chain = config[transaction.chainId];
+      const chain = await chainConfig.getChain(transaction.chainId);
       if (!chain) {
         throw new Error('Chain not supported: ' + transaction.chainId);
       }
@@ -67,10 +70,10 @@ export default defineComponent({
     }
   },
   methods: {
-    async sign(signingWallet, ledgerSignData, chainConfig) {
-      const broadcastable = await libs[chainConfig.library].signLedger(
+    async sign(signingWallet, ledgerSignData, chain: Chain) {
+      const broadcastable = await libs[await chainConfig.getChainLibrary(chain.chain_name)].signLedger(
         signingWallet,
-        chainConfig,
+        chain,
         ledgerSignData.rawTransaction.msgs, // rawTransaction is already the whole transaction, need to stitch again?
         ledgerSignData.fees,
         ledgerSignData.memo,

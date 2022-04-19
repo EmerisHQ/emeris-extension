@@ -48,9 +48,10 @@ const convertObjectKeys = (obj, doX) => {
 const snakeToCamel = (str) =>
   str.replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
 
-import { keyHashfromAddress } from '@/utils/basic';
+import ChainConfig from '@emeris/chain-config';
 
-import chainConfig from '../chain-config';
+import { keyHashfromAddress } from '@/utils/basic';
+const chainConfig = new ChainConfig(process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1');
 export class Emeris implements IEmeris {
   public loaded: boolean;
   private storage: EmerisStorage;
@@ -289,7 +290,7 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[req.data.chainId];
+    const chain = await chainConfig.getChain(req.data.chainId);
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
@@ -298,7 +299,7 @@ export class Emeris implements IEmeris {
       throw new Error('No account selected');
     }
 
-    return await libs[chain.library].getAddress(account, chain);
+    return await libs[await chainConfig.getChainLibrary(chain.chain_name)].getAddress(account, chain);
   }
   // function limits the data that we return to the view layers to not expose accidentially data
   async getDisplayAccounts() {
@@ -313,8 +314,11 @@ export class Emeris implements IEmeris {
           keyHashes: [
             ...new Set(
               await Promise.all(
-                Object.values(chainConfig).map(async (chain) => {
-                  const address = await libs[chain.library].getAddress(account, chain);
+                Object.values(await chainConfig.getChains()).map(async (chain) => {
+                  const address = await libs[await chainConfig.getChainLibrary(chain.chain_name)].getAddress(
+                    account,
+                    chain,
+                  );
                   const keyHash = keyHashfromAddress(address);
                   return keyHash;
                 }),
@@ -331,7 +335,7 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[req.data.chainId];
+    const chain = await chainConfig.getChain(req.data.chainId);
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
@@ -340,7 +344,7 @@ export class Emeris implements IEmeris {
       throw new Error('No account selected');
     }
 
-    return await libs[chain.library].getPublicKey(account, chain);
+    return await libs[await chainConfig.getChainLibrary(chain.chain_name)].getPublicKey(account, chain);
   }
   async isPermitted(origin: string): Promise<boolean> {
     return await this.storage.isWhitelistedWebsite(origin);
@@ -349,7 +353,7 @@ export class Emeris implements IEmeris {
     return false;
   }
   async supportedChains(_req: SupportedChainsRequest): Promise<string[]> {
-    return Object.keys(chainConfig);
+    return (await chainConfig.getChains()).filter((chain) => chain.enabled).map((chain) => chain.chain_name);
   }
   async getAccountName(_req: GetAccountNameRequest): Promise<string> {
     return this.selectedAccount;
@@ -362,13 +366,13 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[request.data.chainId];
+    const chain = await chainConfig.getChain(request.data.chainId);
     if (!chain) {
       throw new Error('Chain not supported: ' + request.data.chainId);
     }
 
     const selectedAccount = this.wallet.find(({ accountName }) => accountName === this.selectedAccount);
-    const address = await libs[chain.library].getAddress(selectedAccount, chain);
+    const address = await libs[await chainConfig.getChainLibrary(chain.chain_name)].getAddress(selectedAccount, chain);
 
     if (address !== request.data.signingAddress) {
       throw new Error('The requested signing address is not active in the extension');
@@ -377,7 +381,7 @@ export class Emeris implements IEmeris {
     let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
     abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
     const chainMessages = await TxMapper(abstractTx);
-    const signable = await libs[chain.library].getRawSignable(
+    const signable = await libs[await chainConfig.getChainLibrary(chain.chain_name)].getRawSignable(
       selectedAccount,
       chain,
       chainMessages,
@@ -391,7 +395,7 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[request.data.chainId];
+    const chain = await chainConfig.getChain(request.data.chainId);
     if (!chain) {
       throw new Error('Chain not supported: ' + request.data.chainId);
     }
@@ -399,7 +403,7 @@ export class Emeris implements IEmeris {
     const accountsWithAddress = [];
     await Promise.all(
       this.wallet.map(async (account) => {
-        const address = await libs[chain.library].getAddress(account, chain);
+        const address = await libs[await chainConfig.getChainLibrary(chain.chain_name)].getAddress(account, chain);
         accountsWithAddress.push({
           address,
           account,
@@ -421,7 +425,7 @@ export class Emeris implements IEmeris {
     let broadcastable;
     // currently not used, as we need to sign in the view part of the app
     if (selectedAccount.isLedger) {
-      broadcastable = await libs[chain.library].signLedger(
+      broadcastable = await libs[await chainConfig.getChainLibrary(chain.chain_name)].signLedger(
         selectedAccount,
         chain,
         chainMessages as AminoMsg[],
@@ -429,7 +433,7 @@ export class Emeris implements IEmeris {
         memo,
       );
     } else {
-      broadcastable = await libs[chain.library].sign(
+      broadcastable = await libs[await chainConfig.getChainLibrary(chain.chain_name)].sign(
         selectedAccount,
         chain,
         chainMessages as AminoMsg[],
