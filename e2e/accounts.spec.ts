@@ -3,6 +3,7 @@ import { expect } from '@playwright/test';
 import { test } from './extension-setup';
 import { defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers';
 
+/* eslint-disable max-lines-per-function */
 test.describe('Account Create', () => {
   test('Create Account', async ({ page }) => {
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
@@ -37,6 +38,12 @@ test.describe('Account Create', () => {
 
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
+
+    // TODO there is a delay in the background until the wallet is available
+    while (await page.isVisible('text=Incorrect word. Try again.')) {
+      await page.waitForTimeout(500);
+      await page.click('text=Show mnemonic');
+    }
 
     const mnemonic = await page.locator('.word > span').allTextContents();
     await page.click('text=I have backed up');
