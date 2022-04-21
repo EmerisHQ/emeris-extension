@@ -224,16 +224,18 @@ export class ProxyEmeris implements IEmeris {
   }
 
   getOfflineAminoSigner() {
+    const self = this // as we return an object the scope of 'this' changes
     return {
       async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
-        return this.signTransactionForOfflineAminoSigner({
+        return self.signTransactionForOfflineAminoSigner({
           messages: signDoc.msgs.map((msg) => ({
             type: 'custom',
-            value: {
+            data: {
               raw: msg,
             },
           })),
           // chainId: chainLookup(signDoc.chain_id), // need to lookup the chain name (our id) from the chain id
+          chainId: 'cosmos-hub', // PLACEHOLDER
           signingAddress: signerAddress,
           fee: signDoc.fee,
           memo: signDoc.memo,

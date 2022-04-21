@@ -247,8 +247,6 @@ export class Emeris implements IEmeris {
         return await this.getRawTransaction(message.data);
       case 'signTransaction':
         return await this.getTransactionSignature(message.data, message.data.data.memo);
-      case 'signTransactionForOfflineAminoSigner':
-        return await this.getTransactionSignatureForOfflineAminoSigner(message.data, message.data.data.memo);
       case 'setResponse':
         return this.setResponse(message.data.data.id, message.data.data);
       case 'extensionReset':
@@ -392,7 +390,7 @@ export class Emeris implements IEmeris {
 
     return signable;
   }
-  async getTransactionSignatureForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
+  async signTransactionForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
