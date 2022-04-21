@@ -19,6 +19,34 @@ module.exports = {
     '@vue/eslint-config-prettier',
   ],
   rules: {
+    '@typescript-eslint/naming-convention': ['warn', { selector: 'variableLike', format: ['camelCase'] }],
+    '@typescript-eslint/naming-convention': [
+      'warn',
+      {
+        selector: 'memberLike',
+        modifiers: ['private'],
+        format: ['camelCase'],
+        leadingUnderscore: 'require',
+      },
+    ],
+    '@typescript-eslint/naming-convention': [
+      'warn',
+      {
+        selector: 'variable',
+        types: ['boolean'],
+        format: ['PascalCase'],
+        prefix: ['is', 'should', 'has', 'can', 'did', 'will'],
+      },
+    ],
+    '@typescript-eslint/naming-convention': [
+      'warn',
+      {
+        selector: 'variable',
+        format: ['camelCase', 'UPPER_CASE'],
+      },
+    ],
+    'max-lines': [2, { max: 300, skipBlankLines: true, skipComments: true }],
+    'max-lines-per-function': [2, { max: 50, skipBlankLines: true, skipComments: true }],
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
     'vue/multi-word-component-names': 'off',
@@ -47,6 +75,12 @@ module.exports = {
         endOfLine: 'auto',
         useTabs: false,
         bracketSameLine: false,
+      },
+    ],
+    'vue/no-static-inline-styles': [
+      'warn',
+      {
+        allowBinding: false,
       },
     ],
   },
