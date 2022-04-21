@@ -122,14 +122,18 @@ watch(mnemonic, (newValue: string) => {
   }
 });
 
-onMounted(() => {
-  const hasPassword = store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
+const mounted = async () => {
+  const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
 
   if (!hasPassword) {
     router.push({ path: '/passwordCreate', query: { returnTo: '/accountImport' } });
   }
 
   getNewAccount();
+};
+
+onMounted(() => {
+  mounted();
 });
 </script>
 <style lang="scss" scoped>
