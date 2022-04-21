@@ -1,9 +1,9 @@
 import { Coin } from '@cosmjs/amino';
 import { ActionContext, ActionTree } from 'vuex';
-import browser from 'webextension-polyfill';
 
 import { GlobalActionTypes } from '@/store';
 import { AccountCreateStates, EmerisAccount, EmerisWallet, ExtensionRequest } from '@@/types/index';
+import browser from '@@/utils/browser';
 
 import { RootState } from '..';
 import { ActionTypes } from './action-types';

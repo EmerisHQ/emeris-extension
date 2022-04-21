@@ -5,12 +5,13 @@
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import browser from 'webextension-polyfill';
 
 import { GlobalActionTypes } from '@/store/demeris-api/action-types';
 import { MutationTypes } from '@/store/demeris-api/mutation-types';
 import { setStore } from '@/utils/useStore';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
+import browser from '@@/utils/browser';
+
 export default defineComponent({
   name: 'App',
   setup() {
@@ -21,7 +22,7 @@ export default defineComponent({
     onMounted(async () => {
       store.commit(
         'demerisAPI/' + MutationTypes.INIT,
-        { endpoint: process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1' },
+        { endpoint: import.meta.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1' },
         { root: true },
       );
 
@@ -82,7 +83,7 @@ export default defineComponent({
         // init starport store
         store
           .dispatch('common/env/config', {
-            apiNode: process.env.VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT || 'https://api.emeris.com/v1/liquidity',
+            apiNode: import.meta.env.VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT || 'https://api.emeris.com/v1/liquidity',
             rpcNode: null,
             wsNode: null,
             chainId: 'cosmos-hub',

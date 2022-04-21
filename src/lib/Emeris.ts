@@ -4,7 +4,6 @@ import TxMapper from '@emeris/mapper';
 import adapter from '@vespaiach/axios-fetch-adapter';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import browser from 'webextension-polyfill';
 
 import { UnlockWalletError } from '@@/errors';
 import { EmerisWallet } from '@@/types';
@@ -23,6 +22,7 @@ import {
   SupportedChainsRequest,
 } from '@@/types/api';
 import { IEmeris } from '@@/types/emeris';
+import browser from '@@/utils/browser';
 
 // TODO
 import EmerisStorage from './EmerisStorage';

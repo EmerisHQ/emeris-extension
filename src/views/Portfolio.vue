@@ -121,6 +121,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    console.log('account is present', this.$store.getters[GlobalEmerisGetterTypes.getAccount]);
     if (this.account && this.account.setupState !== AccountCreateStates.COMPLETE) {
       const localStorageKey = `nextBackupCheck-${this.account.accountName}`;
       const nextCheckTimestamp = Number(window.localStorage.getItem(localStorageKey));

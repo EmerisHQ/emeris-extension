@@ -1,4 +1,4 @@
-import browser from 'webextension-polyfill';
+import browser from '@@/utils/browser';
 
 import { Emeris } from './lib/Emeris';
 import EmerisStorage, { EmerisStorageMode } from './lib/EmerisStorage';

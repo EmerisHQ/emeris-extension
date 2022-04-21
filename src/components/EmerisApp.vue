@@ -5,13 +5,13 @@
 <script lang="ts">
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import { computed, defineComponent } from 'vue';
-import browser from 'webextension-polyfill';
 
 import Loader from '@@/components/Loader.vue';
 import { useExtensionStore } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { ExtensionRequest } from '@@/types';
+import browser from '@@/utils/browser';
 
 // TODO this component should be refactored into sth more speaking imo
 

@@ -1,5 +1,5 @@
 async function setup() {
-  const browser = (await import('webextension-polyfill')).default;
+  const browser = (await import('@@/utils/browser')).default;
 
   function injectScript(file: string) {
     const container = document.head || document.documentElement;

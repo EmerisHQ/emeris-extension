@@ -22,6 +22,18 @@ When you make a change, the extension will rebuild. Wait for that to be done and
 
 (dev:watch includes two scripts that run independent to boost build time. The first builds the views the second the node based scripts)
 
+## Experimental: Debug on Web
+
+Running the chrome extension as a webapp.
+This might not be a great idea for specific functionality which for example needs storage, or signing transactions.
+However, for doing visual development, this might speed you up quite a bit, because you don't have to wait for the extension to build for 60 seconds.
+
+To run, simply do:
+
+```
+yarn run dev:web
+```
+
 ## Usage
 
 ```
