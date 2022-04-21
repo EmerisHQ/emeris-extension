@@ -5,6 +5,7 @@ import EmerisSigner from '@emeris/signer';
 import { Chain } from '@emeris/types/lib/EmerisAPI';
 import { bech32 } from 'bech32';
 
+import { chainAddressfromAddress } from '@/utils/basic';
 import { EmerisAccount } from '@@/types';
 
 export function chainAddressfromKeyHash(prefix: string, keyHash: string) {
@@ -25,7 +26,8 @@ const helpers = {
       return chainAddressfromKeyHash(chainConfig.node_info.bech32_config.prefix_account, account.keyHash);
     } else {
       const signer = EmerisSigner.withMnemonic(getHdPath(chainConfig, account), account.accountMnemonic);
-      return signer.getAddress(chainConfig.chain_name);
+      const cosmosEncodedAddress = await signer.getAddress(chainConfig.chain_name);
+      return chainAddressfromAddress(chainConfig.node_info.bech32_config.prefix_account, cosmosEncodedAddress);
     }
   },
   getPublicKey: async (account: EmerisAccount, chainConfig: Chain): Promise<Uint8Array> => {
