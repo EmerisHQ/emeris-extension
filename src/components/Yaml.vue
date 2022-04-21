@@ -9,7 +9,6 @@ import 'prismjs/components/prism-yaml';
 import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
 
 import yaml from 'js-yaml';
-// import highlighting library (you can use any library you want just return html string)
 import { highlight, languages } from 'prismjs/components/prism-core';
 import { PrismEditor } from 'vue-prism-editor';
 
