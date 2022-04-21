@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Coin } from '@cosmjs/amino';
 import { ActionContext, ActionTree } from 'vuex';
 

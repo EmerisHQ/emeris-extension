@@ -1,3 +1,6 @@
+/* eslint-disable max-lines-per-function */
+/* eslint-disable max-lines */
+
 import { AminoMsg } from '@cosmjs/amino';
 import TxMapper from '@emeris/mapper';
 // @ts-ignore
