@@ -1,3 +1,4 @@
+import { AminoSignResponse, StdSignDoc } from '@cosmjs/amino';
 import { EmerisBase as Base } from '@emeris/types';
 import { EmerisTransactions } from '@emeris/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -153,6 +154,33 @@ export class ProxyEmeris implements IEmeris {
     return response.data as Uint8Array;
   }
 
+  async signTransactionForOfflineAminoSigner({
+    messages,
+    chainId,
+    signingAddress,
+    fee,
+    memo,
+  }: {
+    signingAddress: string;
+    chainId: string;
+    messages: EmerisTransactions.AbstractTransaction[];
+    fee: {
+      gas: string;
+      amount: Base.Amount[];
+    };
+    memo?: string;
+  }): Promise<AminoSignResponse> {
+    const request = {
+      action: 'signTransactionForOfflineAminoSigner',
+      data: { messages, chainId, signingAddress, fee, memo },
+    };
+    const response = await this.sendRequest(request as SignTransactionRequest);
+    if (!response.data) {
+      throw new Error('Signing was not successful');
+    }
+    return response.data as AminoSignResponse;
+  }
+
   async signAndBroadcastTransaction({
     messages,
     chainId,
@@ -193,5 +221,24 @@ export class ProxyEmeris implements IEmeris {
     };
     const response = await this.sendRequest(request as ApproveOriginRequest);
     return response.data as boolean;
+  }
+
+  getOfflineAminoSigner() {
+    return {
+      async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
+        return this.signTransactionForOfflineAminoSigner({
+          messages: signDoc.msgs.map((msg) => ({
+            type: 'custom',
+            value: {
+              raw: msg,
+            },
+          })),
+          // chainId: chainLookup(signDoc.chain_id), // need to lookup the chain name (our id) from the chain id
+          signingAddress: signerAddress,
+          fee: signDoc.fee,
+          memo: signDoc.memo,
+        });
+      },
+    };
   }
 }

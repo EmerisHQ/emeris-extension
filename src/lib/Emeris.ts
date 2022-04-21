@@ -247,6 +247,8 @@ export class Emeris implements IEmeris {
         return await this.getRawTransaction(message.data);
       case 'signTransaction':
         return await this.getTransactionSignature(message.data, message.data.data.memo);
+      case 'signTransactionForOfflineAminoSigner':
+        return await this.getTransactionSignatureForOfflineAminoSigner(message.data, message.data.data.memo);
       case 'setResponse':
         return this.setResponse(message.data.data.id, message.data.data);
       case 'extensionReset':
@@ -389,6 +391,58 @@ export class Emeris implements IEmeris {
     );
 
     return signable;
+  }
+  async getTransactionSignatureForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
+    if (!this.wallet) {
+      throw new Error('No wallet configured');
+    }
+    const chain = chainConfig[request.data.chainId];
+    if (!chain) {
+      throw new Error('Chain not supported: ' + request.data.chainId);
+    }
+
+    const accountsWithAddress = [];
+    await Promise.all(
+      this.wallet.map(async (account) => {
+        const address = await libs[chain.library].getAddress(account, chain);
+        accountsWithAddress.push({
+          address,
+          account,
+        });
+      }),
+    );
+    const selectedAccountPair = accountsWithAddress.find(({ address }) => {
+      return address === request.data.signingAddress;
+    });
+
+    if (!selectedAccountPair) {
+      throw new Error('The requested signing address is not available in the extension');
+    }
+    const selectedAccount = selectedAccountPair.account;
+
+    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
+    abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
+    const chainMessages = await TxMapper(abstractTx);
+    let aminoSignResponse;
+    // currently not used, as we need to sign in the view part of the app
+    if (selectedAccount.isLedger) {
+      aminoSignResponse = await libs[chain.library].signLedgerForAminoOfflineSigner(
+        selectedAccount,
+        chain,
+        chainMessages as AminoMsg[],
+        request.data.fee,
+        memo,
+      );
+    } else {
+      aminoSignResponse = await libs[chain.library].signForAminoOfflineSigner(
+        selectedAccount,
+        chain,
+        chainMessages as AminoMsg[],
+        request.data.fee,
+        memo,
+      );
+    }
+    return aminoSignResponse;
   }
   async getTransactionSignature(request: SignTransactionRequest, memo: string): Promise<string> {
     if (!this.wallet) {
