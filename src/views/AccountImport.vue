@@ -122,7 +122,7 @@ watch(mnemonic, (newValue: string) => {
   }
 });
 
-const mounted = async () => {
+onMounted(async () => {
   const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
 
   if (!hasPassword) {
@@ -130,10 +130,6 @@ const mounted = async () => {
   }
 
   getNewAccount();
-};
-
-onMounted(() => {
-  mounted();
 });
 </script>
 <style lang="scss" scoped>
