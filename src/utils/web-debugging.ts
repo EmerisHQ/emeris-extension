@@ -23,5 +23,6 @@ export const webDebugging = async () => {
 
     await store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, { password: password });
     await store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, { account: account });
+    await store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
   }
 };
