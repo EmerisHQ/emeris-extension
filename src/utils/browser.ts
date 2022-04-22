@@ -19,10 +19,9 @@ if (import.meta.env.MODE === 'web') {
         return store.getters[GlobalEmerisGetterTypes.getPending];
       } else if (req.data.action === 'hasWallet') {
         return wallet;
+      } else if (req.data.action === 'unlockWallet') {
+        return wallet;
       }
-
-      //getWallet
-      return undefined;
     },
     onMessage: {
       addListener: (getPendingMethod) => {
