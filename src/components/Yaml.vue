@@ -9,6 +9,7 @@ import 'prismjs/components/prism-yaml';
 import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
 
 import yaml from 'js-yaml';
+// prettier-ignore
 import { highlight, languages } from 'prismjs/components/prism-core';
 import { PrismEditor } from 'vue-prism-editor';
 
