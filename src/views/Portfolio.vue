@@ -78,12 +78,15 @@ import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
 import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
-import { GlobalGetterTypes } from '@/store';
+import { GlobalGetterTypes } from '@/store/demeris-api/getter-types';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
+import { useExtensionStore } from '@@/store';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
+
+const store = useExtensionStore();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
@@ -105,7 +108,7 @@ export default defineComponent({
       return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
     },
     verifiedDenoms() {
-      return this.$store.getters[GlobalGetterTypes.API.getVerifiedDenoms];
+      return store.getters[GlobalGetterTypes.getVerifiedDenoms];
     },
     balances() {
       if (!this.account) return undefined;
