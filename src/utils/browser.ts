@@ -2,8 +2,6 @@ import { useExtensionStore } from '@@/store';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { account, password, wallet } from '@@/utils/web-debugging';
 
-const store = useExtensionStore();
-
 declare global {
   interface Window {
     chrome: any;
@@ -11,6 +9,7 @@ declare global {
 }
 
 if (import.meta.env.MODE === 'web') {
+  const store = useExtensionStore();
   window.chrome.runtime = {
     sendMessage: (req) => {
       if (req.data.action === 'createWallet') {
