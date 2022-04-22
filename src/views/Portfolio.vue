@@ -78,7 +78,7 @@ import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
 import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
-import { GlobalGetterTypes } from '@/store/demeris-api/getter-types';
+import { GlobalGetterTypes as GlobalApiGetterTypes } from '@/store/demeris-api/getter-types';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import { useExtensionStore } from '@@/store';
@@ -108,7 +108,7 @@ export default defineComponent({
       return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
     },
     verifiedDenoms() {
-      return store.getters[GlobalGetterTypes.getVerifiedDenoms];
+      return store.getters[GlobalApiGetterTypes.getVerifiedDenoms];
     },
     balances() {
       if (!this.account) return undefined;
