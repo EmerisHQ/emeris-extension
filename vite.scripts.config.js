@@ -10,6 +10,7 @@ import { defineConfig } from 'vitest/config';
 import * as pkg from './package.json';
 
 // https://vitejs.dev/config/
+// eslint-disable-next-line max-lines-per-function
 export default () => {
   // Do Node stuff here:
   process.env.VITE_GIT_VERSION = pkg.version;
@@ -17,6 +18,7 @@ export default () => {
   return defineConfig({
     css: { preprocessorOptions: { scss: { charset: false } } },
     build: {
+      target: 'esnext',
       chunkSizeWarningLimit: 1000,
       sourcemap: process.env.NODE_ENV != 'production' ? 'inline' : false,
       emptyOutDir: false,
