@@ -266,7 +266,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     if (!response) {
       response = await browser.runtime.sendMessage({
         type: 'fromPopup',
-        data: { actions, data: { id, ...transaction } },
+        data: { action, data: { id, ...transaction } },
       });
     } else {
       // we need to transport the buffer and it will be converted badly by native methods so we convert to hex
