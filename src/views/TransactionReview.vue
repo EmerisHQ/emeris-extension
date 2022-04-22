@@ -166,8 +166,6 @@ export default defineComponent({
         this.error = newVal.error;
       }
     },
-  },
-  watch: {
     transaction: {
       immediate: true,
       async handler(transaction) {
@@ -225,6 +223,7 @@ export default defineComponent({
 
         await this.$store.dispatch(GlobalEmerisActionTypes.ACCEPT_TRANSACTION, {
           id: this.pending.id,
+          action: this.pending.action, // used to determine what to call for signing
           // TODO currently setting default fee until fee selection works
           fees: {
             gas: this.gas,

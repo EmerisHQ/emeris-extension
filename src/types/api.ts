@@ -12,11 +12,11 @@ export interface Request {
 }
 export type ApproveOriginRequest =
   | (Request & {
-      action: 'enable';
-    })
+    action: 'enable';
+  })
   | (Request & {
-      action: 'keplrEnable';
-    });
+    action: 'keplrEnable';
+  });
 export type GetRawTransactionRequest = Request & {
   action: 'getRawTransaction';
   data: EmerisTransactions.TransactionSignRequest & {
@@ -33,6 +33,10 @@ export type SignTransactionRequest = Request & {
 };
 export type SignAndBroadcastTransactionRequest = Request & {
   action: 'signAndBroadcastTransaction';
+  data: EmerisTransactions.TransactionSignRequest;
+};
+export type SignTransactionForAminoOfflineSignerRequest = Request & {
+  action: 'signTransactionForOfflineAminoSigner';
   data: EmerisTransactions.TransactionSignRequest;
 };
 export type GetAddressRequest = Request & {
@@ -202,6 +206,7 @@ export type PopupRequest =
   | GetLastAccountRequest
   | SetResponseRequest
   | SignTransactionRequest
+  | SignTransactionForAminoOfflineSignerRequest
   | GetAddressRequest
   | ExtensionResetRequest
   | GetWhitelistedWebsiteRequest

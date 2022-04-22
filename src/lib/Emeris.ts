@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-lines */
 
-import { AminoMsg } from '@cosmjs/amino';
+import { AminoMsg, AminoSignResponse } from '@cosmjs/amino';
 import TxMapper from '@emeris/mapper';
 // @ts-ignore
 import adapter from '@vespaiach/axios-fetch-adapter';
@@ -247,6 +247,8 @@ export class Emeris implements IEmeris {
         return await this.getRawTransaction(message.data);
       case 'signTransaction':
         return await this.getTransactionSignature(message.data, message.data.data.memo);
+      case 'signTransactionForOfflineAminoSigner':
+        return await this.getTransactionSignatureForOfflineAminoSigner(message.data, message.data.data.memo);
       case 'setResponse':
         return this.setResponse(message.data.data.id, message.data.data);
       case 'extensionReset':
@@ -390,7 +392,12 @@ export class Emeris implements IEmeris {
 
     return signable;
   }
-  async signTransactionForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
+  async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
+    request.id = uuidv4();
+    const { response: aminoSignResponse } = await this.forwardToPopup(request);
+    return aminoSignResponse;
+  }
+  async getTransactionSignatureForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
@@ -498,7 +505,7 @@ export class Emeris implements IEmeris {
   }
   async signTransaction(request: SignTransactionRequest): Promise<any> {
     request.id = uuidv4();
-    const { broadcastable } = await this.forwardToPopup(request);
+    const { response: broadcastable } = await this.forwardToPopup(request);
     return broadcastable;
   }
   async signAndBroadcastTransaction(request: SignAndBroadcastTransactionRequest): Promise<any> {
