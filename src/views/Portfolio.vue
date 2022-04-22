@@ -83,6 +83,7 @@ import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types/index';
+import { webDebugging } from '@@/utils/web-debugging';
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
@@ -121,17 +122,20 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.log('account is present', this.$store.getters[GlobalEmerisGetterTypes.getAccount]);
-    if (this.account && this.account.setupState !== AccountCreateStates.COMPLETE) {
-      const localStorageKey = `nextBackupCheck-${this.account.accountName}`;
-      const nextCheckTimestamp = Number(window.localStorage.getItem(localStorageKey));
-      const nowInSeconds = Math.floor(Date.now() / 1000);
-      if (isNaN(nextCheckTimestamp) || nowInSeconds - nextCheckTimestamp > 0) {
-        this.$data.showMnemonicBackup = true;
-      }
-    }
+    this.onMount();
   },
   methods: {
+    async onMount() {
+      await webDebugging();
+      if (this.account && this.account.setupState !== AccountCreateStates.COMPLETE) {
+        const localStorageKey = `nextBackupCheck-${this.account.accountName}`;
+        const nextCheckTimestamp = Number(window.localStorage.getItem(localStorageKey));
+        const nowInSeconds = Math.floor(Date.now() / 1000);
+        if (isNaN(nextCheckTimestamp) || nowInSeconds - nextCheckTimestamp > 0) {
+          this.$data.showMnemonicBackup = true;
+        }
+      }
+    },
     skipBackup() {
       const localStorageKey = `nextBackupCheck-${this.account.accountName}`;
       const nowInSeconds = Math.floor(Date.now() / 1000);

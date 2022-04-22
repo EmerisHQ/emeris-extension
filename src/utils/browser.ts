@@ -13,12 +13,12 @@ declare global {
 if (import.meta.env.MODE === 'web') {
   window.chrome.runtime = {
     sendMessage: (req) => {
-      console.log('req.data.action', req.data.action);
-
       if (req.data.action === 'createWallet') {
         return wallet;
       } else if (req.data.action === 'getPending') {
         return store.getters[GlobalEmerisGetterTypes.getPending];
+      } else if (req.data.action === 'hasWallet') {
+        return wallet;
       }
 
       //getWallet
