@@ -4,6 +4,7 @@
 
 <script>
 /* eslint-disable */
+/* needed to disable eslint as it would reorganize the lines and prism needs to be loaded in order */
 import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles somewhere
 import 'prismjs';
 import { highlight, languages } from 'prismjs/components/prism-core';
