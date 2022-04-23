@@ -362,42 +362,12 @@ export class Emeris implements IEmeris {
   async hasWallet(): Promise<boolean> {
     return await this.storage.hasWallet();
   }
-
-  async getRawTransaction(request: GetRawTransactionRequest): Promise<string> {
-    if (!this.wallet) {
-      throw new Error('No wallet configured');
-    }
-    const chain = chainConfig[request.data.chainId];
-    if (!chain) {
-      throw new Error('Chain not supported: ' + request.data.chainId);
-    }
-
-    const selectedAccount = this.wallet.find(({ accountName }) => accountName === this.selectedAccount);
-    const address = await libs[chain.library].getAddress(selectedAccount, chain);
-
-    if (address !== request.data.signingAddress) {
-      throw new Error('The requested signing address is not active in the extension');
-    }
-
-    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
-    abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
-    const chainMessages = await TxMapper(abstractTx);
-    const signable = await libs[chain.library].getRawSignable(
-      selectedAccount,
-      chain,
-      chainMessages,
-      request.data.fee,
-      request.data.memo,
-    );
-
-    return signable;
-  }
   async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
     request.id = uuidv4();
     const { response: aminoSignResponse } = await this.forwardToPopup(request);
     return aminoSignResponse;
   }
-  async getTransactionSignatureForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
+  async getTransactionSigningData(request: SignTransactionRequest | GetRawTransactionRequest) {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
@@ -428,6 +398,25 @@ export class Emeris implements IEmeris {
     let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
     abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
     const chainMessages = await TxMapper(abstractTx);
+
+    return { chain, selectedAccount, chainMessages };
+  }
+  async getRawTransaction(request: GetRawTransactionRequest): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
+    const signable = await libs[chain.library].getRawSignable(
+      selectedAccount,
+      chain,
+      chainMessages,
+      request.data.fee,
+      request.data.memo,
+    );
+
+    return signable;
+  }
+  async getTransactionSignatureForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
     let aminoSignResponse;
     // currently not used, as we need to sign in the view part of the app
     if (selectedAccount.isLedger) {
@@ -450,36 +439,8 @@ export class Emeris implements IEmeris {
     return aminoSignResponse;
   }
   async getTransactionSignature(request: SignTransactionRequest, memo: string): Promise<string> {
-    if (!this.wallet) {
-      throw new Error('No wallet configured');
-    }
-    const chain = chainConfig[request.data.chainId];
-    if (!chain) {
-      throw new Error('Chain not supported: ' + request.data.chainId);
-    }
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
 
-    const accountsWithAddress = [];
-    await Promise.all(
-      this.wallet.map(async (account) => {
-        const address = await libs[chain.library].getAddress(account, chain);
-        accountsWithAddress.push({
-          address,
-          account,
-        });
-      }),
-    );
-    const selectedAccountPair = accountsWithAddress.find(({ address }) => {
-      return address === request.data.signingAddress;
-    });
-
-    if (!selectedAccountPair) {
-      throw new Error('The requested signing address is not available in the extension');
-    }
-    const selectedAccount = selectedAccountPair.account;
-
-    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
-    abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
-    const chainMessages = await TxMapper(abstractTx);
     let broadcastable;
     // currently not used, as we need to sign in the view part of the app
     if (selectedAccount.isLedger) {

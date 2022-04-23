@@ -4,10 +4,7 @@ import { test } from './extension-setup';
 import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from './helpers';
 
 test.describe('Keplr', () => {
-  test('OfflineSigner', async ({ context, page }, testInfo) => {
-    // Extend timeout for all tests running this hook by 30 seconds.
-    testInfo.setTimeout(testInfo.timeout + 60000);
-
+  test('OfflineSigner', async ({ context, page }) => {
     await enableWebsite(context, page);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
