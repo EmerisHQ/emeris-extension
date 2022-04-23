@@ -224,10 +224,9 @@ export class ProxyEmeris implements IEmeris {
   }
 
   getOfflineAminoSigner() {
-    const self = this // as we return an object the scope of 'this' changes
     return {
-      async signAmino(signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
-        return self.signTransactionForOfflineAminoSigner({
+      signAmino: async (signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> => {
+        return this.signTransactionForOfflineAminoSigner({
           messages: signDoc.msgs.map((msg) => ({
             type: 'custom',
             data: {

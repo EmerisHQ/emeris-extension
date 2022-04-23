@@ -49,9 +49,9 @@ export interface Actions {
     { commit }: ActionContext<State, RootState>,
     { accountName, password }: { accountName: string; password: string },
   ): Promise<void>;
-  [ActionTypes.GET_ADDRESS]({ }: ActionContext<State, RootState>, { chainId }: { chainId: string }): Promise<string>;
+  [ActionTypes.GET_ADDRESS]({}: ActionContext<State, RootState>, { chainId }: { chainId: string }): Promise<string>;
   [ActionTypes.REMOVE_WHITELISTED_WEBSITE](
-    { }: ActionContext<State, RootState>,
+    {}: ActionContext<State, RootState>,
     { website }: { website: string },
   ): Promise<void>;
   [ActionTypes.SET_NEW_ACCOUNT](
@@ -171,7 +171,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
       throw new Error('Extension:UnlockWallet failed');
     }
   },
-  async [ActionTypes.CHANGE_PASSWORD]({ }, { password }: { password: string }) {
+  async [ActionTypes.CHANGE_PASSWORD]({}, { password }: { password: string }) {
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'changePassword', data: { password } },
@@ -216,7 +216,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
       throw new Error('Extension:getMnemonic failed');
     }
   },
-  async [ActionTypes.GET_ADDRESS]({ }, { chainId }: { chainId: string }) {
+  async [ActionTypes.GET_ADDRESS]({}, { chainId }: { chainId: string }) {
     try {
       const address = await browser.runtime.sendMessage({
         type: 'fromPopup',
@@ -260,8 +260,8 @@ export const actions: ActionTree<State, RootState> & Actions = {
     await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
   },
   // TODO potentially refactor and split signing with ledger from signing in the background
-  async [ActionTypes.ACCEPT_TRANSACTION]({ }, { id, action, broadcastable, ...transaction }) {
-    let response = broadcastable
+  async [ActionTypes.ACCEPT_TRANSACTION]({}, { id, action, broadcastable, ...transaction }) {
+    let response = broadcastable;
     // when signing with ledger we get the signed message from the view, when signing with a key we get it signing in the background
     if (!response) {
       response = await browser.runtime.sendMessage({
@@ -274,10 +274,10 @@ export const actions: ActionTree<State, RootState> & Actions = {
     }
     await respond(id, { response });
   },
-  async [ActionTypes.CANCEL_TRANSACTION]({ }, { id }) {
+  async [ActionTypes.CANCEL_TRANSACTION]({}, { id }) {
     await respond(id, { broadcastable: undefined });
   },
-  async [ActionTypes.GET_RAW_TRANSACTION]({ }, { messages, chainId, signingAddress, gas, fees, memo }) {
+  async [ActionTypes.GET_RAW_TRANSACTION]({}, { messages, chainId, signingAddress, gas, fees, memo }) {
     return await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: {
@@ -319,7 +319,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     return undefined;
   },
   async [ActionTypes.SET_LEDGER_SIGN_DATA](
-    { },
+    {},
     ledgerSignData: {
       fees: {
         gas: number;
@@ -332,7 +332,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     localStorage.setItem('ledger_sign_data', JSON.stringify(ledgerSignData));
   },
 
-  async [ActionTypes.GET_LEDGER_SIGN_DATA]({ }): Promise<{
+  async [ActionTypes.GET_LEDGER_SIGN_DATA]({}): Promise<{
     fees: {
       gas: number;
       amount: Coin[];

@@ -12,11 +12,11 @@ export interface Request {
 }
 export type ApproveOriginRequest =
   | (Request & {
-    action: 'enable';
-  })
+      action: 'enable';
+    })
   | (Request & {
-    action: 'keplrEnable';
-  });
+      action: 'keplrEnable';
+    });
 export type GetRawTransactionRequest = Request & {
   action: 'getRawTransaction';
   data: EmerisTransactions.TransactionSignRequest & {
