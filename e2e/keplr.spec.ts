@@ -49,4 +49,60 @@ test.describe('Keplr', () => {
       },
     });
   });
+  
+  test('Get accounts', async ({ context, page }) => {
+    await enableWebsite(context, page);
+    await importAccount(page);
+    await page.goto(`https://www.google.com/`);
+    await emerisLoaded(page);
+
+    // when the transaction popup shows, click accept
+    context.waitForEvent('page').then(async (popup) => {
+      await popup.click('text=Accept');
+    });
+
+    const result = await page.evaluate(() => {
+      return window.emeris.keplr.getOfflineSigner().getAccounts();
+    });
+
+    await expect(result).toStrictEqual([{
+         "address": "c790a6f32f285faa266ed80e11dcee7779726bb91ps5g9lwx",
+         "algo": "secp256k1",
+         "pubkey": {
+           "0": 3,
+           "1": 173,
+           "10": 98,
+           "11": 112,
+           "12": 209,
+           "13": 146,
+           "14": 124,
+           "15": 122,
+           "16": 72,
+           "17": 236,
+           "18": 45,
+           "19": 120,
+           "2": 223,
+           "20": 89,
+           "21": 205,
+           "22": 9,
+           "23": 111,
+           "24": 247,
+           "25": 7,
+           "26": 116,
+           "27": 89,
+           "28": 81,
+           "29": 40,
+           "3": 175,
+           "30": 48,
+           "31": 163,
+           "32": 92,
+           "4": 70,
+           "5": 46,
+           "6": 37,
+           "7": 166,
+           "8": 79,
+           "9": 144,
+         },
+    }]);
+  });
 });
