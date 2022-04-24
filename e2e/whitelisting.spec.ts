@@ -35,6 +35,7 @@ test.describe('Whitelisting', () => {
     // check if disconnected
     await expect(page.locator('text=https://www.google.com')).not.toBeVisible();
     await page.goto(`https://www.google.com`);
+    await emerisLoaded(page);
     expect(
       await page.evaluate(() => {
         return window.emeris.supportedChains();
