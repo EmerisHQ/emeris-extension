@@ -61,7 +61,7 @@ test.describe('Keplr', () => {
     });
 
     await expect(result).toStrictEqual([{
-         "address": "c790a6f32f285faa266ed80e11dcee7779726bb91ps5g9lwx",
+         "address": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
          "algo": "secp256k1",
          "pubkey": {
            "0": 3,

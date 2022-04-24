@@ -356,7 +356,7 @@ export class Emeris implements IEmeris {
     return [].concat(
       ...accounts.map((account) =>
         account.keyHashes.map((keyHash) => ({
-          address: chainAddressfromKeyHash(keyHash, req.data.chainId),
+          address: chainAddressfromKeyHash(chain.prefix, keyHash),
           algo: 'secp256k1',
           pubkey: Buffer.from(pubKeys[account.accountName]).toString('hex'),
         })),
