@@ -56,11 +56,6 @@ test.describe('Keplr', () => {
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
 
-    // when the transaction popup shows, click accept
-    context.waitForEvent('page').then(async (popup) => {
-      await popup.click('text=Accept');
-    });
-
     const result = await page.evaluate(() => {
       return window.emeris.keplr.getOfflineSigner().getAccounts();
     });
