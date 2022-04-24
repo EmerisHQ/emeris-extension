@@ -70,7 +70,7 @@
         style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 16px; font-size: 13px"
       >
         <span class="secondary-text">Fees (additional)</span>
-        <a href="" @click.prevent="(e) => {}"><TotalPrice class="inline" :balances="fees" /></a>
+        <a href="" @click.prevent="(e) => {}"><SumBalances class="inline" :balances="fees" /></a>
       </div>
       <div style="display: flex; flex-direction: row">
         <Button name="Reject" variant="secondary" style="margin-right: 16px; flex: 1" @click="cancel" />
@@ -105,11 +105,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import { keyHashfromAddress } from '@/utils/basic';
 import Slideout from '@@/components/Slideout.vue';
+import SumBalances from '@@/components/SumBalances.vue';
 import Message from '@@/components/Transactions/Message.vue';
 import Yaml from '@@/components/Yaml.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
@@ -134,7 +134,7 @@ export default defineComponent({
     Message,
     Slideout,
     Input,
-    TotalPrice,
+    SumBalances,
   },
   data: (): TxReviewData => ({
     tab: 'Details',
@@ -164,6 +164,10 @@ export default defineComponent({
     pending(newVal) {
       if (newVal && newVal.error) {
         this.error = newVal.error;
+      }
+      if (newVal) {
+        if (newVal.data.fee.gas) this.gas = newVal.data.fee.gas;
+        if (newVal.data.fee.amount) this.fees = newVal.data.fee.amount;
       }
     },
   },
