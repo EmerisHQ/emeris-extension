@@ -32,7 +32,10 @@ export default defineComponent({
     const respond = (id) => {
       browser.runtime.sendMessage({
         type: 'fromPopup',
-        data: { action: 'setResponse', data: pending.value.find((item) => item.id == id) },
+        data: {
+          action: 'setResponse',
+          data: pending.value.find((item) => item.id == id),
+        },
       });
     };
     const logLedger = () => {
