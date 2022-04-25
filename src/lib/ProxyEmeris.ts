@@ -86,10 +86,10 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as GetAddressRequest);
     return response.data as string;
   }
-  async getPublicKey(chainId: string): Promise<Uint8Array> {
+  async getPublicKey(chainId: string, accountName?: string): Promise<Uint8Array> {
     const request = {
       action: 'getPublicKey',
-      data: { chainId },
+      data: { chainId, accountName },
     };
     const response = await this.sendRequest(request as GetPublicKeyRequest);
     return response.data as Uint8Array;
@@ -214,6 +214,17 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
 
+  async getCosmJsAccounts(chainId: string): Promise<any> {
+    const request = {
+      action: 'getCosmJsAccounts',
+      data: {
+        chainId,
+      },
+    };
+    const response = await this.sendRequest(request as ApproveOriginRequest);
+    return response.data;
+  }
+
   async keplrEnable(chainIds: string | string[]): Promise<boolean> {
     const request = {
       action: 'keplrEnable',
@@ -224,7 +235,8 @@ export class ProxyEmeris implements IEmeris {
   }
 
   getOfflineAminoSigner() {
-    return {
+    const offlineSigner = {
+      chainId: undefined,
       signAmino: async (signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> => {
         return this.signTransactionForOfflineAminoSigner({
           messages: signDoc.msgs.map((msg) => ({
@@ -233,13 +245,22 @@ export class ProxyEmeris implements IEmeris {
               raw: msg,
             },
           })),
-          // chainId: chainLookup(signDoc.chain_id), // need to lookup the chain name (our id) from the chain id
+          // chainId: chainLookup(signDoc.chain_id), // need to lookup the chain name (our id) from the chain id; waiting on https://github.com/EmerisHQ/emeris-extension/pull/57
           chainId: 'cosmos-hub', // PLACEHOLDER
           signingAddress: signerAddress,
           fee: signDoc.fee,
           memo: signDoc.memo,
         });
       },
+      getAccounts: async () => {
+        // const chainId = chainLookup(offlineSigner.chainId), // need to lookup the chain name (our id) from the chain id; waiting on https://github.com/EmerisHQ/emeris-extension/pull/57
+        const chainId = 'cosmos-hub'; // PLACEHOLDER
+        return (await this.getCosmJsAccounts(chainId)).map((account) => ({
+          ...account,
+          pubkey: Uint8Array.from(Buffer.from(account.pubkey, 'hex')),
+        }));
+      },
     };
+    return offlineSigner;
   }
 }

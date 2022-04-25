@@ -17,6 +17,7 @@ import {
   ExtensionResponse,
   GetAccountNameRequest,
   GetAddressRequest,
+  GetCosmJsAccounts,
   GetPublicKeyRequest,
   GetRawTransactionRequest,
   IsHWWalletRequest,
@@ -54,6 +55,7 @@ const snakeToCamel = (str) =>
 import { keyHashfromAddress } from '@/utils/basic';
 
 import chainConfig from '../chain-config';
+import { chainAddressfromKeyHash } from './libraries/cosmjs';
 export class Emeris implements IEmeris {
   public loaded: boolean;
   private storage: EmerisStorage;
@@ -332,6 +334,36 @@ export class Emeris implements IEmeris {
     );
   }
 
+  // needed in CosmJs offline signer
+  async getCosmJsAccounts(req: GetCosmJsAccounts) {
+    if (!this.wallet) {
+      throw new Error('No wallet configured');
+    }
+
+    const chain = chainConfig[req.data.chainId];
+    if (!chain) {
+      throw new Error('Chain not supported: ' + req.data.chainId);
+    }
+
+    const accounts = await this.getDisplayAccounts();
+    const pubKeys = Object.fromEntries(
+      await Promise.all(
+        this.wallet.map(async (account) => {
+          return [account.accountName, await libs[chain.library].getPublicKey(account, chain)];
+        }),
+      ),
+    );
+    return [].concat(
+      ...accounts.map((account) =>
+        account.keyHashes.map((keyHash) => ({
+          address: chainAddressfromKeyHash(chain.prefix, keyHash),
+          algo: 'secp256k1',
+          pubkey: Buffer.from(pubKeys[account.accountName]).toString('hex'),
+        })),
+      ),
+    );
+  }
+
   async getPublicKey(req: GetPublicKeyRequest): Promise<Uint8Array> {
     if (!this.wallet) {
       throw new Error('No wallet configured');
@@ -340,6 +372,7 @@ export class Emeris implements IEmeris {
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
+
     const account = this.getAccount();
     if (!account) {
       throw new Error('No account selected');
