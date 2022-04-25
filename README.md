@@ -78,4 +78,4 @@ Run:
 
 For individual test runs (replace the string with the test name):
 
-`EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek npx playwright test -g "Create Account"`
+`EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test -g "Create Account"`
