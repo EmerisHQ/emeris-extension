@@ -11,7 +11,9 @@
         @click="switchTab"
       >
         Details
-        <div class="badge" style="margin-left: 8px">{{ transaction.messages.length }}</div>
+        <div class="badge" style="margin-left: 8px">
+          {{ transaction.messages.length }}
+        </div>
       </div>
       <span
         :class="{ 'secondary-text': tab === 'Details' }"
@@ -57,7 +59,9 @@
         z-index: 100;
       "
     >
-      <div v-if="error" style="color: #ff6072; margin-top: 16px; text-align: center">{{ error }}</div>
+      <div v-if="error" style="color: #ff6072; margin-top: 16px; text-align: center">
+        {{ error }}
+      </div>
       <div class="mt-6 mb-2 flex justify-between" style="font-size: 13px">
         <span class="secondary-text">Reference (memo)</span>
         <a
@@ -229,13 +233,12 @@ export default defineComponent({
 
         await this.$store.dispatch(GlobalEmerisActionTypes.ACCEPT_TRANSACTION, {
           id: this.pending.id,
-          // TODO currently setting default fee until fee selection works
-          fees: {
+          ...this.transaction,
+          fee: {
             gas: this.gas,
             amount: this.fees,
           },
           memo: this.memo,
-          ...this.transaction,
         });
         this.$router.push('/');
       } catch (err) {
