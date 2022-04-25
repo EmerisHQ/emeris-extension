@@ -54,6 +54,27 @@ const helpers = {
     });
     return broadcastable;
   },
+
+  // bubble exceptions to show users
+  async signForAminoOfflineSigner(
+    account: EmerisAccount,
+    chainConfig: Chain,
+    messages: EncodeObject[] | AminoMsg[],
+    fee: StdFee,
+    memo: string,
+  ) {
+    const signer = EmerisSigner.withMnemonic(getHdPath(chainConfig, account), account.accountMnemonic);
+    const aminoSignResponse = await signer.getSignature({
+      msgs: messages,
+      fee: {
+        amount: fee.amount.map(({ amount, denom }) => ({ amount: String(amount), denom })),
+        gas: String(fee.gas),
+      },
+      memo,
+      chain_name: chainConfig.chain_name,
+    });
+    return aminoSignResponse;
+  },
   // bubble exceptions to show users
   async signLedger(
     account: EmerisAccount,
@@ -64,6 +85,27 @@ const helpers = {
   ) {
     const signer = EmerisSigner.withLedger(getHdPath(chainConfig, account));
     const broadcastable = await signer.signTx({
+      msgs: messages,
+      fee: {
+        amount: fee.amount.map(({ amount, denom }) => ({ amount: String(amount), denom })),
+        gas: String(fee.gas),
+      },
+      memo,
+      chain_name: chainConfig.chain_name,
+    });
+
+    return broadcastable;
+  },
+  // bubble exceptions to show users
+  async signLedgerForAminoOfflineSigner(
+    account: EmerisAccount,
+    chainConfig: Chain,
+    messages: EncodeObject[] | AminoMsg[],
+    fee: StdFee,
+    memo: string,
+  ) {
+    const signer = EmerisSigner.withLedger(getHdPath(chainConfig, account));
+    const broadcastable = await signer.getSignature({
       msgs: messages,
       fee: {
         amount: fee.amount.map(({ amount, denom }) => ({ amount: String(amount), denom })),
