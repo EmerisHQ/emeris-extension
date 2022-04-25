@@ -18,7 +18,7 @@
 import { defineComponent } from 'vue';
 
 import { keyHashfromAddress } from '@/utils/basic';
-import config from '@@/chain-config';
+import chainConfig from '@@/chain-config';
 import libs from '@@/lib/libraries';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
@@ -42,7 +42,7 @@ export default defineComponent({
       if (!signingWallet) throw new Error('The requested signing address is not active in the extension');
       if (!signingWallet.isLedger) throw new Error('The requested signing address is not stored as a Ledger account.');
 
-      const chain = config[transaction.chainId];
+      const chain = (await chainConfig)[transaction.chainId];
       if (!chain) {
         throw new Error('Chain not supported: ' + transaction.chainId);
       }

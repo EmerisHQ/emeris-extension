@@ -26,7 +26,7 @@ import TransportWebUsb from '@ledgerhq/hw-transport-webusb';
 import { defineComponent } from 'vue';
 
 import { keyHashfromAddress } from '@/utils/basic';
-import chainConfigs from '@@/chain-config';
+import chainConfig from '@@/chain-config';
 import Header from '@@/components/Header.vue';
 import { getHdPath } from '@@/lib/libraries/cosmjs';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
@@ -51,9 +51,9 @@ export default defineComponent({
       const newAccount = await this.$store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
 
       // TODO put all in cosmos library and handle different hd paths?
-      const chainConfig = chainConfigs['cosmos-hub'];
+      const chain = (await chainConfig)['cosmos-hub'];
       const path = stringToPath(
-        getHdPath(chainConfig, {
+        getHdPath(chain, {
           hdPath: newAccount.hdPath,
         }),
       );

@@ -11,7 +11,7 @@
     <ListCard :img="'/images/Secure.png'" caption="Never share your recovery phrase with anyone, store it securily." />
     <ListCard
       :img="'/images/Backup.png'"
-      caption="If you don’t backup your wallet, or loose your recovery phrase, you will not able to recover your walle"
+      caption="If you don’t backup your wallet, or loose your recovery phrase, you will not able to recover your wallet"
     />
 
     <div
@@ -33,7 +33,7 @@
       <Checkbox
         v-model="checked"
         style="margin-bottom: 24px"
-        label="I understand if I don’t back up my account, or if I lost my recovery phrase, I will lose access to my account."
+        label="I understand if I don’t back up my account, or if I lose my recovery phrase, I will lose access to my account."
       />
       <div class="buttons">
         <Button name="Continue" :disabled="!checked" @click="() => $router.push('/account')" />

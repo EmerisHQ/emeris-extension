@@ -32,8 +32,8 @@
     "@cosmjs/tendermint-rpc": "0.28.0",
     "@cosmjs/utils": "0.28.0",
     "@emeris/chain-config": "^0.0.11",
-    "@emeris/mapper": "^0.0.26",
-    "@emeris/signer": "^0.0.27",
+    "@emeris/mapper": "pr-175",
+    "@emeris/signer": "pr-174",
     "@ledgerhq/hw-transport-webhid": "^6.11.2",
     "@ledgerhq/hw-transport-webusb": "^6.11.2",
     "@sentry/tracing": "^6.19.2",
@@ -150,7 +150,7 @@
       "prettier --write"
     ],
     "*.{js,ts,tsx,vue}": [
-      "npm run lint"
+      "npm run lint -- --quiet"
     ]
   },
   "simple-git-hooks": {
