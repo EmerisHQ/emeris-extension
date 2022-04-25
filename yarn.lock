@@ -1143,10 +1143,10 @@
     "@types/w3c-web-hid" "^1.0.2"
     bech32 "^2.0.0"
 
-"@emeris/types@^0.0.33":
-  version "0.0.33"
-  resolved "https://registry.npmjs.org/@emeris/types/-/types-0.0.33.tgz"
-  integrity sha512-CzaoX5XiwQnAsitzZ3mJ3oGNu4MI+5WxIJxo3tyn0GTYmYYuG82C2gzfKwYdHz+wBmtlRbsdpMD4UZgTLmhkqA==
+"@emeris/types@pr-175":
+  version "0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0"
+  resolved "https://registry.yarnpkg.com/@emeris/types/-/types-0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0.tgz#8128bd5958da835fdfeda8eba68bd40e93a5de2d"
+  integrity sha512-/fhfdpRYuTbDZ8TObYjkCQrQGDfx0PNIK1Bpz1YNWWlCIEfmMdzfL94vjEO4t3wp8FJHpVta35kY9ukYUDOYEg==
   dependencies:
     "@sinclair/typebox" "^0.22.1"
 
