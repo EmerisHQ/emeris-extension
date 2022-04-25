@@ -30,10 +30,22 @@ const emerisExtension = require('emeris-extension');
 // TODO: DEMONSTRATE API
 ```
 
+## Dev browser mode
+
+To check the extension as a website (instead of a pop up) and be able to use DevTools, paste the following URL:
+
+```
+// EXTENSION_ID being something like cklkpejioojjeiigffappdlcmnonmjek
+chrome-extension://<EXTENSION_ID>/popup.html/?browser=true
+```
+
+> To find the `EXTENSION_ID` of your instance, go to chrome://extensions/ and copy the ID of emeris-extension.
+
 ## Test current state
 
 Currently the extension is not integrated into Emeris. To test the API you can go to any website and run in the console:
-Replace the signing address with one you have in the extension.
+
+> Replace the signing address with one you have in the extension.
 
 ```
 window.emeris.enable()
@@ -79,3 +91,5 @@ Run:
 For individual test runs (replace the string with the test name):
 
 `EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test -g "Create Account"`
+
+More info about the extension at [Emeris Chrome Extension](https://www.notion.so/allinbits/Emeris-Chrome-Extension-3ad6786c10a64decb033e6df9a99113f) in Notion.
