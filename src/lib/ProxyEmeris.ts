@@ -248,7 +248,10 @@ export class ProxyEmeris implements IEmeris {
           // chainId: chainLookup(signDoc.chain_id), // need to lookup the chain name (our id) from the chain id; waiting on https://github.com/EmerisHQ/emeris-extension/pull/57
           chainId: 'cosmos-hub', // PLACEHOLDER
           signingAddress: signerAddress,
-          fee: signDoc.fee,
+          fee: {
+            gas: signDoc.fee.gas,
+            amount: [signDoc.fee.amount], // signDoc.fee.amount is an object not an array as per the type
+          },
           memo: signDoc.memo,
         });
       },
