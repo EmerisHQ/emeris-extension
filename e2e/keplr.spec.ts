@@ -20,7 +20,7 @@ test.describe('Keplr', () => {
         chain_id: 'cosmoshub-4',
         account_number: '0',
         sequence: '0',
-        fee: { gas: 200000, amount: [{ amount: 1000, denom: 'uatom' }] },
+        fee: { gas: 200000, amount: { amount: 1000, denom: 'uatom' } },
         msgs: [
           {
             type: 'cosmos-sdk/MsgSend',
@@ -38,13 +38,28 @@ test.describe('Keplr', () => {
     await expect(result).toStrictEqual({
       signature: {
         pub_key: { type: 'tendermint/PubKeySecp256k1', value: 'A63fr0YuJaZPkGJw0ZJ8ekjsLXhZzQlv9wd0WVEoMKNc' },
-        signature: 'hacmpAXkWAC5h/DvJ7U/1dFABxwDZfoY12M/o6CaOqMFqdAqKPOrQGuYz26cX5E4hGObFETADSCD9ayGKoLnSQ==',
+        signature: '0Mt72CpFpatIuw3h6UQdko+OM78sVD3jREEJzCqyawdbVpqMktLLSdoLBiFd5KGlYsGqj37ETm03J5f6PS9gSw==',
       },
       signed: {
         account_number: '0',
         chain_id: 'cosmoshub-4',
         fee: { amount: [{ amount: '1000', denom: 'uatom' }], gas: '200000' },
         memo: 'Sent with Emeris',
+        "msgs": [
+          {
+            "type": "cosmos-sdk/MsgSend",
+            "value": {
+              "amount": [
+                {
+                  "amount": "1",
+                  "denom": "uatom",
+                },
+              ],
+              "fromAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+              "toAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+            },
+          },
+        ],
         sequence: '0',
       },
     });
