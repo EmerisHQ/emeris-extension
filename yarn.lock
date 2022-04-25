@@ -1103,22 +1103,22 @@
   dependencies:
     isomorphic-fetch "^3.0.0"
 
-"@emeris/chain-config@^0.2.3-pr-174-b07c8c7690704c5b290ce4728aa7a83c668722e4.0+b07c8c7", "@emeris/chain-config@^0.2.3-pr-175-287c18d763476e18e9475244de9e7786ee68b08a.0+287c18d":
-  version "0.2.3-pr-175-287c18d763476e18e9475244de9e7786ee68b08a.0"
-  resolved "https://registry.yarnpkg.com/@emeris/chain-config/-/chain-config-0.2.3-pr-175-287c18d763476e18e9475244de9e7786ee68b08a.0.tgz#d4bda15f46bd7f67560bee69394a04c2d6e2fbe6"
-  integrity sha512-glSehNc5osMHy/3qwX88nekWZ9i+47mys/aR9PzmULJKjcdK9vVjLk7JkJ7Hn+ZfcB8yB/lyC2h9VPKqcPji3w==
+"@emeris/chain-config@^0.2.3-pr-174-b07c8c7690704c5b290ce4728aa7a83c668722e4.0+b07c8c7", "@emeris/chain-config@^0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0+04ee721":
+  version "0.2.3-pr-176-ec6792078977e5a2f7dd0ffd405d5c4196b56d00.0"
+  resolved "https://registry.yarnpkg.com/@emeris/chain-config/-/chain-config-0.2.3-pr-176-ec6792078977e5a2f7dd0ffd405d5c4196b56d00.0.tgz#378df7ecc06601257b2f74665e8c3cf20a2c6ce9"
+  integrity sha512-bViiVb+qS6ZHDuEKT5K8c+cG1cpaxuarAaa8zqnR768t9zAIfEmD9mLaDuCkANqcI79rgnpNWilWl7NV5Jz1mQ==
   dependencies:
     isomorphic-fetch "^3.0.0"
 
 "@emeris/mapper@pr-175":
-  version "0.2.3-pr-175-287c18d763476e18e9475244de9e7786ee68b08a.0"
-  resolved "https://registry.yarnpkg.com/@emeris/mapper/-/mapper-0.2.3-pr-175-287c18d763476e18e9475244de9e7786ee68b08a.0.tgz#9c0890a1f15e0eac33eced8816d1e8e7409ff08f"
-  integrity sha512-bRoUG+Nn+5rtPTH2erV2IHx0bTaIXZshdjXly36y3HnwKM2hV5uKwBW/Z1abh492kl3jbHrJ5K/PDGTK6GFP+w==
+  version "0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0"
+  resolved "https://registry.yarnpkg.com/@emeris/mapper/-/mapper-0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0.tgz#d6cbcf0f0895413024df782481a07d839bb82613"
+  integrity sha512-ukl2n1Vby8EkHthedvqJUZwHnvNJNY7OtJDx8KxmQtGm5BLYhJIfJ9Pc3ghD2Z6IQe9T7+lFMCoi6wXZOlJh6w==
   dependencies:
     "@clockwork-projects/cosmos-gaia-js" "^6.0.0"
     "@clockwork-projects/osmosis-labs-osmosis-js" "^6.1.0"
     "@cosmjs/amino" "^0.28.0"
-    "@emeris/chain-config" "^0.2.3-pr-175-287c18d763476e18e9475244de9e7786ee68b08a.0+287c18d"
+    "@emeris/chain-config" "^0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0+04ee721"
     bignumber.js "^9.0.2"
     protobufjs "^6.11.2"
 
