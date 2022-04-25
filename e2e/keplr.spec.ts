@@ -20,7 +20,7 @@ test.describe('Keplr', () => {
         chain_id: 'cosmoshub-4',
         account_number: '0',
         sequence: '0',
-        fee: { gas: 200000, amount: [{ amount: 1000, denom: 'uatom' }] },
+        fee: { gas: 200000, amount: { amount: 1000, denom: 'uatom' } },
         msgs: [
           {
             type: 'cosmos-sdk/MsgSend',
@@ -45,6 +45,21 @@ test.describe('Keplr', () => {
         chain_id: 'cosmoshub-4',
         fee: { amount: [{ amount: '1000', denom: 'uatom' }], gas: '200000' },
         memo: 'Sent with Emeris',
+        "msgs": [
+          {
+            "type": "cosmos-sdk/MsgSend",
+            "value": {
+              "amount": [
+                {
+                  "amount": "1",
+                  "denom": "uatom",
+                },
+              ],
+              "fromAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+              "toAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+            },
+          },
+        ],
         sequence: '0',
       },
     });
