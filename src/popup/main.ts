@@ -5,12 +5,17 @@ import 'tippy.js/dist/tippy.css';
 import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import VueTippy from 'vue-tippy';
+import browserPolyFill from 'webextension-polyfill';
 
 import messages from '@/locales/en.json';
 import router from '@@/router/popup';
+import BrowserManager from '@@/utils/browser';
 
 import { rootstore } from '../store/index';
 import App from './App.vue';
+
+BrowserManager.getInstance().setBrowser(browserPolyFill);
+
 const i18n = createI18n({
   globalInjection: true,
   legacy: false,

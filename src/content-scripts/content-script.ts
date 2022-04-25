@@ -1,5 +1,6 @@
 async function setup() {
-  const browser = (await import('@@/utils/browser')).default;
+  const BrowserManager = (await import('@@/utils/browser')).default;
+  const browser = BrowserManager.getInstance().getBrowser();
 
   function injectScript(file: string) {
     const container = document.head || document.documentElement;

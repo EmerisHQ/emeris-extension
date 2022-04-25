@@ -9,8 +9,12 @@ import VueTippy from 'vue-tippy';
 import messages from '@/locales/en.json';
 import App from '@@/popup/App.vue';
 import router from '@@/router/popup';
+import BrowserManager from '@@/utils/browser';
+import browser from '@@/utils/web-browser';
 
 import { rootstore } from './store/index';
+
+BrowserManager.getInstance().setBrowser(browser);
 
 const i18n = createI18n({
   globalInjection: true,

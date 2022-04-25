@@ -11,7 +11,7 @@ import { useExtensionStore } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { ExtensionRequest } from '@@/types';
-import browser from '@@/utils/browser';
+import BrowserManager from '@@/utils/browser';
 import { webDebugging } from '@@/utils/web-debugging';
 
 // TODO this component should be refactored into sth more speaking imo
@@ -23,6 +23,7 @@ export default defineComponent({
   },
   setup() {
     const store = useExtensionStore();
+    const browser = BrowserManager.getInstance().getBrowser();
 
     const pending = computed<ExtensionRequest[]>(() => {
       return store.getters[GlobalEmerisGetterTypes.getPending];

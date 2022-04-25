@@ -1,6 +1,5 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-lines */
-
 import { AminoMsg, AminoSignResponse } from '@cosmjs/amino';
 import TxMapper from '@emeris/mapper';
 // @ts-ignore
@@ -25,11 +24,13 @@ import {
   SupportedChainsRequest,
 } from '@@/types/api';
 import { IEmeris } from '@@/types/emeris';
-import browser from '@@/utils/browser';
+import BrowserManager from '@@/utils/browser';
 
 // TODO
 import EmerisStorage from './EmerisStorage';
 import libs from './libraries';
+
+const browser = BrowserManager.getInstance().getBrowser();
 
 // HACK extension and mapper expect different formats, we need to decide and adjust the formats to one
 const convertObjectKeys = (obj, doX) => {

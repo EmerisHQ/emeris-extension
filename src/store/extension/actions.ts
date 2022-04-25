@@ -4,7 +4,7 @@ import { ActionContext, ActionTree } from 'vuex';
 
 import { GlobalActionTypes } from '@/store';
 import { AccountCreateStates, EmerisAccount, EmerisWallet, ExtensionRequest } from '@@/types/index';
-import browser from '@@/utils/browser';
+import BrowserManager from '@@/utils/browser';
 
 import { RootState } from '..';
 import { ActionTypes } from './action-types';
@@ -65,6 +65,7 @@ export interface Actions {
 export type GlobalActions = Namespaced<Actions, 'extension'>;
 
 const respond = async (id, data) => {
+  const browser = BrowserManager.getInstance().getBrowser();
   await browser.runtime.sendMessage({
     type: 'fromPopup',
     data: { action: 'setResponse', data: { id, ...data } },
@@ -73,6 +74,7 @@ const respond = async (id, data) => {
 
 export const actions: ActionTree<State, RootState> & Actions = {
   async [ActionTypes.GET_PENDING]({ commit, getters }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     try {
       const latestPending = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'getPending' } });
 
@@ -102,6 +104,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.GET_WALLET]({ commit, getters }) {
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
       const wallet = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'getWallet' } });
       if (wallet) {
         commit(MutationTypes.SET_WALLET, wallet as EmerisWallet);
@@ -114,6 +117,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.HAS_WALLET]({ commit }) {
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
       const hasWallet = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'hasWallet' } });
       if (!hasWallet) {
         commit(MutationTypes.SET_WALLET, [] as EmerisWallet);
@@ -124,6 +128,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     }
   },
   async [ActionTypes.CREATE_WALLET]({ commit, getters }, { password }: { password: string }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     const response = await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'createWallet', data: { password } },
@@ -132,6 +137,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     return getters['getWallet'];
   },
   async [ActionTypes.CREATE_ACCOUNT]({ dispatch }, { account }: { account: EmerisAccount }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'createAccount', data: { account } },
@@ -143,6 +149,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     { dispatch },
     { targetAccountName, newAccountName }: { targetAccountName: string; newAccountName: string },
   ) {
+    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'updateAccount', data: { targetAccountName, account: { accountName: newAccountName } } },
@@ -150,6 +157,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     return await dispatch(ActionTypes.GET_WALLET);
   },
   async [ActionTypes.REMOVE_ACCOUNT]({ dispatch }, { accountName }: { accountName: string }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'removeAccount', data: { accountName } },
@@ -158,6 +166,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.UNLOCK_WALLET]({ commit, dispatch, getters }, { password }: { password: string }) {
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
       const wallet = await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'unlockWallet', data: { password } },
@@ -173,6 +182,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     }
   },
   async [ActionTypes.CHANGE_PASSWORD]({}, { password }: { password: string }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'changePassword', data: { password } },
@@ -180,6 +190,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.GET_LAST_ACCOUNT_USED]({ commit, getters }) {
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
       const accountName = await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'getLastAccount' },
@@ -194,6 +205,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.SET_LAST_ACCOUNT_USED]({ commit, getters }, { accountName }) {
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
       await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'setLastAccount', data: { accountName } },
@@ -206,6 +218,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.GET_MNEMONIC]({ commit }, { accountName, password }: { accountName: string; password: string }) {
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
       const account = await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'getMnemonic', data: { accountName, password } },
@@ -219,6 +232,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.GET_ADDRESS]({}, { chainId }: { chainId: string }) {
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
       const address = await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'getAddress', data: { chainId } },
@@ -230,6 +244,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     }
   },
   async [ActionTypes.ACCOUNT_BACKED_UP]({ dispatch }, { accountName }: { accountName: string }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: {
@@ -240,9 +255,11 @@ export const actions: ActionTree<State, RootState> & Actions = {
     dispatch(ActionTypes.LOAD_SESSION_DATA);
   },
   async [ActionTypes.EXTENSION_RESET]() {
+    const browser = BrowserManager.getInstance().getBrowser();
     return await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'extensionReset' } });
   },
   async [ActionTypes.GET_WHITELISTED_WEBSITES]({ commit }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     const whitelistWebsites = await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'getWhitelistedWebsite' },
@@ -250,6 +267,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     commit(MutationTypes.SET_WHITELISTED_WEBSITES, whitelistWebsites);
   },
   async [ActionTypes.REMOVE_WHITELISTED_WEBSITE]({ dispatch }, { website }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'removeWhitelistedWebsite', data: { website } },
@@ -262,6 +280,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   // TODO potentially refactor and split signing with ledger from signing in the background
   async [ActionTypes.ACCEPT_TRANSACTION]({}, { id, action, broadcastable, ...transaction }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     let response = broadcastable;
     // when signing with ledger we get the signed message from the view, when signing with a key we get it signing in the background
     if (!response) {
@@ -279,6 +298,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     await respond(id, { broadcastable: undefined });
   },
   async [ActionTypes.GET_RAW_TRANSACTION]({}, { messages, chainId, signingAddress, gas, fees, memo }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     return await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: {
@@ -297,6 +317,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     });
   },
   async [ActionTypes.SET_NEW_ACCOUNT]({ commit }, account: EmerisAccount & { route: string }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     commit(MutationTypes.SET_NEW_ACCOUNT, account);
     return await browser.runtime.sendMessage({
       type: 'fromPopup',
@@ -307,6 +328,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
     });
   },
   async [ActionTypes.GET_NEW_ACCOUNT]({ commit }) {
+    const browser = BrowserManager.getInstance().getBrowser();
     const partialAccountCreationStep = await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: {
