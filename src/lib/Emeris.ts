@@ -352,7 +352,8 @@ export class Emeris implements IEmeris {
       throw new Error('No wallet configured');
     }
 
-    const chain = chainConfig[req.data.chainId];
+    // cosmjs will send the on chain id not our id
+    const chain = Object.values(await chainConfig).find((chain) => chain.node_info.chain_id === req.data.chainId);
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
@@ -410,6 +411,12 @@ export class Emeris implements IEmeris {
 
   async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
     request.id = uuidv4();
+
+    // cosmjs will send the on chain id not our id
+    const chain = Object.values(await chainConfig).find((chain) => chain.node_info.chain_id === request.data.chainId);
+    if (!chain) throw new Error('Could not find matching chain in Emeris');
+    request.data.chainId = chain.chain_name;
+
     const { response: aminoSignResponse } = await this.forwardToPopup(request);
     return aminoSignResponse;
   }
