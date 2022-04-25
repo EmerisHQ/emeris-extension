@@ -1,7 +1,9 @@
 import ChainConfig from '@emeris/chain-config';
 import { Chain } from '@emeris/types/lib/EmerisAPI';
 import { ChainLibraries } from '@emeris/types/lib/EmerisBase';
-const chainConfigApi = new ChainConfig(process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1');
+const chainConfigApi = new ChainConfig(
+  (import.meta.env.VITE_EMERIS_PROD_ENDPOINT as string) || 'https://api.emeris.com/v1',
+);
 
 const chainConfig: Promise<Record<string, Chain & { library: ChainLibraries }>> = new Promise(async (resolve) => {
   const chains = await chainConfigApi.getChains();
