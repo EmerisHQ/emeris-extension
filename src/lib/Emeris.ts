@@ -294,7 +294,7 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[req.data.chainId];
+    const chain = (await chainConfig)[req.data.chainId];
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
@@ -303,7 +303,12 @@ export class Emeris implements IEmeris {
       throw new Error('No account selected');
     }
 
-    return await libs[chain.library].getAddress(account, chain);
+    try {
+      return await libs[chain.library].getAddress(account, chain);
+    } catch (err) {
+      console.error(err);
+      throw new Error('Cant get address for chain ' + chain.chain_name);
+    }
   }
   // function limits the data that we return to the view layers to not expose accidentially data
   async getDisplayAccounts() {
@@ -317,13 +322,20 @@ export class Emeris implements IEmeris {
           // wrapping in a Set to make all values unique
           keyHashes: [
             ...new Set(
-              await Promise.all(
-                Object.values(chainConfig).map(async (chain) => {
-                  const address = await libs[chain.library].getAddress(account, chain);
-                  const keyHash = keyHashfromAddress(address);
-                  return keyHash;
-                }),
-              ),
+              (
+                await Promise.all(
+                  Object.values(await chainConfig).map(async (chain) => {
+                    try {
+                      const address = await libs[chain.library].getAddress(account, chain);
+                      const keyHash = keyHashfromAddress(address);
+                      return keyHash;
+                    } catch (err) {
+                      console.error(err);
+                      return null;
+                    }
+                  }),
+                )
+              ).filter((x) => !!x),
             ),
           ],
         };
@@ -336,7 +348,7 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[req.data.chainId];
+    const chain = (await chainConfig)[req.data.chainId];
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
@@ -354,7 +366,7 @@ export class Emeris implements IEmeris {
     return false;
   }
   async supportedChains(_req: SupportedChainsRequest): Promise<string[]> {
-    return Object.keys(chainConfig);
+    return Object.keys(await chainConfig);
   }
   async getAccountName(_req: GetAccountNameRequest): Promise<string> {
     return this.selectedAccount;
@@ -362,6 +374,7 @@ export class Emeris implements IEmeris {
   async hasWallet(): Promise<boolean> {
     return await this.storage.hasWallet();
   }
+
   async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
     request.id = uuidv4();
     const { response: aminoSignResponse } = await this.forwardToPopup(request);
@@ -371,7 +384,7 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[request.data.chainId];
+    const chain = (await chainConfig)[request.data.chainId];
     if (!chain) {
       throw new Error('Chain not supported: ' + request.data.chainId);
     }
