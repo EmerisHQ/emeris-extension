@@ -250,7 +250,7 @@ export class ProxyEmeris implements IEmeris {
           signingAddress: signerAddress,
           fee: {
             gas: signDoc.fee.gas,
-            amount: [signDoc.fee.amount], // signDoc.fee.amount is an object not an array as per the type
+            amount: signDoc.fee.amount,
           },
           memo: signDoc.memo,
         });
