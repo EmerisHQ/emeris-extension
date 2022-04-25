@@ -38,7 +38,7 @@ test.describe('Keplr', () => {
     await expect(result).toStrictEqual({
       signature: {
         pub_key: { type: 'tendermint/PubKeySecp256k1', value: 'A63fr0YuJaZPkGJw0ZJ8ekjsLXhZzQlv9wd0WVEoMKNc' },
-        signature: 'hacmpAXkWAC5h/DvJ7U/1dFABxwDZfoY12M/o6CaOqMFqdAqKPOrQGuYz26cX5E4hGObFETADSCD9ayGKoLnSQ==',
+        signature: '0Mt72CpFpatIuw3h6UQdko+OM78sVD3jREEJzCqyawdbVpqMktLLSdoLBiFd5KGlYsGqj37ETm03J5f6PS9gSw==',
       },
       signed: {
         account_number: '0',
@@ -46,6 +46,21 @@ test.describe('Keplr', () => {
         fee: { amount: [{ amount: '1000', denom: 'uatom' }], gas: '200000' },
         memo: 'Sent with Emeris',
         sequence: '0',
+        "msgs": [
+          {
+            "type": "cosmos-sdk/MsgSend",
+            "value":  {
+              "amount":  [
+                {
+                  "amount": "1",
+                  "denom": "uatom",
+                },
+              ],
+              "fromAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+              "toAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+            },
+          },
+        ],
       },
     });
   });
