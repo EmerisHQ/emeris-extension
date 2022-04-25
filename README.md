@@ -30,6 +30,17 @@ const emerisExtension = require('emeris-extension');
 // TODO: DEMONSTRATE API
 ```
 
+## Dev browser mode
+
+To check the extension as a website (instead of a pop up) and be able to use DevTools, paste the following URL:
+
+```
+// Chrome_Extension_ID being something like cklkpejioojjeiigffappdlcmnonmjek
+chrome-extension://<Chrome_Extension_ID>/popup.html/?browser=true
+```
+
+> To find the `Chrome_Extension_ID` of your instance, go to chrome://extensions/ and copy the ID of emeris-extension.
+
 ## Test current state
 
 Currently the extension is not integrated into Emeris. To test the API you can go to any website and run in the console:
