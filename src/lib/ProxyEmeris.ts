@@ -257,7 +257,7 @@ export class ProxyEmeris implements IEmeris {
       },
       getAccounts: async () => {
         // const chainId = chainLookup(offlineSigner.chainId), // need to lookup the chain name (our id) from the chain id; waiting on https://github.com/EmerisHQ/emeris-extension/pull/57
-        const chainId = 'cosmos-hub'; // PLACEHOLDER
+        const chainId = 'cosmoshub-4'; // PLACEHOLDER
         return (await this.getCosmJsAccounts(chainId)).map((account) => ({
           ...account,
           pubkey: Uint8Array.from(Buffer.from(account.pubkey, 'hex')),
