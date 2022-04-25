@@ -4,7 +4,7 @@
     <div style="margin-top: 100px; text-align: center">
       <Icon name="WarningTriangleIcon" icon-size="2" style="color: #fc8c0b; margin-bottom: 24px" />
       <h1 style="margin-bottom: 24px">Emeris support team will never ask you your recovery phrase</h1>
-      <span class="secondary-text">Please make sure to kepp it secret and store it in a secure place</span>
+      <span class="secondary-text">Please make sure to keep it secret and store it in a secure place</span>
     </div>
     <div
       :style="{

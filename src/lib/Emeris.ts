@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-lines */
 
-import { AminoMsg } from '@cosmjs/amino';
+import { AminoMsg, AminoSignResponse } from '@cosmjs/amino';
 import TxMapper from '@emeris/mapper';
 // @ts-ignore
 import adapter from '@vespaiach/axios-fetch-adapter';
@@ -247,6 +247,8 @@ export class Emeris implements IEmeris {
         return await this.getRawTransaction(message.data);
       case 'signTransaction':
         return await this.getTransactionSignature(message.data, message.data.data.memo);
+      case 'signTransactionForOfflineAminoSigner':
+        return await this.getTransactionSignatureForOfflineAminoSigner(message.data, message.data.data.memo);
       case 'setResponse':
         return this.setResponse(message.data.data.id, message.data.data);
       case 'extensionReset':
@@ -360,37 +362,12 @@ export class Emeris implements IEmeris {
   async hasWallet(): Promise<boolean> {
     return await this.storage.hasWallet();
   }
-
-  async getRawTransaction(request: GetRawTransactionRequest): Promise<string> {
-    if (!this.wallet) {
-      throw new Error('No wallet configured');
-    }
-    const chain = chainConfig[request.data.chainId];
-    if (!chain) {
-      throw new Error('Chain not supported: ' + request.data.chainId);
-    }
-
-    const selectedAccount = this.wallet.find(({ accountName }) => accountName === this.selectedAccount);
-    const address = await libs[chain.library].getAddress(selectedAccount, chain);
-
-    if (address !== request.data.signingAddress) {
-      throw new Error('The requested signing address is not active in the extension');
-    }
-
-    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
-    abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
-    const chainMessages = await TxMapper(abstractTx);
-    const signable = await libs[chain.library].getRawSignable(
-      selectedAccount,
-      chain,
-      chainMessages,
-      request.data.fee,
-      request.data.memo,
-    );
-
-    return signable;
+  async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
+    request.id = uuidv4();
+    const { response: aminoSignResponse } = await this.forwardToPopup(request);
+    return aminoSignResponse;
   }
-  async getTransactionSignature(request: SignTransactionRequest, memo: string): Promise<string> {
+  async getTransactionSigningData(request: SignTransactionRequest | GetRawTransactionRequest) {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
@@ -421,6 +398,49 @@ export class Emeris implements IEmeris {
     let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
     abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
     const chainMessages = await TxMapper(abstractTx);
+
+    return { chain, selectedAccount, chainMessages };
+  }
+  async getRawTransaction(request: GetRawTransactionRequest): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
+    const signable = await libs[chain.library].getRawSignable(
+      selectedAccount,
+      chain,
+      chainMessages,
+      request.data.fee,
+      request.data.memo,
+    );
+
+    return signable;
+  }
+  async getTransactionSignatureForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
+    let aminoSignResponse;
+    // currently not used, as we need to sign in the view part of the app
+    if (selectedAccount.isLedger) {
+      aminoSignResponse = await libs[chain.library].signLedgerForAminoOfflineSigner(
+        selectedAccount,
+        chain,
+        chainMessages as AminoMsg[],
+        request.data.fee,
+        memo,
+      );
+    } else {
+      aminoSignResponse = await libs[chain.library].signForAminoOfflineSigner(
+        selectedAccount,
+        chain,
+        chainMessages as AminoMsg[],
+        request.data.fee,
+        memo,
+      );
+    }
+    return aminoSignResponse;
+  }
+  async getTransactionSignature(request: SignTransactionRequest, memo: string): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
     let broadcastable;
     // currently not used, as we need to sign in the view part of the app
     if (selectedAccount.isLedger) {
@@ -446,7 +466,7 @@ export class Emeris implements IEmeris {
   }
   async signTransaction(request: SignTransactionRequest): Promise<any> {
     request.id = uuidv4();
-    const { broadcastable } = await this.forwardToPopup(request);
+    const { response: broadcastable } = await this.forwardToPopup(request);
     return broadcastable;
   }
   async signAndBroadcastTransaction(request: SignAndBroadcastTransactionRequest): Promise<any> {
@@ -501,5 +521,31 @@ export class Emeris implements IEmeris {
 
     browser.runtime.sendMessage({ type: 'toPopup', data: { action: 'update' } });
     return true;
+  }
+  async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
+    request.id = uuidv4();
+    const chainIds = request.data.chainIds;
+    if (typeof chainIds === 'string') {
+      Object.values(chainConfig).forEach((config) => {
+        if (config.chainId !== chainIds) {
+          return false;
+        }
+      });
+    } else if (Array.isArray(chainIds)) {
+      chainIds.forEach((chainId) => {
+        Object.values(chainConfig).forEach((config) => {
+          if (config.chainId !== chainId) {
+            return false;
+          }
+        });
+      });
+    } else {
+      return false;
+    }
+    const enabled = (await this.forwardToPopup(request)).accept as boolean;
+    if (enabled) {
+      await this.storage.addWhitelistedWebsite(request.origin);
+    }
+    return enabled;
   }
 }

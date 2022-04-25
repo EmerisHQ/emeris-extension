@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
