@@ -428,8 +428,14 @@ export class Emeris implements IEmeris {
     }
     const selectedAccount = selectedAccountPair.account;
 
-    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
-    // abstractTx = convertObjectKeys(abstractTx, snakeToCamel); // not working with CosmJs which should be the standard
+    const abstractTx = {
+      ...request.data,
+      chainName: request.data.chainId,
+      txs: request.data.messages.map((message) => {
+        if (message.type === 'custom') return message;
+        return convertObjectKeys(message, snakeToCamel);
+      }),
+    }; // HACK need to adjust transported data model
     const chainMessages = await TxMapper(abstractTx);
 
     return { chain, selectedAccount, chainMessages };
