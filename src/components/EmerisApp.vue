@@ -32,7 +32,10 @@ export default defineComponent({
     const respond = (id) => {
       browser.runtime.sendMessage({
         type: 'fromPopup',
-        data: { action: 'setResponse', data: pending.value.find((item) => item.id == id) },
+        data: {
+          action: 'setResponse',
+          data: pending.value.find((item) => item.id == id),
+        },
       });
     };
     const logLedger = () => {
@@ -65,10 +68,12 @@ export default defineComponent({
       // if there are pending requests show those first
       else if (pending.length > 0) {
         switch (pending[0].action) {
-          case 'enable':
+          // TODO replace action names with enums
+          case 'enable' || 'keplrEnable':
             this.$router.push({ path: '/whitelist' });
             break;
           case 'signTransaction':
+          case 'signTransactionForOfflineAminoSigner':
           case 'signAndBroadcastTransaction':
             this.$router.push({ path: '/transaction/review' });
             break;
