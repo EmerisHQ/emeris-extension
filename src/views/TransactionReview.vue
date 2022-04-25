@@ -174,8 +174,6 @@ export default defineComponent({
         if (newVal.data.fee.amount) this.fees = newVal.data.fee.amount;
       }
     },
-  },
-  watch: {
     transaction: {
       immediate: true,
       async handler(transaction) {
@@ -233,6 +231,7 @@ export default defineComponent({
 
         await this.$store.dispatch(GlobalEmerisActionTypes.ACCEPT_TRANSACTION, {
           id: this.pending.id,
+          action: this.pending.action, // used to determine what to call for signing
           ...this.transaction,
           fee: {
             gas: this.gas,
