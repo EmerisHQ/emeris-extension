@@ -55,7 +55,6 @@ const snakeToCamel = (str) =>
 import { keyHashfromAddress } from '@/utils/basic';
 
 import chainConfig from '../chain-config';
-import { chainAddressfromKeyHash } from './libraries/cosmjs';
 export class Emeris implements IEmeris {
   public loaded: boolean;
   private storage: EmerisStorage;
@@ -358,23 +357,25 @@ export class Emeris implements IEmeris {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
 
-    const pubKeys = Object.fromEntries(
-      await Promise.all(
-        this.wallet.map(async (account) => {
-          return [account.accountName, await libs[chain.library].getPublicKey(account, chain)];
-        }),
-      ),
-    );
+    // const pubKeys = Object.fromEntries(
+    //   await Promise.all(
+    //     this.wallet.map(async (account) => {
+    //       return [account.accountName, await libs[chain.library].getPublicKey(account, chain)];
+    //     }),
+    //   ),
+    // );
     return [].concat(
-      ...await Promise.all(this.wallet.map(async (account) => {
-        const address = await libs[chain.library].getAddress(account, chain);
-        const pubkey = await libs[chain.library].getPublicKey(account, chain)
-        return {
-          address,
-          algo: 'secp256k1',
-          pubkey: Buffer.from(pubkey).toString('hex'),
-        }
-      })),
+      ...(await Promise.all(
+        this.wallet.map(async (account) => {
+          const address = await libs[chain.library].getAddress(account, chain);
+          const pubkey = await libs[chain.library].getPublicKey(account, chain);
+          return {
+            address,
+            algo: 'secp256k1',
+            pubkey: Buffer.from(pubkey).toString('hex'),
+          };
+        }),
+      )),
     );
   }
 
