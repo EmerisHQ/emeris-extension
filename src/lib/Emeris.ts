@@ -357,13 +357,6 @@ export class Emeris implements IEmeris {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
 
-    // const pubKeys = Object.fromEntries(
-    //   await Promise.all(
-    //     this.wallet.map(async (account) => {
-    //       return [account.accountName, await libs[chain.library].getPublicKey(account, chain)];
-    //     }),
-    //   ),
-    // );
     return [].concat(
       ...(await Promise.all(
         this.wallet.map(async (account) => {
