@@ -151,6 +151,10 @@ export class Emeris implements IEmeris {
         await this.storage.setLastAccount(accountName);
         this.selectedAccount = accountName;
         this.storeSession();
+
+        // send an event to all tabs that the account has changed
+        const tabs = await browser.tabs.query({});
+        tabs.forEach((tab) => browser.tabs.sendMessage(tab.id, { type: 'lastAccountUpdated' }));
       } catch (e) {
         console.log(e);
       }
