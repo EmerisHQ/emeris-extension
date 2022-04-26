@@ -86,9 +86,9 @@
     "xstate": "^4.30.6"
   },
   "devDependencies": {
-    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@emeris/types": "^0.0.33",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@keplr-wallet/types": "0.8.8",
     "@pinia/testing": "^0.0.10",
@@ -105,6 +105,7 @@
     "@types/lodash.groupby": "^4.6.6",
     "@types/lodash.isequal": "^4.5.5",
     "@types/lodash.orderby": "^4.6.6",
+    "@types/webextension-polyfill": "^0.8.3",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
     "@vitejs/plugin-vue": "^2.2.4",

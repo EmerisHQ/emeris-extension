@@ -21,13 +21,5 @@ class BrowserManager {
   public getBrowser(): any {
     return this._browser;
   }
-
-  public getBrowserPlugin(): any {
-    return {
-      install: (app) => {
-        app.config.globalProperties.browser = () => this._browser;
-      },
-    };
-  }
 }
 export default BrowserManager;

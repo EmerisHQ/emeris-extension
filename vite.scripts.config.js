@@ -18,7 +18,6 @@ export default () => {
   return defineConfig({
     css: { preprocessorOptions: { scss: { charset: false } } },
     build: {
-      target: 'esnext',
       chunkSizeWarningLimit: 1000,
       sourcemap: process.env.NODE_ENV != 'production' ? 'inline' : false,
       emptyOutDir: false,

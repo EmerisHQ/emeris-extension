@@ -53,7 +53,9 @@ export default defineComponent({
   },
   methods: {
     async route() {
-      await webDebugging();
+      if (import.meta.env.MODE === 'web') {
+        await webDebugging();
+      }
       const pending = await this.$store.dispatch(GlobalEmerisActionTypes.GET_PENDING);
       const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
       const wallet = await this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET); // if able to load the wallet, the extension is unlocked
