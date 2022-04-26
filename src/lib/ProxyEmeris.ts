@@ -218,7 +218,7 @@ export class ProxyEmeris implements IEmeris {
     const request = {
       action: 'getCosmJsAccounts',
       data: {
-        chainId,
+        chainId, // this is the on chain Id which will be resolved in the backend
       },
     };
     const response = await this.sendRequest(request as ApproveOriginRequest);
@@ -234,7 +234,7 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
 
-  getOfflineAminoSigner() {
+  getOfflineAminoSigner(chainId) {
     const offlineSigner = {
       chainId: undefined,
       signAmino: async (signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> => {
@@ -245,8 +245,7 @@ export class ProxyEmeris implements IEmeris {
               raw: msg,
             },
           })),
-          // chainId: chainLookup(signDoc.chain_id), // need to lookup the chain name (our id) from the chain id; waiting on https://github.com/EmerisHQ/emeris-extension/pull/57
-          chainId: 'cosmos-hub', // PLACEHOLDER
+          chainId: signDoc.chain_id, // will be resolved in the backend
           signingAddress: signerAddress,
           fee: {
             gas: signDoc.fee.gas,
@@ -256,8 +255,6 @@ export class ProxyEmeris implements IEmeris {
         });
       },
       getAccounts: async () => {
-        // const chainId = chainLookup(offlineSigner.chainId), // need to lookup the chain name (our id) from the chain id; waiting on https://github.com/EmerisHQ/emeris-extension/pull/57
-        const chainId = 'cosmoshub-4'; // PLACEHOLDER
         return (await this.getCosmJsAccounts(chainId)).map((account) => ({
           ...account,
           pubkey: Uint8Array.from(Buffer.from(account.pubkey, 'hex')),
