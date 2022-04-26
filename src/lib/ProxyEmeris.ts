@@ -86,10 +86,10 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as GetAddressRequest);
     return response.data as string;
   }
-  async getPublicKey(chainId: string): Promise<Uint8Array> {
+  async getPublicKey(chainId: string, accountName?: string): Promise<Uint8Array> {
     const request = {
       action: 'getPublicKey',
-      data: { chainId },
+      data: { chainId, accountName },
     };
     const response = await this.sendRequest(request as GetPublicKeyRequest);
     return response.data as Uint8Array;
@@ -214,6 +214,17 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
 
+  async getCosmJsAccounts(chainId: string): Promise<any> {
+    const request = {
+      action: 'getCosmJsAccounts',
+      data: {
+        chainId, // this is the on chain Id which will be resolved in the backend
+      },
+    };
+    const response = await this.sendRequest(request as ApproveOriginRequest);
+    return response.data;
+  }
+
   async keplrEnable(chainIds: string | string[]): Promise<boolean> {
     const request = {
       action: 'keplrEnable',
@@ -223,8 +234,9 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
 
-  getOfflineAminoSigner() {
-    return {
+  getOfflineAminoSigner(chainId) {
+    const offlineSigner = {
+      chainId: undefined,
       signAmino: async (signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> => {
         return this.signTransactionForOfflineAminoSigner({
           messages: signDoc.msgs.map((msg) => ({
@@ -233,13 +245,19 @@ export class ProxyEmeris implements IEmeris {
               raw: msg,
             },
           })),
-          // chainId: chainLookup(signDoc.chain_id), // need to lookup the chain name (our id) from the chain id
-          chainId: 'cosmos-hub', // PLACEHOLDER
+          chainId: signDoc.chain_id, // will be resolved in the backend
           signingAddress: signerAddress,
           fee: signDoc.fee,
           memo: signDoc.memo,
         });
       },
+      getAccounts: async () => {
+        return (await this.getCosmJsAccounts(chainId)).map((account) => ({
+          ...account,
+          pubkey: Uint8Array.from(Buffer.from(account.pubkey, 'hex')),
+        }));
+      },
     };
+    return offlineSigner;
   }
 }
