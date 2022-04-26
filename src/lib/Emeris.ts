@@ -358,7 +358,6 @@ export class Emeris implements IEmeris {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
 
-    const accounts = await this.getDisplayAccounts();
     const pubKeys = Object.fromEntries(
       await Promise.all(
         this.wallet.map(async (account) => {
@@ -367,13 +366,15 @@ export class Emeris implements IEmeris {
       ),
     );
     return [].concat(
-      ...accounts.map((account) =>
-        account.keyHashes.map((keyHash) => ({
-          address: chainAddressfromKeyHash(chain.prefix, keyHash),
+      ...await Promise.all(this.wallet.map(async (account) => {
+        const address = await libs[chain.library].getAddress(account, chain);
+        const pubkey = await libs[chain.library].getPublicKey(account, chain)
+        return {
+          address,
           algo: 'secp256k1',
-          pubkey: Buffer.from(pubKeys[account.accountName]).toString('hex'),
-        })),
-      ),
+          pubkey: Buffer.from(pubkey).toString('hex'),
+        }
+      })),
     );
   }
 

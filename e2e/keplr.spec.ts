@@ -16,7 +16,7 @@ test.describe('Keplr', () => {
     });
 
     const result = await page.evaluate((defaultCosmosAddress) => {
-      return window.emeris.keplr.getOfflineSigner().signAmino(defaultCosmosAddress, {
+      return window.emeris.keplr.getOfflineSigner('cosmoshub-4').signAmino(defaultCosmosAddress, {
         chain_id: 'cosmoshub-4',
         account_number: '0',
         sequence: '0',
@@ -38,7 +38,7 @@ test.describe('Keplr', () => {
     await expect(result).toStrictEqual({
       signature: {
         pub_key: { type: 'tendermint/PubKeySecp256k1', value: 'A63fr0YuJaZPkGJw0ZJ8ekjsLXhZzQlv9wd0WVEoMKNc' },
-        signature: '0Mt72CpFpatIuw3h6UQdko+OM78sVD3jREEJzCqyawdbVpqMktLLSdoLBiFd5KGlYsGqj37ETm03J5f6PS9gSw==',
+        signature: '+6+47lgYWBTYuU9Sww9ZGuy5pMvhmPrVDEByqx8wt7xLs537BGfdos3+ObPKFyYEZgOvIvT7dFIjbDhbNDh6ZQ==',
       },
       signed: {
         account_number: '0',
@@ -56,8 +56,8 @@ test.describe('Keplr', () => {
                   "denom": "uatom",
                 },
               ],
-              "fromAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
-              "toAddress": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+              "from_address": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
+              "to_address": "cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9",
             },
           },
         ],
@@ -72,7 +72,7 @@ test.describe('Keplr', () => {
     await emerisLoaded(page);
 
     const result = await page.evaluate(() => {
-      return window.emeris.keplr.getOfflineSigner().getAccounts();
+      return window.emeris.keplr.getOfflineSigner('cosmoshub-4').getAccounts();
     });
 
     await expect(result).toStrictEqual([{

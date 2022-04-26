@@ -234,7 +234,7 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
 
-  getOfflineAminoSigner() {
+  getOfflineAminoSigner(chainId) {
     const offlineSigner = {
       chainId: undefined,
       signAmino: async (signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> => {
@@ -252,7 +252,7 @@ export class ProxyEmeris implements IEmeris {
         });
       },
       getAccounts: async () => {
-        return (await this.getCosmJsAccounts(offlineSigner.chainId)).map((account) => ({
+        return (await this.getCosmJsAccounts(chainId)).map((account) => ({
           ...account,
           pubkey: Uint8Array.from(Buffer.from(account.pubkey, 'hex')),
         }));
