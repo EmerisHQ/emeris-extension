@@ -15,6 +15,7 @@ import {
   ExtensionResponse,
   GetAccountNameRequest,
   GetAddressRequest,
+  GetCosmJsAccounts,
   GetPublicKeyRequest,
   GetRawTransactionRequest,
   IsHWWalletRequest,
@@ -345,6 +346,33 @@ export class Emeris implements IEmeris {
     );
   }
 
+  // needed in CosmJs offline signer
+  async getCosmJsAccounts(req: GetCosmJsAccounts) {
+    if (!this.wallet) {
+      throw new Error('No wallet configured');
+    }
+
+    // cosmjs will send the on chain id not our id
+    const chain = Object.values(await chainConfig).find((chain) => chain.node_info.chain_id === req.data.chainId);
+    if (!chain) {
+      throw new Error('Chain not supported: ' + req.data.chainId);
+    }
+
+    return [].concat(
+      ...(await Promise.all(
+        this.wallet.map(async (account) => {
+          const address = await libs[chain.library].getAddress(account, chain);
+          const pubkey = await libs[chain.library].getPublicKey(account, chain);
+          return {
+            address,
+            algo: 'secp256k1',
+            pubkey: Buffer.from(pubkey).toString('hex'),
+          };
+        }),
+      )),
+    );
+  }
+
   async getPublicKey(req: GetPublicKeyRequest): Promise<Uint8Array> {
     if (!this.wallet) {
       throw new Error('No wallet configured');
@@ -353,6 +381,7 @@ export class Emeris implements IEmeris {
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
+
     const account = this.getAccount();
     if (!account) {
       throw new Error('No account selected');
@@ -378,6 +407,12 @@ export class Emeris implements IEmeris {
 
   async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
     request.id = uuidv4();
+
+    // cosmjs will send the on chain id not our id
+    const chain = Object.values(await chainConfig).find((chain) => chain.node_info.chain_id === request.data.chainId);
+    if (!chain) throw new Error('Could not find matching chain in Emeris');
+    request.data.chainId = chain.chain_name;
+
     const { response: aminoSignResponse } = await this.forwardToPopup(request);
     return aminoSignResponse;
   }
@@ -409,8 +444,14 @@ export class Emeris implements IEmeris {
     }
     const selectedAccount = selectedAccountPair.account;
 
-    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
-    abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
+    const abstractTx = {
+      ...request.data,
+      chainName: request.data.chainId,
+      txs: request.data.messages.map((message) => {
+        if (message.type === 'custom') return message;
+        return convertObjectKeys(message, snakeToCamel);
+      }),
+    }; // HACK need to adjust transported data model
     const chainMessages = await TxMapper(abstractTx);
 
     return { chain, selectedAccount, chainMessages };

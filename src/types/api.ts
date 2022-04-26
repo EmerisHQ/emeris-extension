@@ -51,6 +51,12 @@ export type GetPublicKeyRequest = Request & {
     chainId: string;
   };
 };
+export type GetCosmJsAccounts = Request & {
+  action: 'getCosmJsAccounts';
+  data: {
+    chainId: string;
+  };
+};
 export type IsHWWalletRequest = Request & {
   action: 'isHWWallet';
 };
@@ -188,6 +194,7 @@ export type ExtensionRequest =
   | SignAndBroadcastTransactionRequest
   | GetAddressRequest
   | GetPublicKeyRequest
+  | GetCosmJsAccounts
   | IsHWWalletRequest
   | SupportedChainsRequest
   | GetAccountNameRequest
