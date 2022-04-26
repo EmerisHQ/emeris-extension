@@ -72,6 +72,7 @@ test.describe('Account Create', () => {
   });
 
   test('Import Account', async ({ page }) => {
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
 
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
@@ -98,4 +99,44 @@ test.describe('Account Create', () => {
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
     await expect(page.locator('text=Test Account Imported >> visible=true')).toBeVisible();
   });
+
+  test('Switch account', async ({ page, context }) => {
+    async function waitForEvent(page, eventName, seconds) {
+
+      seconds = seconds || 30;
+
+      // use race to implement a timeout
+      return Promise.race([
+
+          // add event listener and wait for event to fire before returning
+          page.evaluate(function(eventName) {
+              return new Promise(function(resolve, reject) {
+                  document.addEventListener(eventName, function(e) {
+                      resolve(); // resolves when the event fires
+                  });
+              });
+          }, eventName),
+
+          // if the event does not fire within n seconds, exit
+          page.waitForTimeout(seconds * 1000)
+      ]);
+    }
+      
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
+    await importAccount(page);
+    await page.waitForTimeout(1 * 1000)
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accountAddAdditional`);
+    await importAccount(page, 'Test Import Account 2');
+    await page.waitForTimeout(1 * 1000)
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
+
+    const secondPage = await context.newPage()
+    await secondPage.goto('https://www.google.com')
+
+    // on changing the account see if the window receives the event
+    await Promise.all([
+      waitForEvent(secondPage, 'emeris_account_changed', 3),
+      page.click('text=Test Import Account')
+    ])
+  })
 });

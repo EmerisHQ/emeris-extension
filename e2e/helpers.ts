@@ -4,21 +4,22 @@ export const defaultMnemonic =
   'frog radio wisdom pottery position depart machine turn seek audit tank cloth brave engine card amused napkin blossom exile gravity mesh siege fruit quick';
 export const defaultCosmosAddress = 'cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9';
 
-export const importAccount = async (page) => {
-  await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
-
+export const importAccount = async (page, name = 'Test Account Imported') => {
   // Test import
   await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
   await page.click('text=Import Account >> visible=true');
-  await page.fill('[placeholder="Enter a password"]', '123456A$');
-  await page.fill('[placeholder="Confirm password"]', '123456A$');
-  await page.click('text=Continue');
+  
+  if (await page.$('[placeholder="Enter a password"]')) {
+    await page.fill('[placeholder="Enter a password"]', '123456A$');
+    await page.fill('[placeholder="Confirm password"]', '123456A$');
+    await page.click('text=Continue');
+  }
 
   const mnemonic = defaultMnemonic;
   await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
   await page.click('[type=submit]');
 
-  await page.fill('[placeholder="Account Name"]', 'Test Account Imported');
+  await page.fill('[placeholder="Account Name"]', name);
   await page.click('text=Continue');
 
   await page.click('text=Continue');
