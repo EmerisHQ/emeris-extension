@@ -10,9 +10,13 @@ export interface Request {
   origin?: string; // set by Emeris
   data?: Record<string, unknown>;
 }
-export type ApproveOriginRequest = Request & {
-  action: 'enable';
-};
+export type ApproveOriginRequest =
+  | (Request & {
+      action: 'enable';
+    })
+  | (Request & {
+      action: 'keplrEnable';
+    });
 export type GetRawTransactionRequest = Request & {
   action: 'getRawTransaction';
   data: EmerisTransactions.TransactionSignRequest & {
@@ -31,6 +35,10 @@ export type SignAndBroadcastTransactionRequest = Request & {
   action: 'signAndBroadcastTransaction';
   data: EmerisTransactions.TransactionSignRequest;
 };
+export type SignTransactionForAminoOfflineSignerRequest = Request & {
+  action: 'signTransactionForOfflineAminoSigner';
+  data: EmerisTransactions.TransactionSignRequest;
+};
 export type GetAddressRequest = Request & {
   action: 'getAddress';
   data: {
@@ -39,6 +47,12 @@ export type GetAddressRequest = Request & {
 };
 export type GetPublicKeyRequest = Request & {
   action: 'getPublicKey';
+  data: {
+    chainId: string;
+  };
+};
+export type GetCosmJsAccounts = Request & {
+  action: 'getCosmJsAccounts';
   data: {
     chainId: string;
   };
@@ -180,6 +194,7 @@ export type ExtensionRequest =
   | SignAndBroadcastTransactionRequest
   | GetAddressRequest
   | GetPublicKeyRequest
+  | GetCosmJsAccounts
   | IsHWWalletRequest
   | SupportedChainsRequest
   | GetAccountNameRequest
@@ -198,6 +213,7 @@ export type PopupRequest =
   | GetLastAccountRequest
   | SetResponseRequest
   | SignTransactionRequest
+  | SignTransactionForAminoOfflineSignerRequest
   | GetAddressRequest
   | ExtensionResetRequest
   | GetWhitelistedWebsiteRequest

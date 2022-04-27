@@ -107,6 +107,7 @@ export const actions: ActionTree<State, RootState> & Actions = {
         commit(MutationTypes.SET_WALLET, wallet as EmerisWallet);
       }
     } catch (e) {
+      console.log(e);
       throw new Error('Extension:GetWallet failed');
     }
     return getters['getWallet'];
@@ -260,18 +261,19 @@ export const actions: ActionTree<State, RootState> & Actions = {
     await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
   },
   // TODO potentially refactor and split signing with ledger from signing in the background
-  async [ActionTypes.ACCEPT_TRANSACTION]({}, { id, broadcastable, ...transaction }) {
+  async [ActionTypes.ACCEPT_TRANSACTION]({}, { id, action, broadcastable, ...transaction }) {
+    let response = broadcastable;
     // when signing with ledger we get the signed message from the view, when signing with a key we get it signing in the background
-    if (!broadcastable) {
-      broadcastable = await browser.runtime.sendMessage({
+    if (!response) {
+      response = await browser.runtime.sendMessage({
         type: 'fromPopup',
-        data: { action: 'signTransaction', data: { id, ...transaction } },
+        data: { action, data: { id, ...transaction } },
       });
     } else {
       // we need to transport the buffer and it will be converted badly by native methods so we convert to hex
-      broadcastable = Buffer.from(broadcastable).toString('hex');
+      response = Buffer.from(broadcastable).toString('hex');
     }
-    await respond(id, { broadcastable });
+    await respond(id, { response });
   },
   async [ActionTypes.CANCEL_TRANSACTION]({}, { id }) {
     await respond(id, { broadcastable: undefined });

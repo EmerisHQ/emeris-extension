@@ -1,3 +1,4 @@
+import { AminoSignResponse, StdSignDoc } from '@cosmjs/amino';
 import { EmerisBase as Base } from '@emeris/types';
 import { EmerisTransactions } from '@emeris/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +22,7 @@ import { AbstractTxResult } from '@@/types/transactions';
 
 export class ProxyEmeris implements IEmeris {
   loaded: boolean;
+  keplr: object;
   private queuedRequests: Map<
     string,
     {
@@ -85,10 +87,10 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as GetAddressRequest);
     return response.data as string;
   }
-  async getPublicKey(chainId: string): Promise<Uint8Array> {
+  async getPublicKey(chainId: string, accountName?: string): Promise<Uint8Array> {
     const request = {
       action: 'getPublicKey',
-      data: { chainId },
+      data: { chainId, accountName },
     };
     const response = await this.sendRequest(request as GetPublicKeyRequest);
     return response.data as Uint8Array;
@@ -153,6 +155,33 @@ export class ProxyEmeris implements IEmeris {
     return response.data as Uint8Array;
   }
 
+  async signTransactionForOfflineAminoSigner({
+    messages,
+    chainId,
+    signingAddress,
+    fee,
+    memo,
+  }: {
+    signingAddress: string;
+    chainId: string;
+    messages: EmerisTransactions.AbstractTransaction[];
+    fee: {
+      gas: string;
+      amount: Base.Amount[];
+    };
+    memo?: string;
+  }): Promise<AminoSignResponse> {
+    const request = {
+      action: 'signTransactionForOfflineAminoSigner',
+      data: { messages, chainId, signingAddress, fee, memo },
+    };
+    const response = await this.sendRequest(request as SignTransactionRequest);
+    if (!response.data) {
+      throw new Error('Signing was not successful');
+    }
+    return response.data as AminoSignResponse;
+  }
+
   async signAndBroadcastTransaction({
     messages,
     chainId,
@@ -184,5 +213,52 @@ export class ProxyEmeris implements IEmeris {
     };
     const response = await this.sendRequest(request as ApproveOriginRequest);
     return response.data as boolean;
+  }
+
+  async getCosmJsAccounts(chainId: string): Promise<any> {
+    const request = {
+      action: 'getCosmJsAccounts',
+      data: {
+        chainId, // this is the on chain Id which will be resolved in the backend
+      },
+    };
+    const response = await this.sendRequest(request as ApproveOriginRequest);
+    return response.data;
+  }
+
+  async keplrEnable(chainIds: string | string[]): Promise<boolean> {
+    const request = {
+      action: 'keplrEnable',
+      data: { chainIds },
+    };
+    const response = await this.sendRequest(request as ApproveOriginRequest);
+    return response.data as boolean;
+  }
+
+  getOfflineAminoSigner(chainId) {
+    const offlineSigner = {
+      chainId: undefined,
+      signAmino: async (signerAddress: string, signDoc: StdSignDoc): Promise<AminoSignResponse> => {
+        return this.signTransactionForOfflineAminoSigner({
+          messages: signDoc.msgs.map((msg) => ({
+            type: 'custom',
+            data: {
+              raw: msg,
+            },
+          })),
+          chainId: signDoc.chain_id, // will be resolved in the backend
+          signingAddress: signerAddress,
+          fee: signDoc.fee,
+          memo: signDoc.memo,
+        });
+      },
+      getAccounts: async () => {
+        return (await this.getCosmJsAccounts(chainId)).map((account) => ({
+          ...account,
+          pubkey: Uint8Array.from(Buffer.from(account.pubkey, 'hex')),
+        }));
+      },
+    };
+    return offlineSigner;
   }
 }

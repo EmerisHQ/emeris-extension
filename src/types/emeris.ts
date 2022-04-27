@@ -1,3 +1,4 @@
+import { AccountData, AminoSignResponse, StdSignDoc } from '@cosmjs/amino';
 import { Transaction, TransactionData } from 'EmerisTransactions';
 
 import * as Base from '@@/../../types/lib/EmerisBase';
@@ -52,4 +53,11 @@ export interface IEmeris {
         }
       | SignAndBroadcastTransactionRequest,
   ) => Promise<AbstractTxResult>;
+  keplr?: {
+    enable: (arg?: ApproveOriginRequest) => Promise<boolean>;
+    getOfflineSigner: (chainId: string) => {
+      signAmino: (signerAddress: string, signDoc: StdSignDoc) => Promise<AminoSignResponse>;
+      getAccounts: () => Promise<AccountData>
+    };
+  };
 }

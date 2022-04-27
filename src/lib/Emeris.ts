@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-lines */
 
-import { AminoMsg } from '@cosmjs/amino';
+import { AminoMsg, AminoSignResponse } from '@cosmjs/amino';
 import TxMapper from '@emeris/mapper';
 // @ts-ignore
 import adapter from '@vespaiach/axios-fetch-adapter';
@@ -17,6 +17,7 @@ import {
   ExtensionResponse,
   GetAccountNameRequest,
   GetAddressRequest,
+  GetCosmJsAccounts,
   GetPublicKeyRequest,
   GetRawTransactionRequest,
   IsHWWalletRequest,
@@ -251,6 +252,8 @@ export class Emeris implements IEmeris {
         return await this.getRawTransaction(message.data);
       case 'signTransaction':
         return await this.getTransactionSignature(message.data, message.data.data.memo);
+      case 'signTransactionForOfflineAminoSigner':
+        return await this.getTransactionSignatureForOfflineAminoSigner(message.data, message.data.data.memo);
       case 'setResponse':
         return this.setResponse(message.data.data.id, message.data.data);
       case 'extensionReset':
@@ -296,7 +299,7 @@ export class Emeris implements IEmeris {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[req.data.chainId];
+    const chain = (await chainConfig)[req.data.chainId];
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
@@ -305,7 +308,12 @@ export class Emeris implements IEmeris {
       throw new Error('No account selected');
     }
 
-    return await libs[chain.library].getAddress(account, chain);
+    try {
+      return await libs[chain.library].getAddress(account, chain);
+    } catch (err) {
+      console.error(err);
+      throw new Error('Cant get address for chain ' + chain.chain_name);
+    }
   }
   // function limits the data that we return to the view layers to not expose accidentially data
   async getDisplayAccounts() {
@@ -319,13 +327,20 @@ export class Emeris implements IEmeris {
           // wrapping in a Set to make all values unique
           keyHashes: [
             ...new Set(
-              await Promise.all(
-                Object.values(chainConfig).map(async (chain) => {
-                  const address = await libs[chain.library].getAddress(account, chain);
-                  const keyHash = keyHashfromAddress(address);
-                  return keyHash;
-                }),
-              ),
+              (
+                await Promise.all(
+                  Object.values(await chainConfig).map(async (chain) => {
+                    try {
+                      const address = await libs[chain.library].getAddress(account, chain);
+                      const keyHash = keyHashfromAddress(address);
+                      return keyHash;
+                    } catch (err) {
+                      console.error(err);
+                      return null;
+                    }
+                  }),
+                )
+              ).filter((x) => !!x),
             ),
           ],
         };
@@ -334,14 +349,42 @@ export class Emeris implements IEmeris {
     );
   }
 
+  // needed in CosmJs offline signer
+  async getCosmJsAccounts(req: GetCosmJsAccounts) {
+    if (!this.wallet) {
+      throw new Error('No wallet configured');
+    }
+
+    // cosmjs will send the on chain id not our id
+    const chain = Object.values(await chainConfig).find((chain) => chain.node_info.chain_id === req.data.chainId);
+    if (!chain) {
+      throw new Error('Chain not supported: ' + req.data.chainId);
+    }
+
+    return [].concat(
+      ...(await Promise.all(
+        this.wallet.map(async (account) => {
+          const address = await libs[chain.library].getAddress(account, chain);
+          const pubkey = await libs[chain.library].getPublicKey(account, chain);
+          return {
+            address,
+            algo: 'secp256k1',
+            pubkey: Buffer.from(pubkey).toString('hex'),
+          };
+        }),
+      )),
+    );
+  }
+
   async getPublicKey(req: GetPublicKeyRequest): Promise<Uint8Array> {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[req.data.chainId];
+    const chain = (await chainConfig)[req.data.chainId];
     if (!chain) {
       throw new Error('Chain not supported: ' + req.data.chainId);
     }
+
     const account = this.getAccount();
     if (!account) {
       throw new Error('No account selected');
@@ -356,7 +399,7 @@ export class Emeris implements IEmeris {
     return false;
   }
   async supportedChains(_req: SupportedChainsRequest): Promise<string[]> {
-    return Object.keys(chainConfig);
+    return Object.keys(await chainConfig);
   }
   async getAccountName(_req: GetAccountNameRequest): Promise<string> {
     return this.selectedAccount;
@@ -365,40 +408,22 @@ export class Emeris implements IEmeris {
     return await this.storage.hasWallet();
   }
 
-  async getRawTransaction(request: GetRawTransactionRequest): Promise<string> {
-    if (!this.wallet) {
-      throw new Error('No wallet configured');
-    }
-    const chain = chainConfig[request.data.chainId];
-    if (!chain) {
-      throw new Error('Chain not supported: ' + request.data.chainId);
-    }
+  async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
+    request.id = uuidv4();
 
-    const selectedAccount = this.wallet.find(({ accountName }) => accountName === this.selectedAccount);
-    const address = await libs[chain.library].getAddress(selectedAccount, chain);
+    // cosmjs will send the on chain id not our id
+    const chain = Object.values(await chainConfig).find((chain) => chain.node_info.chain_id === request.data.chainId);
+    if (!chain) throw new Error('Could not find matching chain in Emeris');
+    request.data.chainId = chain.chain_name;
 
-    if (address !== request.data.signingAddress) {
-      throw new Error('The requested signing address is not active in the extension');
-    }
-
-    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
-    abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
-    const chainMessages = await TxMapper(abstractTx);
-    const signable = await libs[chain.library].getRawSignable(
-      selectedAccount,
-      chain,
-      chainMessages,
-      request.data.fee,
-      request.data.memo,
-    );
-
-    return signable;
+    const { response: aminoSignResponse } = await this.forwardToPopup(request);
+    return aminoSignResponse;
   }
-  async getTransactionSignature(request: SignTransactionRequest, memo: string): Promise<string> {
+  async getTransactionSigningData(request: SignTransactionRequest | GetRawTransactionRequest) {
     if (!this.wallet) {
       throw new Error('No wallet configured');
     }
-    const chain = chainConfig[request.data.chainId];
+    const chain = (await chainConfig)[request.data.chainId];
     if (!chain) {
       throw new Error('Chain not supported: ' + request.data.chainId);
     }
@@ -422,9 +447,58 @@ export class Emeris implements IEmeris {
     }
     const selectedAccount = selectedAccountPair.account;
 
-    let abstractTx = { ...request.data, chainName: request.data.chainId, txs: request.data.messages }; // HACK need to adjust transported data model
-    abstractTx = convertObjectKeys(abstractTx, snakeToCamel);
+    const abstractTx = {
+      ...request.data,
+      chainName: request.data.chainId,
+      txs: request.data.messages.map((message) => {
+        if (message.type === 'custom') return message;
+        return convertObjectKeys(message, snakeToCamel);
+      }),
+    }; // HACK need to adjust transported data model
     const chainMessages = await TxMapper(abstractTx);
+
+    return { chain, selectedAccount, chainMessages };
+  }
+  async getRawTransaction(request: GetRawTransactionRequest): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
+    const signable = await libs[chain.library].getRawSignable(
+      selectedAccount,
+      chain,
+      chainMessages,
+      request.data.fee,
+      request.data.memo,
+    );
+
+    return signable;
+  }
+  async getTransactionSignatureForOfflineAminoSigner(request: SignTransactionRequest, memo: string): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
+    let aminoSignResponse;
+    // currently not used, as we need to sign in the view part of the app
+    if (selectedAccount.isLedger) {
+      aminoSignResponse = await libs[chain.library].signLedgerForAminoOfflineSigner(
+        selectedAccount,
+        chain,
+        chainMessages as AminoMsg[],
+        request.data.fee,
+        memo,
+      );
+    } else {
+      aminoSignResponse = await libs[chain.library].signForAminoOfflineSigner(
+        selectedAccount,
+        chain,
+        chainMessages as AminoMsg[],
+        request.data.fee,
+        memo,
+      );
+    }
+    return aminoSignResponse;
+  }
+  async getTransactionSignature(request: SignTransactionRequest, memo: string): Promise<string> {
+    const { chain, selectedAccount, chainMessages } = await this.getTransactionSigningData(request);
+
     let broadcastable;
     // currently not used, as we need to sign in the view part of the app
     if (selectedAccount.isLedger) {
@@ -450,7 +524,7 @@ export class Emeris implements IEmeris {
   }
   async signTransaction(request: SignTransactionRequest): Promise<any> {
     request.id = uuidv4();
-    const { broadcastable } = await this.forwardToPopup(request);
+    const { response: broadcastable } = await this.forwardToPopup(request);
     return broadcastable;
   }
   async signAndBroadcastTransaction(request: SignAndBroadcastTransactionRequest): Promise<any> {
@@ -505,5 +579,31 @@ export class Emeris implements IEmeris {
 
     browser.runtime.sendMessage({ type: 'toPopup', data: { action: 'update' } });
     return true;
+  }
+  async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
+    request.id = uuidv4();
+    const chainIds = request.data.chainIds;
+    if (typeof chainIds === 'string') {
+      Object.values(chainConfig).forEach((config) => {
+        if (config.chainId !== chainIds) {
+          return false;
+        }
+      });
+    } else if (Array.isArray(chainIds)) {
+      chainIds.forEach((chainId) => {
+        Object.values(chainConfig).forEach((config) => {
+          if (config.chainId !== chainId) {
+            return false;
+          }
+        });
+      });
+    } else {
+      return false;
+    }
+    const enabled = (await this.forwardToPopup(request)).accept as boolean;
+    if (enabled) {
+      await this.storage.addWhitelistedWebsite(request.origin);
+    }
+    return enabled;
   }
 }
