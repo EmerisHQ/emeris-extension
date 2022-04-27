@@ -57,7 +57,7 @@ export interface IEmeris {
     enable: (arg?: ApproveOriginRequest) => Promise<boolean>;
     getOfflineSigner: (chainId: string) => {
       signAmino: (signerAddress: string, signDoc: StdSignDoc) => Promise<AminoSignResponse>;
-      getAccounts: () => Promise<AccountData>
+      getAccounts: () => Promise<AccountData>;
     };
   };
 }
