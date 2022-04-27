@@ -8,7 +8,7 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
   // Test import
   await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
   await page.click('text=Import Account >> visible=true');
-  
+
   if (await page.$('[placeholder="Enter a password"]')) {
     await page.fill('[placeholder="Enter a password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
@@ -19,6 +19,7 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
   await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
   await page.click('[type=submit]');
 
+  await page.waitForTimeout(500); // needed as the view overwrite the input on load
   await page.fill('[placeholder="Account Name"]', name);
   await page.click('text=Continue');
 
