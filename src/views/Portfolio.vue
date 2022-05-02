@@ -97,7 +97,7 @@ const account = computed(() => {
 });
 
 const verifiedDenoms = computed(() => {
-  return store.getters[GlobalApiGetterTypes.API.getVerifiedDenoms];
+  return store.getters[GlobalApiGetterTypes.getVerifiedDenoms];
 });
 
 const balances = computed(() => {
