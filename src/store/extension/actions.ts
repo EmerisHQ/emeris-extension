@@ -1,13 +1,14 @@
-/* eslint-disable max-lines */
 import { Coin } from '@cosmjs/amino';
 import { ActionContext, ActionTree } from 'vuex';
 
 import { GlobalActionTypes } from '@/store';
-import { AccountCreateStates, EmerisAccount, EmerisWallet, ExtensionRequest } from '@@/types/index';
+import { ExtensionRequest } from '@@/types/index';
 import BrowserManager from '@@/utils/browser';
 
 import { RootState } from '..';
 import { ActionTypes } from './action-types';
+import { AccountActionsInterface, airdropActions } from './actions/account';
+import { walletActions, WalletActionsInterface } from './actions/wallet';
 import { MutationTypes } from './mutation-types';
 import { State } from './state';
 
@@ -15,36 +16,9 @@ type Namespaced<T, N extends string> = {
   [P in keyof T & string as `${N}/${P}`]: T[P];
 };
 
-export interface Actions {
+export interface Actions extends AccountActionsInterface, WalletActionsInterface {
   // Cross-chain endpoint actions
   [ActionTypes.GET_PENDING]({ commit, getters }: ActionContext<State, RootState>): Promise<ExtensionRequest[]>;
-  [ActionTypes.GET_WALLET]({ commit, getters }: ActionContext<State, RootState>): Promise<EmerisWallet>;
-  [ActionTypes.HAS_WALLET]({ commit, getters }: ActionContext<State, RootState>): Promise<boolean>;
-  [ActionTypes.CREATE_ACCOUNT](
-    { commit }: ActionContext<State, RootState>,
-    { account }: { account: EmerisAccount },
-  ): Promise<void>;
-  [ActionTypes.UPDATE_ACCOUNT](
-    { commit }: ActionContext<State, RootState>,
-    { targetAccountName, newAccountName }: { targetAccountName: string; newAccountName: string },
-  ): Promise<EmerisWallet>;
-  [ActionTypes.REMOVE_ACCOUNT](
-    { commit }: ActionContext<State, RootState>,
-    { accountName }: { accountName: string },
-  ): Promise<void>;
-  [ActionTypes.CREATE_WALLET](
-    { commit }: ActionContext<State, RootState>,
-    { password }: { password: string },
-  ): Promise<EmerisWallet>;
-  [ActionTypes.UNLOCK_WALLET](
-    { commit }: ActionContext<State, RootState>,
-    { password }: { password: string },
-  ): Promise<EmerisWallet>;
-  [ActionTypes.GET_LAST_ACCOUNT_USED]({ commit, getters }: ActionContext<State, RootState>): Promise<string>;
-  [ActionTypes.SET_LAST_ACCOUNT_USED](
-    { commit, getters }: ActionContext<State, RootState>,
-    { accountName }: { accountName: string },
-  ): Promise<void>;
   [ActionTypes.GET_MNEMONIC](
     { commit }: ActionContext<State, RootState>,
     { accountName, password }: { accountName: string; password: string },
@@ -54,13 +28,6 @@ export interface Actions {
     {}: ActionContext<State, RootState>,
     { website }: { website: string },
   ): Promise<void>;
-  [ActionTypes.SET_NEW_ACCOUNT](
-    { commit }: ActionContext<State, RootState>,
-    account: EmerisAccount & { route: string },
-  ): void;
-  [ActionTypes.GET_NEW_ACCOUNT]({
-    commit,
-  }: ActionContext<State, RootState>): Promise<EmerisAccount & { route: string }>;
 }
 export type GlobalActions = Namespaced<Actions, 'extension'>;
 
@@ -73,6 +40,8 @@ const respond = async (id, data) => {
 };
 
 export const actions: ActionTree<State, RootState> & Actions = {
+  ...airdropActions,
+  ...walletActions,
   async [ActionTypes.GET_PENDING]({ commit, getters }) {
     const browser = BrowserManager.getInstance().getBrowser();
     try {
@@ -102,119 +71,12 @@ export const actions: ActionTree<State, RootState> & Actions = {
       ),
     );
   },
-  async [ActionTypes.GET_WALLET]({ commit, getters }) {
-    try {
-      const browser = BrowserManager.getInstance().getBrowser();
-      const wallet = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'getWallet' } });
-      if (wallet) {
-        commit(MutationTypes.SET_WALLET, wallet as EmerisWallet);
-      }
-    } catch (e) {
-      console.log(e);
-      throw new Error('Extension:GetWallet failed');
-    }
-    return getters['getWallet'];
-  },
-  async [ActionTypes.HAS_WALLET]({ commit }) {
-    try {
-      const browser = BrowserManager.getInstance().getBrowser();
-      const hasWallet = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'hasWallet' } });
-      if (!hasWallet) {
-        commit(MutationTypes.SET_WALLET, [] as EmerisWallet);
-      }
-      return hasWallet;
-    } catch (e) {
-      throw new Error('Extension:HasWallet failed');
-    }
-  },
-  async [ActionTypes.CREATE_WALLET]({ commit, getters }, { password }: { password: string }) {
-    const browser = BrowserManager.getInstance().getBrowser();
-    const response = await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: { action: 'createWallet', data: { password } },
-    });
-    commit(MutationTypes.SET_WALLET, response as EmerisWallet);
-    return getters['getWallet'];
-  },
-  async [ActionTypes.CREATE_ACCOUNT]({ dispatch }, { account }: { account: EmerisAccount }) {
-    const browser = BrowserManager.getInstance().getBrowser();
-    await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: { action: 'createAccount', data: { account } },
-    });
-    dispatch(ActionTypes.GET_WALLET);
-    dispatch(ActionTypes.SET_LAST_ACCOUNT_USED, account);
-  },
-  async [ActionTypes.UPDATE_ACCOUNT](
-    { dispatch },
-    { targetAccountName, newAccountName }: { targetAccountName: string; newAccountName: string },
-  ) {
-    const browser = BrowserManager.getInstance().getBrowser();
-    await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: { action: 'updateAccount', data: { targetAccountName, account: { accountName: newAccountName } } },
-    });
-    return await dispatch(ActionTypes.GET_WALLET);
-  },
-  async [ActionTypes.REMOVE_ACCOUNT]({ dispatch }, { accountName }: { accountName: string }) {
-    const browser = BrowserManager.getInstance().getBrowser();
-    await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: { action: 'removeAccount', data: { accountName } },
-    });
-    await dispatch(ActionTypes.GET_WALLET);
-  },
-  async [ActionTypes.UNLOCK_WALLET]({ commit, dispatch, getters }, { password }: { password: string }) {
-    try {
-      const browser = BrowserManager.getInstance().getBrowser();
-      const wallet = await browser.runtime.sendMessage({
-        type: 'fromPopup',
-        data: { action: 'unlockWallet', data: { password } },
-      });
-      if (wallet) {
-        commit(MutationTypes.SET_WALLET, wallet as EmerisWallet);
-        dispatch(ActionTypes.GET_WALLET);
-        return getters['getWallet'];
-      }
-    } catch (e) {
-      console.log(e);
-      throw new Error('Extension:UnlockWallet failed');
-    }
-  },
   async [ActionTypes.CHANGE_PASSWORD]({}, { password }: { password: string }) {
     const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'changePassword', data: { password } },
     });
-  },
-  async [ActionTypes.GET_LAST_ACCOUNT_USED]({ commit, getters }) {
-    try {
-      const browser = BrowserManager.getInstance().getBrowser();
-      const accountName = await browser.runtime.sendMessage({
-        type: 'fromPopup',
-        data: { action: 'getLastAccount' },
-      });
-      if (accountName) {
-        commit(MutationTypes.SET_LAST_ACCOUNT, accountName);
-      }
-    } catch (e) {
-      throw new Error('Extension:GetLastAccountUsed failed');
-    }
-    return getters['getLastAccount'];
-  },
-  async [ActionTypes.SET_LAST_ACCOUNT_USED]({ commit, getters }, { accountName }) {
-    try {
-      const browser = BrowserManager.getInstance().getBrowser();
-      await browser.runtime.sendMessage({
-        type: 'fromPopup',
-        data: { action: 'setLastAccount', data: { accountName } },
-      });
-      commit(MutationTypes.SET_LAST_ACCOUNT, accountName);
-    } catch (e) {
-      throw new Error('Extension:SetLastAccount failed');
-    }
-    return getters['getLastAccount'];
   },
   async [ActionTypes.GET_MNEMONIC]({ commit }, { accountName, password }: { accountName: string; password: string }) {
     try {
@@ -242,17 +104,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
       console.log(e);
       throw new Error('Extension:getAddress failed');
     }
-  },
-  async [ActionTypes.ACCOUNT_BACKED_UP]({ dispatch }, { accountName }: { accountName: string }) {
-    const browser = BrowserManager.getInstance().getBrowser();
-    await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: {
-        action: 'updateAccount',
-        data: { account: { setupState: AccountCreateStates.COMPLETE }, targetAccountName: accountName },
-      },
-    });
-    dispatch(ActionTypes.LOAD_SESSION_DATA);
   },
   async [ActionTypes.EXTENSION_RESET]() {
     const browser = BrowserManager.getInstance().getBrowser();
@@ -315,31 +166,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
         },
       },
     });
-  },
-  async [ActionTypes.SET_NEW_ACCOUNT]({ commit }, account: EmerisAccount & { route: string }) {
-    const browser = BrowserManager.getInstance().getBrowser();
-    commit(MutationTypes.SET_NEW_ACCOUNT, account);
-    return await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: {
-        action: 'setPartialAccountCreationStep',
-        data: account,
-      },
-    });
-  },
-  async [ActionTypes.GET_NEW_ACCOUNT]({ commit }) {
-    const browser = BrowserManager.getInstance().getBrowser();
-    const partialAccountCreationStep = await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: {
-        action: 'getPartialAccountCreationStep',
-      },
-    });
-    if (partialAccountCreationStep) {
-      commit(MutationTypes.SET_NEW_ACCOUNT, partialAccountCreationStep);
-      return partialAccountCreationStep;
-    }
-    return undefined;
   },
   async [ActionTypes.SET_LEDGER_SIGN_DATA](
     {},

@@ -6,6 +6,7 @@ import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from
 test.describe('Keplr', () => {
   test('OfflineSigner', async ({ context, page }) => {
     await enableWebsite(context, page);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
@@ -67,6 +68,7 @@ test.describe('Keplr', () => {
 
   test('Get accounts', async ({ context, page }) => {
     await enableWebsite(context, page);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
