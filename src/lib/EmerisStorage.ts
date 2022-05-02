@@ -1,10 +1,8 @@
 import * as CryptoJS from 'crypto-js';
+import browser from 'webextension-polyfill';
 
 import { SaveWalletError, UnlockWalletError } from '@@/errors';
 import { EmerisAccount, EmerisEncryptedWallet, EmerisWallet } from '@@/types';
-import BrowserManager from '@@/utils/browser';
-
-const browser = BrowserManager.getInstance().getBrowser();
 
 export enum EmerisStorageMode {
   SYNC = 'sync',
