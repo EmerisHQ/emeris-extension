@@ -11,7 +11,9 @@
         @click="switchTab"
       >
         Details
-        <div class="badge" style="margin-left: 8px">{{ transaction.messages.length }}</div>
+        <div class="badge" style="margin-left: 8px">
+          {{ transaction.messages.length }}
+        </div>
       </div>
       <span
         :class="{ 'secondary-text': tab === 'Details' }"
@@ -57,7 +59,9 @@
         z-index: 100;
       "
     >
-      <div v-if="error" style="color: #ff6072; margin-top: 16px; text-align: center">{{ error }}</div>
+      <div v-if="error" style="color: #ff6072; margin-top: 16px; text-align: center">
+        {{ error }}
+      </div>
       <div class="mt-6 mb-2 flex justify-between" style="font-size: 13px">
         <span class="secondary-text">Reference (memo)</span>
         <a
@@ -70,7 +74,7 @@
         style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 16px; font-size: 13px"
       >
         <span class="secondary-text">Fees (additional)</span>
-        <a href="" @click.prevent="(e) => {}"><TotalPrice class="inline" :balances="fees" /></a>
+        <a href="" @click.prevent="(e) => {}"><SumBalances class="inline" :balances="fees" /></a>
       </div>
       <div style="display: flex; flex-direction: row">
         <Button name="Reject" variant="secondary" style="margin-right: 16px; flex: 1" @click="cancel" />
@@ -105,11 +109,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import { keyHashfromAddress } from '@/utils/basic';
 import Slideout from '@@/components/Slideout.vue';
+import SumBalances from '@@/components/SumBalances.vue';
 import Message from '@@/components/Transactions/Message.vue';
 import Yaml from '@@/components/Yaml.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
@@ -134,7 +138,7 @@ export default defineComponent({
     Message,
     Slideout,
     Input,
-    TotalPrice,
+    SumBalances,
   },
   data: (): TxReviewData => ({
     tab: 'Details',
@@ -164,6 +168,10 @@ export default defineComponent({
     pending(newVal) {
       if (newVal && newVal.error) {
         this.error = newVal.error;
+      }
+      if (newVal) {
+        if (newVal.data.fee.gas) this.gas = newVal.data.fee.gas;
+        if (newVal.data.fee.amount) this.fees = newVal.data.fee.amount;
       }
     },
     transaction: {
@@ -224,13 +232,12 @@ export default defineComponent({
         await this.$store.dispatch(GlobalEmerisActionTypes.ACCEPT_TRANSACTION, {
           id: this.pending.id,
           action: this.pending.action, // used to determine what to call for signing
-          // TODO currently setting default fee until fee selection works
-          fees: {
+          ...this.transaction,
+          fee: {
             gas: this.gas,
             amount: this.fees,
           },
           memo: this.memo,
-          ...this.transaction,
         });
         this.$router.push('/');
       } catch (err) {
