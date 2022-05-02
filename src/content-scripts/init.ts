@@ -14,6 +14,7 @@ export async function init(emeris: ProxyEmeris): Promise<void> {
     signAndBroadcastTransaction,
     keplrEnable,
     getOfflineAminoSigner,
+    getActiveAccount,
   } = emeris;
   window.emeris = {
     loaded,
@@ -29,6 +30,7 @@ export async function init(emeris: ProxyEmeris): Promise<void> {
     keplr: {
       enable: keplrEnable.bind(emeris),
       getOfflineSigner: getOfflineAminoSigner.bind(emeris),
+      getKey: getActiveAccount.bind(emeris),
     },
   };
 }

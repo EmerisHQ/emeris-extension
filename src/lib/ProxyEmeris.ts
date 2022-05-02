@@ -20,6 +20,8 @@ import {
 import { IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
 
+import { DisplayAccount } from './../types/emeris';
+
 export class ProxyEmeris implements IEmeris {
   loaded: boolean;
   keplr: object;
@@ -232,6 +234,26 @@ export class ProxyEmeris implements IEmeris {
     };
     const response = await this.sendRequest(request as ApproveOriginRequest);
     return response.data as boolean;
+  }
+
+  async getActiveAccount(chainId: string): Promise<DisplayAccount> {
+    const request = {
+      action: 'getActiveAccount',
+      data: { chainId },
+    };
+    const response = await this.sendRequest(request as ApproveOriginRequest);
+    const data = response.data as {
+      name: string;
+      algo: string;
+      pubKey: string;
+      address: string;
+      bech32Address: string;
+    };
+    return {
+      ...data,
+      pubKey: Uint8Array.from(Buffer.from(data.pubKey, 'hex')),
+      address: Uint8Array.from(Buffer.from(data.address, 'hex')),
+    };
   }
 
   getOfflineAminoSigner(chainId) {
