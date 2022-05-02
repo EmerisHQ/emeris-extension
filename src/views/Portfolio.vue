@@ -103,7 +103,6 @@ const balances = computed(() => {
   if (!account.value) {
     return undefined;
   }
-  console.log('jesse balances', balances);
   return store.getters[GlobalEmerisGetterTypes.getAllBalances](account.value);
 });
 
