@@ -6,13 +6,14 @@ import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from
 test.describe('Transactions', () => {
   test('Send', async ({ context, page }) => {
     await enableWebsite(context, page);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
 
     // when the transaction popup shows, click accept
     context.waitForEvent('page').then(async (popup) => {
-      await expect(popup.locator('.total-price')).not.toHaveText('$0.00') // fees should display
+      await expect(popup.locator('.total-price')).not.toHaveText('$0.00'); // fees should display
       await popup.click('text=Accept');
     });
 
@@ -53,6 +54,7 @@ test.describe('Transactions', () => {
     testInfo.setTimeout(testInfo.timeout + 30000);
 
     await enableWebsite(context, page);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);

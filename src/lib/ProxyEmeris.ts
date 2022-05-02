@@ -47,6 +47,7 @@ export class ProxyEmeris implements IEmeris {
     if (event.data.type != 'fromEmerisExtension') {
       return;
     }
+
     const request = this.queuedRequests.get(event.data.data.id);
     if (!request) {
       return;

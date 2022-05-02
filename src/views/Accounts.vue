@@ -58,13 +58,30 @@
       </div>
     </div>
     <div style="margin-top: auto">
-      <Button name="Add account" @click="addAccount" />
+      <Button name="Add account" @click="addAdditionalAccount = true" />
     </div>
     <Slideout :open="!!editWallet" @update:open="() => (editWallet = null)">
-      <Button name="Remove account" variant="link" @click="removeAccount" />
-      <Button name="Edit wallet name" variant="link" @click="renameAccount" />
+      <Button name="Edit wallet name" variant="link" style="margin-bottom: 4px" @click="renameAccount" />
+      <hr style="opacity: 0.14; margin-bottom: 4px" />
+      <Button name="Remove account" variant="link" link-color="red" style="margin-bottom: 4px" @click="removeAccount" />
+      <hr style="opacity: 0.14; margin-bottom: 4px" />
       <div style="font-weight: 600">
-        <Button name="Close" variant="link" @click="() => (editWallet = null)" />
+        <Button name="Cancel" variant="link" @click="() => (editWallet = null)" />
+      </div>
+    </Slideout>
+
+    <!-- Add Additional Account -->
+    <Slideout :open="addAdditionalAccount" @update:open="() => (addAdditionalAccount = null)">
+      <router-link :to="{ name: 'Create Wallet' }" style="margin-bottom: 4px; color: white">
+        <Button name="Create account" variant="link" />
+      </router-link>
+      <hr style="opacity: 0.14; margin-bottom: 4px" />
+      <router-link :to="{ name: 'Account Import' }" style="margin-bottom: 4px; color: white">
+        <Button name="Import account" variant="link" />
+      </router-link>
+      <hr style="opacity: 0.14; margin-bottom: 4px" />
+      <div style="font-weight: 600">
+        <Button name="Cancel" variant="link" @click="() => (addAdditionalAccount = null)" />
       </div>
     </Slideout>
   </div>
@@ -105,6 +122,7 @@ export default defineComponent({
   },
   data: () => ({
     editWallet: null,
+    addAdditionalAccount: false,
     edit: false,
   }),
   watch: {
