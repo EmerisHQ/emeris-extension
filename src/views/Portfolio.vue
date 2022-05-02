@@ -37,7 +37,7 @@
       >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
     /></span>
     <h1 style="font-size: 38px; text-align: left; margin-bottom: 24px">
-      <TotalPrice :balances="balances" small-decimals />
+      <SumBalances :balances="balances" />
     </h1>
     <div style="display: flex">
       <Button name="Receive" style="margin-right: 12px; flex: 1" @click="$router.push('/receive')" />
@@ -75,13 +75,13 @@
 import { computed, onMounted, ref, watch } from 'vue';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
-import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
 import { GlobalGetterTypes as GlobalApiGetterTypes } from '@/store/demeris-api/getter-types';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import { useExtensionStore } from '@@/store';
+import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
