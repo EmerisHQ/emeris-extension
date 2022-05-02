@@ -1,4 +1,4 @@
-import BrowserManager from '@@/utils/browser';
+import browser from 'webextension-polyfill';
 
 import { Emeris } from './lib/Emeris';
 import EmerisStorage, { EmerisStorageMode } from './lib/EmerisStorage';
@@ -31,5 +31,4 @@ const messageHandler = async (request) => {
   }
   return await pageHandler(request);
 };
-const browser = BrowserManager.getInstance().getBrowser();
 browser.runtime.onMessage.addListener(messageHandler);

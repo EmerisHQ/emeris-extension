@@ -43,10 +43,12 @@ export const actions: ActionTree<State, RootState> & Actions = {
   ...airdropActions,
   ...walletActions,
   async [ActionTypes.GET_PENDING]({ commit, getters }) {
-    const browser = BrowserManager.getInstance().getBrowser();
     try {
+      const browser = BrowserManager.getInstance().getBrowser();
+      console.log('browser', browser);
+      console.log('browser.runtime', browser.runtime);
       const latestPending = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'getPending' } });
-
+      console.log('test 4'); //@TODO does not show for some reason in the extension version! Something wrong with the browser polyfill
       commit(MutationTypes.ADD_PENDING, latestPending);
     } catch (e) {
       throw new Error('Extension:GetPendingRequests failed');
