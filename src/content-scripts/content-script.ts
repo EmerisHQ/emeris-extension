@@ -53,5 +53,12 @@ async function setup() {
       );
     }
   });
+
+  // handle inbound messages from the background without an output request
+  browser.runtime.onMessage.addListener((message) => {
+    if (message.type === 'lastAccountUpdated') {
+      window.dispatchEvent(new Event('emeris_account_changed'));
+    }
+  });
 }
 setup();

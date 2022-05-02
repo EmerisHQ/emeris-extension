@@ -1,8 +1,8 @@
 name: Extension Build
-on: 
+on:
   pull_request:
     paths:
-      - "**"
+      - '**'
 defaults:
   run:
     working-directory: ./
@@ -19,7 +19,7 @@ jobs:
           ssh-private-key: ${{ secrets.DEMERIS_SSH_PRIVATE_KEY }}
 
       - run: git submodule init && git submodule update
-          
+
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
@@ -28,7 +28,6 @@ jobs:
 
       - name: build artifacts
         run: |
-          npm ci
           NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
         env:
           # Put in secrets
