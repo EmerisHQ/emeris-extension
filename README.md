@@ -24,6 +24,11 @@ When you make a change, the extension will rebuild. Wait for that to be done and
 
 ## Experimental: Debug on Web
 
+Known issues:
+
+- font doesn't work for some reason
+- first time you open `http://localhost:3000/` - it closes your browser window for some reason. Simply opening `http://localhost:3000/` again solves the issue
+
 Running the chrome extension as a webapp.
 This might not be a great idea for specific functionality which for example needs storage, or signing transactions.
 However, for doing visual development, this might speed you up quite a bit, because you don't have to wait for the extension to build for 60 seconds.
