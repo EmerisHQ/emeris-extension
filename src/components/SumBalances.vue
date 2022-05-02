@@ -20,13 +20,15 @@ const props = withDefaults(defineProps<Props>(), { smallDecimals: false });
 const store = useStore();
 
 const displayPrice = props.balances.reduce((total, balance) => {
-  if (store.getters[GlobalGetterTypes.API.getPrice]({ denom: balance.base_denom })) {
-    const totalValue =
-      parseInt(balance.amount) * store.getters[GlobalGetterTypes.API.getPrice]({ denom: balance.base_denom });
+  //the passed balances sometimes have the denom as base_denom, sometimes as denom. Needs to be cleaned up.
+  const denom = balance.base_denom ?? balance.denom;
+  const denomPrice = store.getters[GlobalGetterTypes.API.getPrice]({ denom: denom });
+  if (denomPrice) {
+    const totalValue = parseInt(balance.amount) * denomPrice;
     const precision = Math.pow(
       10,
       store.getters[GlobalGetterTypes.API.getDenomPrecision]({
-        name: balance.base_denom,
+        name: denom,
       }) || 6,
     );
     const value = totalValue / precision;
