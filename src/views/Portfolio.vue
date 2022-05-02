@@ -73,7 +73,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
 import TotalPrice from '@/components/common/TotalPrice.vue';
@@ -88,8 +87,6 @@ import { AccountCreateStates } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
 
 const store = useExtensionStore();
-
-const store = useStore();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
@@ -107,7 +104,6 @@ const balances = computed(() => {
   if (!account.value) {
     return undefined;
   }
-  console.log('jesse balances', balances);
   return store.getters[GlobalEmerisGetterTypes.getAllBalances](account.value);
 });
 
