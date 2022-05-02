@@ -31,8 +31,6 @@ import BrowserManager from '@@/utils/browser';
 import EmerisStorage from './EmerisStorage';
 import libs from './libraries';
 
-const browser = BrowserManager.getInstance().getBrowser();
-
 // HACK extension and mapper expect different formats, we need to decide and adjust the formats to one
 const convertObjectKeys = (obj, doX) => {
   let newObj;
@@ -83,6 +81,7 @@ export class Emeris implements IEmeris {
     return this.initialized;
   }
   async init() {
+    const browser = BrowserManager.getInstance().getBrowser();
     this.password = (await browser.storage['session'].get('password')).password ?? null;
     this.wallet = (await browser.storage['session'].get('wallet')).wallet ?? null;
     this.pending = [];
@@ -94,6 +93,7 @@ export class Emeris implements IEmeris {
     this.initPromise();
   }
   async storeSession(): Promise<void> {
+    const browser = BrowserManager.getInstance().getBrowser();
     await browser.storage['session'].set({ wallet: this.wallet });
     await browser.storage['session'].set({ password: this.password });
     await browser.storage['session'].set({ selectedAccount: this.selectedAccount });
@@ -123,6 +123,7 @@ export class Emeris implements IEmeris {
     }
   }
   async launchPopup(): Promise<number> {
+    const browser = BrowserManager.getInstance().getBrowser();
     return (
       await browser.windows.create({
         width: 375,
@@ -148,6 +149,7 @@ export class Emeris implements IEmeris {
     return this.wallet.find((x) => x.accountName == this.selectedAccount);
   }
   async setLastAccount(accountName) {
+    const browser = BrowserManager.getInstance().getBrowser();
     if (accountName) {
       try {
         await this.storage.setLastAccount(accountName);
@@ -278,6 +280,7 @@ export class Emeris implements IEmeris {
     }
   }
   async ensurePopup(): Promise<void> {
+    const browser = BrowserManager.getInstance().getBrowser();
     if (!this.popup) {
       this.popup = await this.launchPopup();
       browser.windows.update(this.popup as number, {
@@ -566,6 +569,7 @@ export class Emeris implements IEmeris {
     return enabled;
   }
   setResponse(id: string, response: any) {
+    const browser = BrowserManager.getInstance().getBrowser();
     const request = this.queuedRequests.get(id);
     if (!request) {
       return;
