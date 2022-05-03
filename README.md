@@ -26,8 +26,7 @@ When you make a change, the extension will rebuild. Wait for that to be done and
 
 Known issues:
 
-- font doesn't work for some reason
-- first time you open `http://localhost:3000/` - it closes your browser window for some reason. Simply opening `http://localhost:3000/` again solves the issue
+- Some pages don't seem to work well, for example Accounts page. Seems something minor, looking for a fix.
 
 Running the chrome extension as a webapp.
 This might not be a great idea for specific functionality which for example needs storage, or signing transactions.
@@ -48,6 +47,8 @@ Next, run:
 ```
 yarn run dev:web
 ```
+
+Now, open the page: http://localhost:8080/?browser=true
 
 ## Usage
 
