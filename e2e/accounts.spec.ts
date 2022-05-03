@@ -51,8 +51,8 @@ test.describe('Account Create', () => {
     await page.click('text=I have backed up');
     await page.click('text=Continue');
 
-    for (let i = 0; i <= 2; i) {
-      const numberRegexp = /Select the (\d)\w word in your recovery phrase/;
+    for (let i = 0; i <= 2; i++) {
+      const numberRegexp = /Select the (\d+)\w+ word in your recovery phrase/;
       const numberPhrase = await page.locator(`text=word in your recovery phrase`).textContent();
       const [, number] = numberRegexp.exec(numberPhrase);
       await page.click(`text=${mnemonic[Number(number) - 1]}`);
