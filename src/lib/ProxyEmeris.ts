@@ -20,7 +20,7 @@ import {
 import { IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
 
-import { DisplayAccount } from './../types/emeris';
+import { IEmeris, DisplayAccount } from '@@/types/emeris';
 
 export class ProxyEmeris implements IEmeris {
   loaded: boolean;
