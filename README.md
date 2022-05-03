@@ -108,10 +108,10 @@ const main = async () => {
       },
     ],
     {
-      amount: {
+      amount: [{
         amount: '1',
         denom: 'uatom',
-      },
+      }],
       gas: '200000',
     },
   );
