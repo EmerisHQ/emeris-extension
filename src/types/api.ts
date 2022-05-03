@@ -35,6 +35,10 @@ export type SignAndBroadcastTransactionRequest = Request & {
   action: 'signAndBroadcastTransaction';
   data: EmerisTransactions.TransactionSignRequest;
 };
+export type SignTransactionForAminoOfflineSignerRequest = Request & {
+  action: 'signTransactionForOfflineAminoSigner';
+  data: EmerisTransactions.TransactionSignRequest;
+};
 export type GetAddressRequest = Request & {
   action: 'getAddress';
   data: {
@@ -202,6 +206,7 @@ export type PopupRequest =
   | GetLastAccountRequest
   | SetResponseRequest
   | SignTransactionRequest
+  | SignTransactionForAminoOfflineSignerRequest
   | GetAddressRequest
   | ExtensionResetRequest
   | GetWhitelistedWebsiteRequest
