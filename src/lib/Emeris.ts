@@ -503,29 +503,30 @@ export class Emeris implements IEmeris {
     return true;
   }
   async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
-    request.id = uuidv4();
-    const chainIds = request.data.chainIds;
-    if (typeof chainIds === 'string') {
-      Object.values(chainConfig).forEach((config) => {
-        if (config.chainId !== chainIds) {
-          return false;
-        }
-      });
-    } else if (Array.isArray(chainIds)) {
-      chainIds.forEach((chainId) => {
-        Object.values(chainConfig).forEach((config) => {
-          if (config.chainId !== chainId) {
+    try {
+      request.id = uuidv4();
+      const chainIds = request.data.chainIds;
+      if (typeof chainIds === 'string') {
+        for (const config of Object.values(chainConfig)) {
+          if (config.chainId !== chainIds) {
             return false;
           }
-        });
-      });
-    } else {
-      return false;
+        }
+      } else if (Array.isArray(chainIds)) {
+        for (const config of Object.values(chainConfig)) {
+          for (const chainId of chainIds) {
+            if (config.chainId !== chainId) {
+              return false;
+            }
+          }
+        }
+      } else {
+        return false;
+      }
+      const enabled = await this.enable(request);
+      return enabled;
+    } catch (e) {
+      console.log(e);
     }
-    const enabled = (await this.forwardToPopup(request)).accept as boolean;
-    if (enabled) {
-      await this.storage.addWhitelistedWebsite(request.origin);
-    }
-    return enabled;
   }
 }
