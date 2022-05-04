@@ -2,7 +2,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { enableWebsite } from './helpers';
+import { emerisLoaded, enableWebsite } from './helpers';
 import { defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers';
 
 /* eslint-disable max-lines-per-function */
@@ -149,6 +149,7 @@ test.describe('Account Create', () => {
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
+    await emerisLoaded(page);
 
     expect(
       await page.evaluate(() => {
