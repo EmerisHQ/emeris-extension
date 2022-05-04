@@ -73,20 +73,20 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
-import { GlobalGetterTypes as GlobalApiGetterTypes } from '@/store/demeris-api/getter-types';
+import { GlobalGetterTypes } from '@/store';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
-import { useExtensionStore } from '@@/store';
 import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
 
-const store = useExtensionStore();
+const store = useStore();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
@@ -97,7 +97,7 @@ const account = computed(() => {
 });
 
 const verifiedDenoms = computed(() => {
-  return store.getters[GlobalApiGetterTypes.getVerifiedDenoms];
+  return store.getters[GlobalGetterTypes.API.getVerifiedDenoms];
 });
 
 const balances = computed(() => {
