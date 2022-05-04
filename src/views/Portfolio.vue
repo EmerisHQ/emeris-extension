@@ -83,8 +83,7 @@ import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
-import { BalanceDenom } from '@@/types/index';
-import { AccountCreateStates } from '@@/types/index';
+import { AccountCreateStates, BalanceDenom } from '@@/types/index';
 
 const store = useStore();
 
