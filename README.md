@@ -78,9 +78,47 @@ Also available:
 window.emeris.signAndBroadcastTransaction
 ```
 
-Fees are currently ignored.
-
 Other message formats can be found here: https://github.com/EmerisHQ/emeris-libraries/blob/develop/packages/types/src/EmerisTransactions.ts
+
+## Test CosmJs compatibilty
+
+Run the following code in the web (i.e. replace main.ts of demeris with following):
+
+```
+import { SigningStargateClient } from '@cosmjs/stargate';
+
+const main = async () => {
+  while (!window.emeris) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  }
+  await window.emeris.enable();
+  console.log(await window.emeris.getActiveAccount('cosmoshub-4');
+  const offlineSigner = window.emeris.getOfflineSigner();
+  const signer = await SigningStargateClient.connectWithSigner(
+    'https://rpc-cosmoshub.blockapsis.com:443',
+    offlineSigner,
+  );
+  await signer.sendTokens(
+    'cosmos1ttm76wws8lct6ua09c2jz463jweelhy2c0m6r0',
+    'cosmos1ttm76wws8lct6ua09c2jz463jweelhy2c0m6r0',
+    [
+      {
+        amount: '1',
+        denom: 'uatom',
+      },
+    ],
+    {
+      amount: [{
+        amount: '1',
+        denom: 'uatom',
+      }],
+      gas: '200000',
+    },
+  );
+};
+
+main();
+```
 
 ## Test E2E
 

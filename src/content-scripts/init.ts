@@ -26,11 +26,11 @@ export async function init(emeris: ProxyEmeris): Promise<void> {
     getAccountName: getAccountName.bind(emeris),
     hasWallet: hasWallet.bind(emeris),
     signTransaction: signTransaction.bind(emeris),
-    enable: enable.bind(emeris),
-    keplr: {
-      enable: keplrEnable.bind(emeris),
-      getOfflineSigner: getOfflineAminoSigner.bind(emeris),
-      getKey: getActiveAccount.bind(emeris),
+    enable: (chainIds) => {
+      if (!chainIds) return enable.call(emeris);
+      return keplrEnable.call(emeris, chainIds);
     },
+    getOfflineSigner: getOfflineAminoSigner.bind(emeris),
+    getActiveAccount: getActiveAccount.bind(emeris),
   };
 }

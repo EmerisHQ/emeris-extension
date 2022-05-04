@@ -18,9 +18,8 @@ import {
   SupportedChainsRequest,
 } from '@@/types/api';
 import { IEmeris } from '@@/types/emeris';
+import { DisplayAccount, IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
-
-import { IEmeris, DisplayAccount } from '@@/types/emeris';
 
 export class ProxyEmeris implements IEmeris {
   loaded: boolean;

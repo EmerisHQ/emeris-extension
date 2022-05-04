@@ -13,13 +13,13 @@ export const enableWebsite = async (context, page) => {
     context.waitForEvent('page'), // the background worker opens a new page which is the popup
     // Opens popup.
     page.evaluate(() => {
-      window.emeris.keplr.enable('cosmoshub-4');
+      window.emeris.enable('cosmoshub-4');
     }),
   ]);
   await popup.click('text=Accept');
 };
 
-test.describe('Keplr', () => {
+test.describe('CosmJs', () => {
   test('OfflineSigner', async ({ context, page }) => {
     await enableWebsite(context, page);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
@@ -33,7 +33,7 @@ test.describe('Keplr', () => {
     });
 
     const result = await page.evaluate((defaultCosmosAddress) => {
-      return window.emeris.keplr.getOfflineSigner('cosmoshub-4').signAmino(defaultCosmosAddress, {
+      return window.emeris.getOfflineSigner('cosmoshub-4').signAmino(defaultCosmosAddress, {
         chain_id: 'cosmoshub-4',
         account_number: '0',
         sequence: '0',
@@ -105,7 +105,7 @@ test.describe('Keplr', () => {
     await emerisLoaded(page);
 
     const result = await page.evaluate(() => {
-      return window.emeris.keplr.getOfflineSigner('cosmoshub-4').getAccounts();
+      return window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
     });
 
     await expect(result).toStrictEqual([

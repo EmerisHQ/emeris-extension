@@ -61,12 +61,9 @@ export interface IEmeris {
         }
       | SignAndBroadcastTransactionRequest,
   ) => Promise<AbstractTxResult>;
-  keplr?: {
-    enable: (arg?: ApproveOriginRequest) => Promise<boolean>;
-    getOfflineSigner: (chainId: string) => {
-      signAmino: (signerAddress: string, signDoc: StdSignDoc) => Promise<AminoSignResponse>;
-      getAccounts: () => Promise<AccountData>;
-    };
-    getKey: (chainId: string) => Promise<DisplayAccount>;
+  getOfflineSigner: (chainId: string) => {
+    signAmino: (signerAddress: string, signDoc: StdSignDoc) => Promise<AminoSignResponse>;
+    getAccounts: () => Promise<AccountData>;
   };
+  getActiveAccount: (chainId: string) => Promise<DisplayAccount>;
 }
