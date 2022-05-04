@@ -60,7 +60,7 @@ export type IBCPath = {
   path: string;
 };
 
-export type BalanceToken = {
+export type BalanceDenom = {
   address: string;
   amount: string;
   base_denom: string;
