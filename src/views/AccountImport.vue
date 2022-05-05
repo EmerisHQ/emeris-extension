@@ -58,7 +58,12 @@ const hasInvalidChar = ref(false);
 const unknownWords = ref([]);
 
 const isMnemonicInvalid = computed(() => {
-  return !mnemonic.value || unknownWords.value.length > 0 || invalidRecoveryPhraseWarning.value;
+  return (
+    !mnemonic.value ||
+    unknownWords.value.length > 0 ||
+    invalidRecoveryPhraseWarning.value ||
+    mnemonicFormat(mnemonic.value).split(' ').length < 12
+  );
 });
 
 const errorText = computed(() => {
@@ -99,7 +104,7 @@ watch(mnemonic, async (newValue: string) => {
     unknownWords.value = wordList.filter((word) => !wordlist.includes(word));
 
     // Validate if the mnemonic is valid from 12 words
-    if (wordList.length > 12) {
+    if (wordList.length >= 12) {
       try {
         await Secp256k1HdWallet.fromMnemonic(mnemonic.value);
         invalidRecoveryPhraseWarning.value = false;
