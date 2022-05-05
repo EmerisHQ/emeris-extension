@@ -92,4 +92,13 @@ For individual test runs (replace the string with the test name):
 
 `EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test -g "Create Account"`
 
+For automatic tests:
+
+> If you want to automatically create your tests with `codegen`, you can do it using a different technique as the [Codegen with custom setup](https://playwright.dev/docs/cli#codegen-with-custom-set) guide describes.
+
+- Add `await page.pause();` in any of the tests.
+- Run the test command above.
+- When the test is paused, you can start a new recording session by clicking the recording button.
+- When the new Chrome tab is open, copy the extension link: chrome-extension://cklkpejioojjeiigffappdlcmnonmjek/popup.html?browser=true, and start your tests!
+
 More info about the extension at [Emeris Chrome Extension](https://www.notion.so/allinbits/Emeris-Chrome-Extension-3ad6786c10a64decb033e6df9a99113f) in Notion.
