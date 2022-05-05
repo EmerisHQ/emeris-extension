@@ -6,15 +6,25 @@
     <div
       style="margin-bottom: 16px"
       :class="{
-        error: password && (!length || !upperCaseChar || !symbolChar || !digitChar),
-        success: password && length && upperCaseChar && symbolChar && digitChar,
+        error: password && passwordInvalid,
+        success: password && !passwordInvalid,
       }"
     >
       <Input
         v-model="password"
-        :placeholder="passwordChange ? 'Enter a new password' : 'Enter a password'"
-        type="password"
-      />
+        :placeholder="passwordChange ? 'Enter new password' : 'Enter password'"
+        :type="passwordVisible ? 'text' : 'password'"
+      >
+        <template #end>
+          <a v-if="password" class="cursor-pointer" @click="() => (passwordVisible = !passwordVisible)">
+            <!-- <Icon name="ThreeDotsIcon" :icon-size="1" /> -->
+            <img
+              :class="passwordVisible ? 'w-4 h-4' : 'w-4 h-3 mt-0.5'"
+              :src="passwordVisible ? '/images/EyeSlash.png' : '/images/Eye.png'"
+            />
+          </a>
+        </template>
+      </Input>
     </div>
     <div
       style="margin-bottom: 24px"
@@ -30,18 +40,33 @@
       />
     </div>
     <span class="form-info" :class="{ error: password && !length, success: password && length }"
-      >Minimum 8 characters</span
+      ><Icon v-if="password && length" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
+      <Icon v-if="password && !length" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />Minimum 8
+      characters</span
     >
     <span class="form-info" :class="{ error: password && !upperCaseChar, success: password && upperCaseChar }"
-      >At least one upper case</span
+      ><Icon v-if="password && upperCaseChar" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
+      <Icon v-if="password && !upperCaseChar" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />At least one
+      upper case</span
     >
     <span class="form-info" :class="{ error: password && !symbolChar, success: password && symbolChar }"
-      >At least one symbol</span
+      ><Icon v-if="password && symbolChar" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
+      <Icon v-if="password && !symbolChar" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />At least one
+      symbol</span
     >
     <span class="form-info" :class="{ error: password && !digitChar, success: password && digitChar }"
-      >At least one digit</span
+      ><Icon v-if="password && digitChar" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
+      <Icon v-if="password && !digitChar" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />At least one
+      digit</span
     >
-    <span v-if="passwordRepeated && !match" class="form-info error">Passwords don’t match</span>
+    <span
+      v-if="passwordRepeated"
+      class="form-info"
+      :class="{ error: passwordRepeated && !match, success: passwordRepeated && match }"
+      ><Icon v-if="passwordRepeated && match" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
+      <Icon v-if="passwordRepeated && !match" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />Passwords
+      {{ passwordRepeated && match ? '' : 'do not ' }}match</span
+    >
     <div
       :style="{
         marginTop: 'auto',
@@ -57,7 +82,7 @@
       <Button
         :name="passwordChange ? 'Change password' : 'Continue'"
         type="submit"
-        :disabled="!length || !upperCaseChar || !symbolChar || !digitChar || !match"
+        :disabled="buttonDisabled"
         @click="
           () => {
             submit();
@@ -73,6 +98,7 @@ import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
+import Icon from '@/components/ui/Icon.vue';
 import Input from '@/components/ui/Input.vue';
 import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
@@ -81,11 +107,17 @@ export default defineComponent({
   name: 'Password Create Form',
   components: {
     Button,
+    Icon,
     Input,
+  },
+  props: {
+    onContinue: { type: Function, required: true },
+    passwordChange: { type: Boolean, required: false, default: false },
   },
   data: () => ({
     password: '',
     passwordRepeated: '',
+    passwordVisible: false,
 
     length: false,
     upperCaseChar: false,
@@ -97,10 +129,12 @@ export default defineComponent({
     ...mapState({
       wallet: (state: RootState) => state.extension.wallet,
     }),
-  },
-  props: {
-    onContinue: { type: Function, required: true },
-    passwordChange: { type: Boolean, required: false, default: false },
+    passwordInvalid() {
+      return !this.length || !this.upperCaseChar || !this.symbolChar || !this.digitChar;
+    },
+    buttonDisabled() {
+      return this.passwordInvalid || !this.match;
+    },
   },
   watch: {
     password(password) {
