@@ -10,8 +10,8 @@
       >
     </Header>
     <div class="form" @keyup.enter="submit">
-      <span style="margin-top: 16px; margin-bottom: 16px">Enter your recovery phrase</span>
-      <div style="margin-bottom: 16px">
+      <span class="my-4">Enter your recovery phrase</span>
+      <div class="mb-4">
         <MnemonicInput v-model="mnemonic" placeholder="Your recovery phrase" />
       </div>
       <span v-if="hasInvalidChar" class="form-info error">Invalid character used</span>
@@ -19,23 +19,20 @@
         >Unknown words found: {{ unknownWords.join(', ') }}</span
       >
       <a @click="infoOpen = true">What’s a recovery phrase?</a>
-      <div
-        :style="{
-          marginTop: 'auto',
-        }"
-      >
+      <div class="mt-auto">
         <Button type="submit" name="Import" :disabled="!mnemonic || unknownWords.length > 0" @click="submit" />
       </div>
     </div>
     <Modal
-      title="Invalid recovery phrase"
-      description="Check you have entered your recovery phrase correctly and try again."
-      :open="invalidRecoveryPhraseWarning"
+      title="Invalid secret recovery phrase"
+      description="Check whether you entered your secret recovery phrase correctly."
+      button-text="Try again"
+      :open="true"
       @close="invalidRecoveryPhraseWarning = false"
     ></Modal>
     <Slideout :open="infoOpen" @update:open="infoOpen = $event">
-      <h1 style="margin-bottom: 16px">What’s a recovery phrase?</h1>
-      <div class="secondary-text" style="margin-bottom: 24px">
+      <h1 class="mb-4">What’s a recovery phrase?</h1>
+      <div class="secondary-text mb-6">
         These phrases are usually 12 or 24 words long. Each word in the phrase tends to be unrelated to another. Wallet
         providers will usually provide you a mnemonic phrase when you open a new account, this phrase will help you to
         import your wallet.

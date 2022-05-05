@@ -9,15 +9,15 @@ Browser extension to hold keys and sign transactions for Emeris as well as other
 3. `git submodule init`
 4. `git submodule update`
 5. Or run `git clone https://github.com/EmerisHQ/demeris.git` if you have permission issues after running command number 4
-6. `yarn install`
-7. `yarn run dev`
+6. `yarn`
+7. `yarn dev`
 8. Go to `chrome://extensions` and ensure you are in Developer mode
 9. Drag the `dist` folder into this screen to install the Emeris Extension
 
 ## Most efficient way of doing development
 
 Unfortunately right now there is no hot-reloading. After every change, the extension will have to build again.
-The best you can do is to run `yarn run dev:watch`.
+The best you can do is to run `yarn dev:watch`.
 When you make a change, the extension will rebuild. Wait for that to be done and open the extension again.
 
 (dev:watch includes two scripts that run independent to boost build time. The first builds the views the second the node based scripts)
