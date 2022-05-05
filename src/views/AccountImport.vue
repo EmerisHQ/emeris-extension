@@ -27,7 +27,7 @@
       title="Invalid secret recovery phrase"
       description="Check whether you entered your secret recovery phrase correctly."
       button-text="Try again"
-      :open="true"
+      :open="invalidRecoveryPhraseWarning"
       @close="invalidRecoveryPhraseWarning = false"
     ></Modal>
     <Slideout :open="infoOpen" @update:open="infoOpen = $event">
