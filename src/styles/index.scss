@@ -79,10 +79,10 @@ a {
 // inputs
 
 input:not(.checkbox__control) {
-  background: #262626 !important; // TODO
+  background: #262626; // TODO
 
   &:focus {
-    background: #171717 !important;
+    background: #171717;
   }
 }
 
