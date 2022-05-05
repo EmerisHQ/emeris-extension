@@ -1,8 +1,8 @@
 import { ActionContext, ActionTree } from 'vuex';
+import browser from 'webextension-polyfill';
 
 import { RootState } from '@@/store';
 import { EmerisWallet } from '@@/types/index';
-import BrowserManager from '@@/utils/browser';
 
 import { ActionTypes } from '../action-types';
 import { MutationTypes } from '../mutation-types';
@@ -25,7 +25,6 @@ export interface WalletActionsInterface {
 export const walletActions: ActionTree<State, RootState> & WalletActionsInterface = {
   async [ActionTypes.GET_WALLET]({ commit, getters }) {
     try {
-      const browser = BrowserManager.getInstance().getBrowser();
       const wallet = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'getWallet' } });
       if (wallet) {
         commit(MutationTypes.SET_WALLET, wallet as EmerisWallet);
@@ -38,7 +37,6 @@ export const walletActions: ActionTree<State, RootState> & WalletActionsInterfac
   },
   async [ActionTypes.HAS_WALLET]({ commit }) {
     try {
-      const browser = BrowserManager.getInstance().getBrowser();
       const hasWallet = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'hasWallet' } });
       if (!hasWallet) {
         commit(MutationTypes.SET_WALLET, [] as EmerisWallet);
@@ -50,7 +48,6 @@ export const walletActions: ActionTree<State, RootState> & WalletActionsInterfac
     }
   },
   async [ActionTypes.CREATE_WALLET]({ commit, getters }, { password }: { password: string }) {
-    const browser = BrowserManager.getInstance().getBrowser();
     const response = await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'createWallet', data: { password } },
@@ -60,7 +57,6 @@ export const walletActions: ActionTree<State, RootState> & WalletActionsInterfac
   },
   async [ActionTypes.UNLOCK_WALLET]({ commit, dispatch, getters }, { password }: { password: string }) {
     try {
-      const browser = BrowserManager.getInstance().getBrowser();
       const wallet = await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'unlockWallet', data: { password } },

@@ -1,6 +1,5 @@
-import BrowserManager from '@@/utils/browser';
+import browser from 'webextension-polyfill';
 
 export async function sendMessage(type, data) {
-  const browser = BrowserManager.getInstance().getBrowser();
   return await browser.runtime.sendMessage({ type, data });
 }

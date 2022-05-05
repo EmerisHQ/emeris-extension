@@ -1,9 +1,9 @@
 import { Coin } from '@cosmjs/amino';
 import { ActionContext, ActionTree } from 'vuex';
+import browser from 'webextension-polyfill';
 
 import { GlobalActionTypes } from '@/store';
 import { ExtensionRequest } from '@@/types/index';
-import BrowserManager from '@@/utils/browser';
 
 import { RootState } from '..';
 import { ActionTypes } from './action-types';
@@ -32,7 +32,6 @@ export interface Actions extends AccountActionsInterface, WalletActionsInterface
 export type GlobalActions = Namespaced<Actions, 'extension'>;
 
 const respond = async (id, data) => {
-  const browser = BrowserManager.getInstance().getBrowser();
   await browser.runtime.sendMessage({
     type: 'fromPopup',
     data: { action: 'setResponse', data: { id, ...data } },
@@ -44,7 +43,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
   ...walletActions,
   async [ActionTypes.GET_PENDING]({ commit, getters }) {
     try {
-      const browser = BrowserManager.getInstance().getBrowser();
       const latestPending = await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'getPending' } });
       commit(MutationTypes.ADD_PENDING, latestPending);
     } catch (e) {
@@ -71,7 +69,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
     );
   },
   async [ActionTypes.CHANGE_PASSWORD]({}, { password }: { password: string }) {
-    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'changePassword', data: { password } },
@@ -79,7 +76,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.GET_MNEMONIC]({ commit }, { accountName, password }: { accountName: string; password: string }) {
     try {
-      const browser = BrowserManager.getInstance().getBrowser();
       const account = await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'getMnemonic', data: { accountName, password } },
@@ -93,7 +89,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.GET_ADDRESS]({}, { chainId }: { chainId: string }) {
     try {
-      const browser = BrowserManager.getInstance().getBrowser();
       const address = await browser.runtime.sendMessage({
         type: 'fromPopup',
         data: { action: 'getAddress', data: { chainId } },
@@ -105,11 +100,9 @@ export const actions: ActionTree<State, RootState> & Actions = {
     }
   },
   async [ActionTypes.EXTENSION_RESET]() {
-    const browser = BrowserManager.getInstance().getBrowser();
     return await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'extensionReset' } });
   },
   async [ActionTypes.GET_WHITELISTED_WEBSITES]({ commit }) {
-    const browser = BrowserManager.getInstance().getBrowser();
     const whitelistWebsites = await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'getWhitelistedWebsite' },
@@ -117,7 +110,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
     commit(MutationTypes.SET_WHITELISTED_WEBSITES, whitelistWebsites);
   },
   async [ActionTypes.REMOVE_WHITELISTED_WEBSITE]({ dispatch }, { website }) {
-    const browser = BrowserManager.getInstance().getBrowser();
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'removeWhitelistedWebsite', data: { website } },
@@ -130,7 +122,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   // TODO potentially refactor and split signing with ledger from signing in the background
   async [ActionTypes.ACCEPT_TRANSACTION]({}, { id, action, broadcastable, ...transaction }) {
-    const browser = BrowserManager.getInstance().getBrowser();
     let response = broadcastable;
     // when signing with ledger we get the signed message from the view, when signing with a key we get it signing in the background
     if (!response) {
@@ -148,7 +139,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
     await respond(id, { broadcastable: undefined });
   },
   async [ActionTypes.GET_RAW_TRANSACTION]({}, { messages, chainId, signingAddress, gas, fees, memo }) {
-    const browser = BrowserManager.getInstance().getBrowser();
     return await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: {

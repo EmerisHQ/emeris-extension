@@ -6,12 +6,12 @@
 /* eslint-disable max-lines-per-function */
 import { defineComponent, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import browser from 'webextension-polyfill';
 
 import { GlobalActionTypes } from '@/store/demeris-api/action-types';
 import { MutationTypes } from '@/store/demeris-api/mutation-types';
 import { setStore } from '@/utils/useStore';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
-import BrowserManager from '@@/utils/browser';
 
 export default defineComponent({
   name: 'App',
@@ -103,8 +103,6 @@ export default defineComponent({
           });
       };
       loadData();
-
-      const browser = BrowserManager.getInstance().getBrowser();
 
       browser.runtime.onMessage.addListener((message) => {
         if (message.type == 'toPopup' && message.data.action == 'update') {
