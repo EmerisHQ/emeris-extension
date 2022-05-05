@@ -54,3 +54,17 @@ export type ChainDetails = {
   chainId: string;
   rpcEndpoint: string;
 };
+
+export type IBCPath = {
+  hash: string;
+  path: string;
+};
+
+export type BalanceDenom = {
+  address: string;
+  amount: string;
+  base_denom: string;
+  on_chain: string;
+  verified: boolean;
+  ibc: IBCPath;
+};
