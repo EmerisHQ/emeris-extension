@@ -11,7 +11,6 @@ import router from '@@/router/popup';
 
 import { rootstore } from '../store/index';
 import App from './App.vue';
-
 const i18n = createI18n({
   globalInjection: true,
   legacy: false,

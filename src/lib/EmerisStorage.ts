@@ -3,7 +3,6 @@ import browser from 'webextension-polyfill';
 
 import { SaveWalletError, UnlockWalletError } from '@@/errors';
 import { EmerisAccount, EmerisEncryptedWallet, EmerisWallet } from '@@/types';
-
 export enum EmerisStorageMode {
   SYNC = 'sync',
   LOCAL = 'local',

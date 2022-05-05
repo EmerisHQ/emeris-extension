@@ -12,7 +12,6 @@ import { GlobalActionTypes } from '@/store/demeris-api/action-types';
 import { MutationTypes } from '@/store/demeris-api/mutation-types';
 import { setStore } from '@/utils/useStore';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
-
 export default defineComponent({
   name: 'App',
   setup() {
@@ -23,7 +22,7 @@ export default defineComponent({
     onMounted(async () => {
       store.commit(
         'demerisAPI/' + MutationTypes.INIT,
-        { endpoint: import.meta.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1' },
+        { endpoint: process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1' },
         { root: true },
       );
 
@@ -84,7 +83,7 @@ export default defineComponent({
         // init starport store
         store
           .dispatch('common/env/config', {
-            apiNode: import.meta.env.VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT || 'https://api.emeris.com/v1/liquidity',
+            apiNode: process.env.VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT || 'https://api.emeris.com/v1/liquidity',
             rpcNode: null,
             wsNode: null,
             chainId: 'cosmos-hub',

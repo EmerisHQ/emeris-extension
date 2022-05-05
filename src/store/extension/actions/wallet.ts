@@ -43,7 +43,6 @@ export const walletActions: ActionTree<State, RootState> & WalletActionsInterfac
       }
       return hasWallet;
     } catch (e) {
-      console.log(e);
       throw new Error('Extension:HasWallet failed');
     }
   },
