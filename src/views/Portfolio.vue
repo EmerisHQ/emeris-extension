@@ -83,7 +83,7 @@ import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
-import { AccountCreateStates } from '@@/types/index';
+import { AccountCreateStates, BalanceDenom } from '@@/types/index';
 
 const store = useStore();
 
@@ -103,7 +103,7 @@ const balances = computed(() => {
   if (!account.value) {
     return undefined;
   }
-  return store.getters[GlobalEmerisGetterTypes.getAllBalances](account.value);
+  return store.getters[GlobalEmerisGetterTypes.getAllBalances](account.value).filter((b: BalanceDenom) => b.verified);
 });
 
 watch(account.value, (newValue) => {
