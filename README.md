@@ -48,7 +48,7 @@ Next, run:
 yarn run dev:web
 ```
 
-Now, open the page: http://localhost:8080/?browser=true
+Now, open the page: http://localhost:8080/popup.html?browser=true
 
 ## Usage
 
