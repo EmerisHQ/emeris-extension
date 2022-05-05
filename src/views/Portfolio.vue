@@ -114,7 +114,9 @@ watch(account.value, (newValue) => {
 });
 
 onMounted(async () => {
-  await webDebugging();
+  if (import.meta.env.MODE === 'web') {
+    await webDebugging();
+  }
   if (account.value && account.value.setupState !== AccountCreateStates.COMPLETE) {
     const localStorageKey = `nextBackupCheck-${account.value.accountName}`;
     const nextCheckTimestamp = Number(window.localStorage.getItem(localStorageKey));

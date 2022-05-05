@@ -1,4 +1,3 @@
-import { GlobalActionTypes } from '@/store/demeris-api/action-types';
 import { useExtensionStore } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates, EmerisAccount, EmerisWallet } from '@@/types';
@@ -21,10 +20,6 @@ export const webDebugging = async () => {
     console.log('web debugging activated');
 
     const store = useExtensionStore();
-
-    await store.dispatch(GlobalActionTypes.GET_VERIFIED_DENOMS, {
-      subscribe: false,
-    });
     await store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, { password: password });
     await store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, { account: account });
     await store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
