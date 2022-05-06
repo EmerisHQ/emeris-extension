@@ -13,7 +13,7 @@ test.describe('Transactions', () => {
 
     // when the transaction popup shows, click accept
     context.waitForEvent('page').then(async (popup) => {
-      await expect(popup.locator('.total-price')).not.toHaveText('$0.00') // fees should display
+      await expect(popup.locator('.total-price')).not.toHaveText('$0.00'); // fees should display
       await popup.click('text=Accept');
     });
 

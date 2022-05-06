@@ -36,7 +36,7 @@ export interface AccountActionsInterface {
   }: ActionContext<State, RootState>): Promise<EmerisAccount & { route: string }>;
 }
 
-export const airdropActions: ActionTree<State, RootState> & AccountActionsInterface = {
+export const accountActions: ActionTree<State, RootState> & AccountActionsInterface = {
   async [ActionTypes.CREATE_ACCOUNT]({ dispatch }, { account }: { account: EmerisAccount }) {
     await sendMessage('fromPopup', { action: 'createAccount', data: { account } });
     dispatch(ActionTypes.GET_WALLET);

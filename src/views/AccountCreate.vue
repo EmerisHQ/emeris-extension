@@ -9,10 +9,10 @@
       </div>
       <div class="my-6">
         <input
+          v-model="name"
           type="text"
           class="w-full border-none !bg-transparent text-center font-medium text-2 focus:outline-none focus:border-none"
           :class="{ 'text-negative-text': error || nameHasSpecialCharacters }"
-          v-model="name"
           placeholder="Surfer"
           style="caret-color: rgba(255, 255, 255, 0.5)"
         />
@@ -103,6 +103,7 @@ export default defineComponent({
     async submit() {
       try {
         const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
+
         await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, {
           account: {
             accountName: this.name,
@@ -112,6 +113,7 @@ export default defineComponent({
             ...this.newAccount,
           },
         });
+
         // if the account is imported we don't need to show the backup seed screen
         let nextRoute;
         if (this.newAccount.setupState === AccountCreateStates.COMPLETE) {
@@ -119,6 +121,7 @@ export default defineComponent({
         } else {
           nextRoute = '/backup';
         }
+
         await this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow
         this.$router.push(nextRoute);
       } catch (err) {
@@ -131,6 +134,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <style scoped>
 .terms-of-use {
   font-size: 13px;
