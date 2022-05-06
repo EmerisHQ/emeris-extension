@@ -84,6 +84,7 @@ import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates, BalanceDenom } from '@@/types/index';
+import { webDebugging } from '@@/utils/web-debugging';
 
 const store = useStore();
 
@@ -112,7 +113,10 @@ watch(account.value, (newValue) => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
+  if (import.meta.env.MODE === 'web') {
+    await webDebugging();
+  }
   if (account.value && account.value.setupState !== AccountCreateStates.COMPLETE) {
     const localStorageKey = `nextBackupCheck-${account.value.accountName}`;
     const nextCheckTimestamp = Number(window.localStorage.getItem(localStorageKey));

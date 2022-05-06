@@ -7,7 +7,7 @@ import { ExtensionRequest } from '@@/types/index';
 
 import { RootState } from '..';
 import { ActionTypes } from './action-types';
-import { AccountActionsInterface, airdropActions } from './actions/account';
+import { accountActions, AccountActionsInterface } from './actions/account';
 import { walletActions, WalletActionsInterface } from './actions/wallet';
 import { MutationTypes } from './mutation-types';
 import { State } from './state';
@@ -39,7 +39,7 @@ const respond = async (id, data) => {
 };
 
 export const actions: ActionTree<State, RootState> & Actions = {
-  ...airdropActions,
+  ...accountActions,
   ...walletActions,
   async [ActionTypes.GET_PENDING]({ commit, getters }) {
     try {
