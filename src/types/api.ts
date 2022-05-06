@@ -188,6 +188,12 @@ export type SetPartialAccountCreationStepRequest = Request & {
 export type GetPartialAccountCreationStepRequest = Request & {
   action: 'getPartialAccountCreationStep';
 };
+export type ActiveAccountRequest = Request & {
+  action: 'getActiveAccount';
+  data: EmerisAccount & {
+    chainId: string;
+  };
+};
 export type ExtensionRequest =
   | ApproveOriginRequest
   | SignTransactionRequest
@@ -198,6 +204,7 @@ export type ExtensionRequest =
   | IsHWWalletRequest
   | SupportedChainsRequest
   | GetAccountNameRequest
+  | ActiveAccountRequest
   | HasWalletRequest;
 export type PopupRequest =
   | GetPendingRequest

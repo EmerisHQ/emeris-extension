@@ -1,9 +1,25 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from './helpers';
+import { defaultCosmosAddress, emerisLoaded, importAccount } from './helpers';
 
-test.describe('Keplr', () => {
+export const enableWebsite = async (context, page) => {
+  await page.goto(`https://www.google.com/`);
+
+  await emerisLoaded(page);
+
+  const [popup] = await Promise.all([
+    // It is important to call waitForEvent before click to set up waiting.
+    context.waitForEvent('page'), // the background worker opens a new page which is the popup
+    // Opens popup.
+    page.evaluate(() => {
+      window.emeris.enable('cosmoshub-4');
+    }),
+  ]);
+  await popup.click('text=Accept');
+};
+
+test.describe('CosmJs', () => {
   test('OfflineSigner', async ({ context, page }) => {
     await enableWebsite(context, page);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
@@ -17,7 +33,7 @@ test.describe('Keplr', () => {
     });
 
     const result = await page.evaluate((defaultCosmosAddress) => {
-      return window.emeris.keplr.getOfflineSigner('cosmoshub-4').signAmino(defaultCosmosAddress, {
+      return window.emeris.getOfflineSigner('cosmoshub-4').signAmino(defaultCosmosAddress, {
         chain_id: 'cosmoshub-4',
         account_number: '0',
         sequence: '0',
@@ -46,6 +62,21 @@ test.describe('Keplr', () => {
         chain_id: 'cosmoshub-4',
         fee: { amount: [{ amount: '1000', denom: 'uatom' }], gas: '200000' },
         memo: 'Sent with Emeris',
+        msgs: [
+          {
+            type: 'cosmos-sdk/MsgSend',
+            value: {
+              amount: [
+                {
+                  amount: '1',
+                  denom: 'uatom',
+                },
+              ],
+              from_address: 'cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9',
+              to_address: 'cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9',
+            },
+          },
+        ],
         sequence: '0',
         msgs: [
           {
@@ -74,7 +105,7 @@ test.describe('Keplr', () => {
     await emerisLoaded(page);
 
     const result = await page.evaluate(() => {
-      return window.emeris.keplr.getOfflineSigner('cosmoshub-4').getAccounts();
+      return window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
     });
 
     await expect(result).toStrictEqual([
@@ -118,5 +149,44 @@ test.describe('Keplr', () => {
         },
       },
     ]);
+  });
+
+  test('Request page whitelisting', async ({ page, context }) => {
+    await page.goto(`https://www.google.com/`);
+    await emerisLoaded(page);
+
+    // negative test
+    expect(
+      await page.evaluate(() => {
+        return window.emeris.supportedChains();
+      }),
+    ).toBe(false); // TODO the response should be a thrown error imo
+
+    await enableWebsite(context, page);
+
+    // positive test
+    expect(
+      async () =>
+        await page.evaluate(() => {
+          return window.emeris.supportedChains();
+        }),
+    ).not.toBe(false);
+
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
+    await expect(page.locator('text=https://www.google.com').first()).toBeVisible();
+
+    // disconnect page
+    await page.click('text=disconnect');
+    await page.click('text=Remove');
+
+    // check if disconnected
+    await expect(page.locator('text=https://www.google.com')).not.toBeVisible();
+    await page.goto(`https://www.google.com`);
+    await emerisLoaded(page);
+    expect(
+      await page.evaluate(() => {
+        return window.emeris.supportedChains();
+      }),
+    ).toBe(false); // TODO the response should be a thrown error imo
   });
 });

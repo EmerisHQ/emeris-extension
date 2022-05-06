@@ -3,7 +3,6 @@
 </template>
 
 <script lang="ts">
-import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import { computed, defineComponent } from 'vue';
 import browser from 'webextension-polyfill';
 
@@ -12,6 +11,7 @@ import { useExtensionStore } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { ExtensionRequest } from '@@/types';
+import { webDebugging } from '@@/utils/web-debugging';
 
 // TODO this component should be refactored into sth more speaking imo
 
@@ -38,19 +38,17 @@ export default defineComponent({
         },
       });
     };
-    const logLedger = () => {
-      TransportWebUSB.create(10000).then((transport) => {
-        console.log(transport);
-      });
-    };
 
-    return { pending, respond, wallet, logLedger };
+    return { pending, respond, wallet };
   },
   mounted() {
     this.route();
   },
   methods: {
     async route() {
+      if (import.meta.env.MODE === 'web') {
+        await webDebugging();
+      }
       const pending = await this.$store.dispatch(GlobalEmerisActionTypes.GET_PENDING);
       const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
       const wallet = await this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET); // if able to load the wallet, the extension is unlocked
@@ -69,7 +67,8 @@ export default defineComponent({
       else if (pending.length > 0) {
         switch (pending[0].action) {
           // TODO replace action names with enums
-          case 'enable' || 'keplrEnable':
+          case 'enable':
+          case 'keplrEnable':
             this.$router.push({ path: '/whitelist' });
             break;
           case 'signTransaction':

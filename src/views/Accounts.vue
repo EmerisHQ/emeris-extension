@@ -61,9 +61,9 @@
       <Button name="Add account" @click="addAdditionalAccount = true" />
     </div>
     <Slideout :open="!!editWallet" @update:open="() => (editWallet = null)">
-      <Button name="Edit wallet name" variant="link" @click="renameAccount" style="margin-bottom: 4px" />
+      <Button name="Edit wallet name" variant="link" style="margin-bottom: 4px" @click="renameAccount" />
       <hr style="opacity: 0.14; margin-bottom: 4px" />
-      <Button name="Remove account" variant="link" link-color="red" @click="removeAccount" style="margin-bottom: 4px" />
+      <Button name="Remove account" variant="link" link-color="red" style="margin-bottom: 4px" @click="removeAccount" />
       <hr style="opacity: 0.14; margin-bottom: 4px" />
       <div style="font-weight: 600">
         <Button name="Cancel" variant="link" @click="() => (editWallet = null)" />

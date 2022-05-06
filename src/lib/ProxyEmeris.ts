@@ -18,6 +18,7 @@ import {
   SupportedChainsRequest,
 } from '@@/types/api';
 import { IEmeris } from '@@/types/emeris';
+import { DisplayAccount, IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
 
 export class ProxyEmeris implements IEmeris {
@@ -235,6 +236,26 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
 
+  async getActiveAccount(chainId: string): Promise<DisplayAccount> {
+    const request = {
+      action: 'getActiveAccount',
+      data: { chainId },
+    };
+    const response = await this.sendRequest(request as ApproveOriginRequest);
+    const data = response.data as {
+      name: string;
+      algo: string;
+      pubKey: string;
+      address: string;
+      bech32Address: string;
+    };
+    return {
+      ...data,
+      pubKey: Uint8Array.from(Buffer.from(data.pubKey, 'hex')),
+      address: Uint8Array.from(Buffer.from(data.address, 'hex')),
+    };
+  }
+
   getOfflineAminoSigner(chainId) {
     const offlineSigner = {
       chainId: undefined,
@@ -248,7 +269,10 @@ export class ProxyEmeris implements IEmeris {
           })),
           chainId: signDoc.chain_id, // will be resolved in the backend
           signingAddress: signerAddress,
-          fee: signDoc.fee,
+          fee: {
+            gas: signDoc.fee.gas,
+            amount: signDoc.fee.amount,
+          },
           memo: signDoc.memo,
         });
       },

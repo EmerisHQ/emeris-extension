@@ -16,6 +16,14 @@ import {
 } from './api';
 import { AbstractTxResult } from './transactions';
 
+export interface DisplayAccount {
+  name: string;
+  algo: string;
+  pubKey: Uint8Array;
+  address: Uint8Array;
+  bech32Address: string;
+}
+
 export interface IEmeris {
   loaded: boolean;
   getAddress?: (arg: string | GetAddressRequest) => Promise<string>;
@@ -53,11 +61,9 @@ export interface IEmeris {
         }
       | SignAndBroadcastTransactionRequest,
   ) => Promise<AbstractTxResult>;
-  keplr?: {
-    enable: (arg?: ApproveOriginRequest) => Promise<boolean>;
-    getOfflineSigner: (chainId: string) => {
-      signAmino: (signerAddress: string, signDoc: StdSignDoc) => Promise<AminoSignResponse>;
-      getAccounts: () => Promise<AccountData>;
-    };
+  getOfflineSigner: (chainId: string) => {
+    signAmino: (signerAddress: string, signDoc: StdSignDoc) => Promise<AminoSignResponse>;
+    getAccounts: () => Promise<AccountData>;
   };
+  getActiveAccount: (chainId: string) => Promise<DisplayAccount>;
 }

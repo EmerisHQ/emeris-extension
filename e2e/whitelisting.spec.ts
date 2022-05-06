@@ -19,11 +19,16 @@ test.describe('Whitelisting', () => {
 
     // positive test
     expect(
-      async () =>
-        await page.evaluate(() => {
-          return window.emeris.supportedChains();
-        }),
+      await page.evaluate(() => {
+        return window.emeris.supportedChains();
+      }),
     ).not.toBe(false);
+
+    expect(
+      await page.evaluate(() => {
+        return window.emeris.enable();
+      }),
+    ).toBe(true);
 
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
     await expect(page.locator('text=https://www.google.com').first()).toBeVisible();
