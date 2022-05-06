@@ -16,19 +16,12 @@
           placeholder="Surfer"
           style="caret-color: rgba(255, 255, 255, 0.5)"
         />
-        <p v-if="error" class="form-info error text-center mt-6">
-          You already used this name for another account. Choose another name.
-        </p>
-        <p v-if="nameHasSpecialCharacters" class="form-info error text-center mt-6">
-          Name cannot contain special characters, only numbers and letters.
+        <p v-if="errorText" class="form-info error text-center mt-6">
+          {{ errorText }}
         </p>
       </div>
     </div>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
+    <div class="mt-auto">
       <Button name="Continue" :disabled="buttonDisabled" @click="submit" />
     </div>
   </div>
@@ -65,6 +58,11 @@ export default defineComponent({
     },
     buttonDisabled() {
       return !this.name || this.error || this.nameHasSpecialCharacters;
+    },
+    errorText() {
+      if (this.error) return 'You already used this name for another account. Choose another name.';
+      if (this.nameHasSpecialCharacters) return 'Name cannot contain special characters, only numbers and letters.';
+      return '';
     },
   },
   data: () => ({
