@@ -12,6 +12,7 @@ import { defineConfig } from 'vitest/config';
 import * as pkg from './package.json';
 
 // https://vitejs.dev/config/
+// eslint-disable-next-line max-lines-per-function
 export default () => {
   // Do Node stuff here:
   process.env.VITE_GIT_VERSION = pkg.version;
@@ -57,6 +58,9 @@ export default () => {
         stream: 'rollup-plugin-node-polyfills/polyfills/stream',
         '@': path.resolve(__dirname, './demeris/src'),
         '@@': path.resolve(__dirname, './src'),
+        ...(process.env.NODE_ENV === 'web'
+          ? { 'webextension-polyfill': path.resolve(__dirname, './src/utils/web-browser') }
+          : {}),
       },
       extensions: ['.ts', '.vue', '.js', '.json', '.tsx'],
     },

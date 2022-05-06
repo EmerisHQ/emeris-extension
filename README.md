@@ -22,6 +22,34 @@ When you make a change, the extension will rebuild. Wait for that to be done and
 
 (dev:watch includes two scripts that run independent to boost build time. The first builds the views the second the node based scripts)
 
+## Experimental: Debug on Web
+
+Known issues:
+
+- Some pages don't seem to work well, for example Accounts page. Seems something minor, looking for a fix.
+
+Running the chrome extension as a webapp.
+This might not be a great idea for specific functionality which for example needs storage, or signing transactions.
+However, for doing visual development, this might speed you up quite a bit, because you don't have to wait for the extension to build for 60 seconds.
+
+To run:
+Add the following in your `.env.local` file:
+Note: [See how to get the keyhash](https://www.notion.so/allinbits/How-do-Key-Hashes-work-284f9b77ef4b4a47992d5aa392e909a6)
+
+```
+VITE_EMERIS_MNEMONIC={mnemonic}
+VITE_EMERIS_KEYHASH={cosmos keyhash from your account}
+VITE_EMERIS_WALLET_PASSWORD=1234
+```
+
+Next, run:
+
+```
+yarn run dev:web
+```
+
+Now, open the page: http://localhost:8080/popup.html?browser=true
+
 ## Usage
 
 ```
