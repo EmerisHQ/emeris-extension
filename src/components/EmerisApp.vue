@@ -3,7 +3,6 @@
 </template>
 
 <script lang="ts">
-import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import { computed, defineComponent } from 'vue';
 import browser from 'webextension-polyfill';
 
@@ -39,13 +38,8 @@ export default defineComponent({
         },
       });
     };
-    const logLedger = () => {
-      TransportWebUSB.create(10000).then((transport) => {
-        console.log(transport);
-      });
-    };
 
-    return { pending, respond, wallet, logLedger };
+    return { pending, respond, wallet };
   },
   mounted() {
     this.route();
@@ -73,7 +67,8 @@ export default defineComponent({
       else if (pending.length > 0) {
         switch (pending[0].action) {
           // TODO replace action names with enums
-          case 'enable' || 'keplrEnable':
+          case 'enable':
+          case 'keplrEnable':
             this.$router.push({ path: '/whitelist' });
             break;
           case 'signTransaction':

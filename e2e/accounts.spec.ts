@@ -2,6 +2,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
+import { emerisLoaded, enableWebsite } from './helpers';
 import { defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers';
 
 /* eslint-disable max-lines-per-function */
@@ -178,5 +179,80 @@ test.describe('Account Create', () => {
 
     // on changing the account see if the window receives the event
     await Promise.all([waitForEvent(secondPage, 'emeris_account_changed', 3), page.click('text=Test Import Account')]);
+  });
+
+  test('Get active account', async ({ page, context }) => {
+    await enableWebsite(context, page);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
+    await importAccount(page);
+    await page.goto(`https://www.google.com/`);
+    await emerisLoaded(page);
+
+    expect(
+      await page.evaluate(() => {
+        return window.emeris.getActiveAccount('cosmoshub-4');
+      }),
+    ).toStrictEqual({
+      address: {
+        '0': 199,
+        '1': 144,
+        '10': 216,
+        '11': 14,
+        '12': 17,
+        '13': 220,
+        '14': 238,
+        '15': 119,
+        '16': 121,
+        '17': 114,
+        '18': 107,
+        '19': 185,
+        '2': 166,
+        '3': 243,
+        '4': 47,
+        '5': 40,
+        '6': 95,
+        '7': 170,
+        '8': 38,
+        '9': 110,
+      },
+      algo: 'secp256k1',
+      bech32Address: 'cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9',
+      name: 'Test Account Imported',
+      pubKey: {
+        '0': 3,
+        '1': 173,
+        '10': 98,
+        '11': 112,
+        '12': 209,
+        '13': 146,
+        '14': 124,
+        '15': 122,
+        '16': 72,
+        '17': 236,
+        '18': 45,
+        '19': 120,
+        '2': 223,
+        '20': 89,
+        '21': 205,
+        '22': 9,
+        '23': 111,
+        '24': 247,
+        '25': 7,
+        '26': 116,
+        '27': 89,
+        '28': 81,
+        '29': 40,
+        '3': 175,
+        '30': 48,
+        '31': 163,
+        '32': 92,
+        '4': 70,
+        '5': 46,
+        '6': 37,
+        '7': 166,
+        '8': 79,
+        '9': 144,
+      },
+    });
   });
 });

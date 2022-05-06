@@ -150,7 +150,7 @@
       "prettier --write"
     ],
     "*.{js,ts,tsx,vue}": [
-      "npm run lint -- --quiet"
+      "npm run lint"
     ]
   },
   "simple-git-hooks": {

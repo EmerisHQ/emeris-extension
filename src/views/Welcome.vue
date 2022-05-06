@@ -10,7 +10,8 @@
     >
       <AccountCreateSection />
       <div style="text-align: center; margin-top: 16px; font-size: 13px">
-        Need help? Visit <a href="" @click="open('https://support.emeris.com/')">Emeris Support</a>
+        Need help? Visit
+        <a href="" @click="open('https://support.emeris.com/')">Emeris Support</a>
       </div>
     </div>
   </div>

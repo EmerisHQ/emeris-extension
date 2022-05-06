@@ -2,6 +2,7 @@
 /* eslint-disable max-lines */
 
 import { AminoMsg, AminoSignResponse } from '@cosmjs/amino';
+import { fromBech32 } from '@cosmjs/encoding';
 import TxMapper from '@emeris/mapper';
 // @ts-ignore
 import adapter from '@vespaiach/axios-fetch-adapter';
@@ -9,9 +10,11 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import browser from 'webextension-polyfill';
 
+import { keyHashfromAddress } from '@/utils/basic';
 import { UnlockWalletError } from '@@/errors';
 import { EmerisWallet } from '@@/types';
 import {
+  ActiveAccountRequest,
   ApproveOriginRequest,
   ExtensionRequest,
   ExtensionResponse,
@@ -28,6 +31,7 @@ import {
 } from '@@/types/api';
 import { IEmeris } from '@@/types/emeris';
 
+import chainConfig from '../chain-config';
 // TODO
 import EmerisStorage from './EmerisStorage';
 import libs from './libraries';
@@ -52,9 +56,6 @@ const convertObjectKeys = (obj, doX) => {
 const snakeToCamel = (str) =>
   str.replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
 
-import { keyHashfromAddress } from '@/utils/basic';
-
-import chainConfig from '../chain-config';
 export class Emeris implements IEmeris {
   public loaded: boolean;
   private storage: EmerisStorage;
@@ -586,16 +587,17 @@ export class Emeris implements IEmeris {
   async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
     request.id = uuidv4();
     const chainIds = request.data.chainIds;
+    const chainConfigLookup = await chainConfig;
     if (typeof chainIds === 'string') {
-      Object.values(chainConfig).forEach((config) => {
-        if (config.chainId !== chainIds) {
+      Object.values(chainConfigLookup).forEach((config) => {
+        if (config.node_info.chain_id !== chainIds) {
           return false;
         }
       });
     } else if (Array.isArray(chainIds)) {
       chainIds.forEach((chainId) => {
-        Object.values(chainConfig).forEach((config) => {
-          if (config.chainId !== chainId) {
+        Object.values(chainConfigLookup).forEach((config) => {
+          if (config.node_info.chain_id !== chainId) {
             return false;
           }
         });
@@ -608,5 +610,36 @@ export class Emeris implements IEmeris {
       await this.storage.addWhitelistedWebsite(request.origin);
     }
     return enabled;
+  }
+
+  async getActiveAccount(request: ActiveAccountRequest): Promise<{
+    readonly name: string;
+    readonly algo: string;
+    readonly pubKey: string; // hex encoded Uint8Array
+    readonly address: string; // hex encoded Uint8Array
+    readonly bech32Address: string;
+  }> {
+    // find chain based on chain ID
+    const chain = Object.values(await chainConfig).find((config) => config.node_info.chain_id == request.data.chainId);
+    if (!chain) {
+      throw new Error('Chain not supported: ' + request.data.chainId);
+    }
+
+    const account = this.getAccount();
+    if (!account) {
+      throw new Error('No account selected');
+    }
+
+    const name = this.selectedAccount;
+    const pubKey = await libs[chain.library].getPublicKey(account, chain);
+    const bech32Address = await libs[chain.library].getAddress(account, chain);
+    const address = fromBech32(bech32Address).data;
+    return {
+      name,
+      algo: 'secp256k1',
+      pubKey: Buffer.from(pubKey).toString('hex'),
+      address: Buffer.from(address).toString('hex'),
+      bech32Address,
+    };
   }
 }
