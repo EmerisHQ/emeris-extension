@@ -14,7 +14,7 @@ test.describe('Account Create', () => {
   test('Create Account', async ({ page }) => {
     await expect(page.locator('text=Create Account >> visible=true')).toBeVisible();
     await page.click('text=Create Account >> visible=true');
-    await page.fill('[placeholder="Enter a password"]', '123456A$');
+    await page.fill('[placeholder="Enter password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
     await page.fill('[placeholder="Surfer"]', 'Test Account Created');
@@ -30,7 +30,7 @@ test.describe('Account Create', () => {
     await expect(page.locator('text=Create Account >> visible=true')).toBeVisible();
     await page.click('text=Create Account >> visible=true');
 
-    await page.fill('[placeholder="Enter a password"]', '123456A$');
+    await page.fill('[placeholder="Enter password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
 

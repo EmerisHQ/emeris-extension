@@ -9,8 +9,8 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
   await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
   await page.click('text=Import Account >> visible=true');
 
-  if (await page.$('[placeholder="Enter a password"]')) {
-    await page.fill('[placeholder="Enter a password"]', '123456A$');
+  if (await page.$('[placeholder="Enter password"]')) {
+    await page.fill('[placeholder="Enter password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
   }
