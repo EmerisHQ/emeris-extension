@@ -7,8 +7,11 @@ import { defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers'
 
 /* eslint-disable max-lines-per-function */
 test.describe('Account Create', () => {
-  test('Create Account', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
+  });
+
+  test('Create Account', async ({ page }) => {
     await expect(page.locator('text=Create Account >> visible=true')).toBeVisible();
     await page.click('text=Create Account >> visible=true');
     await page.fill('[placeholder="Enter a password"]', '123456A$');
@@ -21,9 +24,8 @@ test.describe('Account Create', () => {
     await page.click('text=Continue');
     await expect(page.locator('text=Test Account Created >> visible=true')).toBeVisible();
   });
-  test('Create Account with backup', async ({ page }) => {
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
 
+  test('Create Account with backup', async ({ page }) => {
     // Test creation
     await expect(page.locator('text=Create Account >> visible=true')).toBeVisible();
     await page.click('text=Create Account >> visible=true');
@@ -81,7 +83,6 @@ test.describe('Account Create', () => {
   });
 
   test('Import Account', async ({ page }) => {
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
 
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
@@ -109,6 +110,43 @@ test.describe('Account Create', () => {
     await expect(page.locator('text=Test Account Imported >> visible=true')).toBeVisible();
   });
 
+  test.describe('Cannot Import Account', () => {
+    let mnemonic = '';
+
+    test.beforeEach(async ({ page }) => {
+      await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
+      await page.click('text=Import Account >> visible=true');
+
+      if (await page.$('[placeholder="Enter a password"]')) {
+        await page.fill('[placeholder="Enter a password"]', '123456A$');
+        await page.fill('[placeholder="Confirm password"]', '123456A$');
+        await page.click('text=Continue');
+      }
+    });
+
+    test.afterEach(async ({ page }) => {
+      const importButtonDisabled = await page.locator('button', { hasText: 'Import' }).isDisabled();
+      await expect(importButtonDisabled).toBeTruthy();
+    });
+
+    test('Should enter only correct words in the mnemonic', async ({ page }) => {
+      mnemonic = 'rilld';
+      await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
+      await expect(page.locator('text=Unknown words found: rilld >> visible=true')).toBeVisible();
+    });
+
+    test('Should enter enough words in the mnemonic', async ({ page }) => {
+      mnemonic = 'drill question cream love depart sort blast nose';
+      await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
+    });
+
+    test('Should enter enough words in the mnemonic and be valid (exist)', async ({ page }) => {
+      mnemonic = 'drill question cream love depart sort nose blast brown master other thunder fabric';
+      await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
+      await expect(page.locator('text=Invalid secret recovery phrase >> visible=true')).toBeVisible();
+    });
+  });
+
   test('Switch account', async ({ page, context }) => {
     async function waitForEvent(page, eventName, seconds) {
       seconds = seconds || 30;
@@ -116,9 +154,9 @@ test.describe('Account Create', () => {
       // use race to implement a timeout
       return Promise.race([
         // add event listener and wait for event to fire before returning
-        page.evaluate(function (eventName) {
-          return new Promise(function (resolve) {
-            document.addEventListener(eventName, function () {
+        page.evaluate((eventName) => {
+          return new Promise<void>((resolve) => {
+            document.addEventListener(eventName, () => {
               resolve(); // resolves when the event fires
             });
           });
@@ -129,7 +167,6 @@ test.describe('Account Create', () => {
       ]);
     }
 
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.waitForTimeout(1 * 1000);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accountAddAdditional`);

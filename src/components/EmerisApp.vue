@@ -11,6 +11,7 @@ import { useExtensionStore } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { ExtensionRequest } from '@@/types';
+import { webDebugging } from '@@/utils/web-debugging';
 
 // TODO this component should be refactored into sth more speaking imo
 
@@ -45,6 +46,9 @@ export default defineComponent({
   },
   methods: {
     async route() {
+      if (import.meta.env.MODE === 'web') {
+        await webDebugging();
+      }
       const pending = await this.$store.dispatch(GlobalEmerisActionTypes.GET_PENDING);
       const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
       const wallet = await this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET); // if able to load the wallet, the extension is unlocked

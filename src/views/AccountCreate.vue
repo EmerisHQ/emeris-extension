@@ -1,19 +1,15 @@
 <template>
   <div class="page">
     <Header title="Account Name" />
-    <span class="secondary-text" style="margin-top: 16px; margin-bottom: 24px"
-      >If you have multiple accounts this will help you to find the right one</span
-    >
-    <div style="margin-bottom: 16px">
+    <span class="secondary-text mt-4 mb-6">
+      If you have multiple accounts this will help you to find the right one
+    </span>
+    <div class="mb-4">
       <Input v-model="name" placeholder="Account Name" />
       <span v-if="error" class="form-info error">Name already in use</span>
     </div>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
-      <div style="margin-bottom: 32px; display: flex" class="terms-of-use">
+    <div class="mt-auto">
+      <div class="mb-8 flex terms-of-use">
         <Icon
           name="InformationIcon"
           style="margin-right: 9px; transform: rotate(180deg)"
@@ -97,6 +93,7 @@ export default defineComponent({
 
       try {
         const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
+
         await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, {
           account: {
             accountName: this.name,
@@ -106,6 +103,7 @@ export default defineComponent({
             ...this.newAccount,
           },
         });
+
         // if the account is imported we don't need to show the backup seed screen
         let nextRoute;
         if (this.newAccount.setupState === AccountCreateStates.COMPLETE) {
@@ -113,6 +111,7 @@ export default defineComponent({
         } else {
           nextRoute = '/backup';
         }
+
         await this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow
         this.$router.push(nextRoute);
       } catch (err) {
@@ -125,6 +124,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <style scoped>
 .terms-of-use {
   font-size: 13px;

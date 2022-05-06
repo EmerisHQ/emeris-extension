@@ -4,6 +4,7 @@
   "private": true,
   "author": "Ignite, Inc <hello@ignt.com>",
   "scripts": {
+    "dev:web": "NODE_ENV=web vite --config vite.config.ts --mode web",
     "coverage": "vitest run --coverage",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' vite build --mode production",
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' vite build --mode development",

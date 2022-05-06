@@ -37,7 +37,7 @@
       >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
     /></span>
     <h1 style="font-size: 38px; text-align: left; margin-bottom: 24px">
-      <TotalPrice :balances="balances" small-decimals />
+      <SumBalances :balances="balances" />
     </h1>
     <div style="display: flex">
       <Button name="Receive" style="margin-right: 12px; flex: 1" @click="$router.push('/receive')" />
@@ -71,74 +71,68 @@
   </Slideout>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue';
+import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
-import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
 import { GlobalGetterTypes } from '@/store';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
+import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
-import { AccountCreateStates } from '@@/types/index';
+import { AccountCreateStates, BalanceDenom } from '@@/types/index';
+import { webDebugging } from '@@/utils/web-debugging';
+
+const store = useStore();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
-export default defineComponent({
-  name: 'Portfolio',
-  components: {
-    Button,
-    Icon,
-    AssetsTable,
-    TotalPrice,
-    Loader,
-    Slideout,
-  },
-  data: () => ({
-    showMnemonicBackup: false,
-  }),
-  computed: {
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
-    },
-    verifiedDenoms() {
-      return this.$store.getters[GlobalGetterTypes.API.getVerifiedDenoms];
-    },
-    balances() {
-      if (!this.account) return undefined;
-      return this.$store.getters[GlobalEmerisGetterTypes.getAllBalances](this.account);
-    },
-  },
-  watch: {
-    account: {
-      handler(account) {
-        if (account.setupState === AccountCreateStates.COMPLETE) {
-          this.$data.showMnemonicBackup = false;
-        }
-      },
-    },
-  },
-  mounted() {
-    if (this.account && this.account.setupState !== AccountCreateStates.COMPLETE) {
-      const localStorageKey = `nextBackupCheck-${this.account.accountName}`;
-      const nextCheckTimestamp = Number(window.localStorage.getItem(localStorageKey));
-      const nowInSeconds = Math.floor(Date.now() / 1000);
-      if (isNaN(nextCheckTimestamp) || nowInSeconds - nextCheckTimestamp > 0) {
-        this.$data.showMnemonicBackup = true;
-      }
-    }
-  },
-  methods: {
-    skipBackup() {
-      const localStorageKey = `nextBackupCheck-${this.account.accountName}`;
-      const nowInSeconds = Math.floor(Date.now() / 1000);
-      window.localStorage.setItem(localStorageKey, `${nowInSeconds + CHECK_INTERVAL_SECONDS}`);
-      this.$data.showMnemonicBackup = false;
-    },
-  },
+const showMnemonicBackup = ref(false);
+
+const account = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getAccount];
 });
+
+const verifiedDenoms = computed(() => {
+  return store.getters[GlobalGetterTypes.API.getVerifiedDenoms];
+});
+
+const balances = computed(() => {
+  if (!account.value) {
+    return undefined;
+  }
+  return store.getters[GlobalEmerisGetterTypes.getAllBalances](account.value).filter((b: BalanceDenom) => b.verified);
+});
+
+watch(account.value, (newValue) => {
+  if (newValue.setupState === AccountCreateStates.COMPLETE) {
+    showMnemonicBackup.value = false;
+  }
+});
+
+onMounted(async () => {
+  if (import.meta.env.MODE === 'web') {
+    await webDebugging();
+  }
+  if (account.value && account.value.setupState !== AccountCreateStates.COMPLETE) {
+    const localStorageKey = `nextBackupCheck-${account.value.accountName}`;
+    const nextCheckTimestamp = Number(window.localStorage.getItem(localStorageKey));
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    if (isNaN(nextCheckTimestamp) || nowInSeconds - nextCheckTimestamp > 0) {
+      showMnemonicBackup.value = true;
+    }
+  }
+});
+
+const skipBackup = () => {
+  const localStorageKey = `nextBackupCheck-${account.value.accountName}`;
+  const nowInSeconds = Math.floor(Date.now() / 1000);
+  window.localStorage.setItem(localStorageKey, `${nowInSeconds + CHECK_INTERVAL_SECONDS}`);
+  showMnemonicBackup.value = false;
+};
 </script>
 <style lang="scss" scoped>
 .wordmark {
