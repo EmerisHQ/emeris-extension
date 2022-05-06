@@ -17,6 +17,64 @@ module.exports = {
         title: 1.25,
         copy: 1.625,
       },
+      fontSize: {
+        '-2': [
+          '.6875rem',
+          {
+            letterSpacing: '0.01em',
+            lineHeight: '1.2727',
+          },
+        ],
+        '-1': [
+          '.8125rem',
+          {
+            letterSpacing: '0.01em',
+            lineHeight: '1.3077',
+          },
+        ],
+        0: [
+          '1rem',
+          {
+            letterSpacing: '-0.007em',
+            lineHeight: '1.5',
+          },
+        ],
+        1: [
+          '1.3125rem',
+          {
+            letterSpacing: '-0.015em',
+            lineHeight: '1.2857',
+          },
+        ],
+        2: [
+          '1.75rem',
+          {
+            letterSpacing: '-0.02em',
+            lineHeight: '1.2857',
+          },
+        ],
+        3: [
+          '2.375rem',
+          {
+            letterSpacing: '-0.027em',
+            lineHeight: '1.2631',
+          },
+        ],
+        4: [
+          '3.1875rem',
+          {
+            letterSpacing: '-0.04em',
+            lineHeight: '1.2549',
+          },
+        ],
+        5: [
+          '4.1875rem',
+          {
+            letterSpacing: '-0.055em',
+            lineHeight: '1.194',
+          },
+        ],
+      },
     },
     backgroundImage: {
       grain: 'url(/images/texture-grain.png)',
@@ -64,69 +122,6 @@ module.exports = {
     },
     fontFamily: {
       sans: 'Inter var, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-    },
-    fontSize: {
-      '-2': [
-        '.6875rem',
-        {
-          letterSpacing: '0.01em',
-          lineHeight: '1.2727',
-        },
-      ],
-      '-1': [
-        '.8125rem',
-        {
-          letterSpacing: '0.01em',
-          lineHeight: '1.3077',
-        },
-      ],
-      0: [
-        '1rem',
-        {
-          letterSpacing: '-0.007em',
-          lineHeight: '1.5',
-        },
-      ],
-      1: [
-        '1.3125rem',
-        {
-          letterSpacing: '-0.015em',
-          lineHeight: '1.2857',
-        },
-      ],
-      2: [
-        '1.75rem',
-        {
-          letterSpacing: '-0.02em',
-          lineHeight: '1.2857',
-        },
-      ],
-      3: [
-        '2.375rem',
-        {
-          letterSpacing: '-0.027em',
-          lineHeight: '1.2631',
-        },
-      ],
-      4: [
-        '3.1875rem',
-        {
-          letterSpacing: '-0.04em',
-          lineHeight: '1.2549',
-        },
-      ],
-      5: [
-        '4.1875rem',
-        {
-          letterSpacing: '-0.055em',
-          lineHeight: '1.194',
-        },
-      ],
-    },
-    fontWeight: {
-      normal: 400,
-      medium: 560,
-      bold: 730,
     },
   },
   corePlugins: {
