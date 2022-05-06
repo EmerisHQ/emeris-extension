@@ -1,11 +1,10 @@
 <template>
-  <ConfirmationScreen title="Welcome back" subtitle="Enter your password to unlock Emeris.">
+  <ConfirmationScreen title="Welcome back" :subtitle="subtitleText" :error-subtitle="error">
     <div class="form" @keyup.enter="checkPassword">
       <div class="buttons mt-auto">
         <div :class="{ error: error }">
           <Input v-model="password" type="password" placeholder="Enter password" />
         </div>
-        <span v-if="error" class="form-info error">Wrong Password</span>
         <Button type="submit" name="Unlock Emeris" @click="checkPassword" />
         <router-link to="/extensionReset">
           <Button name="Forgot Password" variant="link" />
@@ -34,6 +33,12 @@ export default defineComponent({
     error: false,
     password: '',
   }),
+  computed: {
+    subtitleText() {
+      if (this.error) return 'Wrong Password. Try again.';
+      return 'Enter your password to unlock Emeris.';
+    },
+  },
   methods: {
     async checkPassword() {
       const wallet = await this.$store.dispatch(GlobalEmerisActionTypes.UNLOCK_WALLET, { password: this.password });
@@ -46,10 +51,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.wordmark {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
-</style>
