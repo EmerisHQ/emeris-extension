@@ -556,7 +556,10 @@ export class Emeris implements IEmeris {
     return response;
   }
   async enable(request: ApproveOriginRequest): Promise<boolean> {
-    // TODO purge this queue and replace with a sensible data struct to we can check if a request is a dupe
+    if (await this.storage.isWhitelistedWebsite(request.origin)) {
+      return true;
+    }
+
     request.id = uuidv4();
     const enabled = (await this.forwardToPopup(request)).accept as boolean;
     if (enabled) {
