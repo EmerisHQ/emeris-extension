@@ -83,17 +83,29 @@ export class Emeris implements IEmeris {
     return this.initialized;
   }
   async init() {
-    this.password = (await browser.storage['session'].get('password')).password ?? null;
-    this.wallet = (await browser.storage['session'].get('wallet')).wallet ?? null;
-    this.pending = [];
-    this.selectedAccount = (await browser.storage['session'].get('selectedAccount')).selectedAccount ?? null;
-    this.loaded = true;
-    this.popup = (await browser.storage['session'].get('popup')).popup ?? null;
-    this.queuedRequests = new Map();
+    const lastAccessed = (await browser.storage['local'].get('lastAccessed')).lastAccessed;
+    if (!lastAccessed || Date.now() - lastAccessed > 300000) {
+      this.password = null;
+      this.wallet = null;
+      this.pending = [];
+      this.selectedAccount = null;
+      this.loaded = true;
+      this.popup = null;
+      this.queuedRequests = new Map();
+    } else {
+      this.password = (await browser.storage['session'].get('password')).password ?? null;
+      this.wallet = (await browser.storage['session'].get('wallet')).wallet ?? null;
+      this.pending = [];
+      this.selectedAccount = (await browser.storage['session'].get('selectedAccount')).selectedAccount ?? null;
+      this.loaded = true;
+      this.popup = (await browser.storage['session'].get('popup')).popup ?? null;
+      this.queuedRequests = new Map();
+    }
     await this.storeSession();
     this.initPromise();
   }
   async storeSession(): Promise<void> {
+    await browser.storage['local'].set({ lastAccessed: Date.now() });
     await browser.storage['session'].set({ wallet: this.wallet });
     await browser.storage['session'].set({ password: this.password });
     await browser.storage['session'].set({ selectedAccount: this.selectedAccount });
