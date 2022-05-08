@@ -108,13 +108,19 @@ export const actions: ActionTree<State, RootState> & Actions = {
       type: 'fromPopup',
       data: { action: 'getWhitelistedWebsite' },
     });
-    commit(MutationTypes.SET_WHITELISTED_WEBSITES, whitelistWebsites);
+    if (whitelistWebsites) commit(MutationTypes.SET_WHITELISTED_WEBSITES, whitelistWebsites);
+    else commit(MutationTypes.SET_WHITELISTED_WEBSITES, []);
+    return whitelistWebsites;
   },
   async [ActionTypes.REMOVE_WHITELISTED_WEBSITE]({ dispatch }, { website }) {
     await browser.runtime.sendMessage({
       type: 'fromPopup',
       data: { action: 'removeWhitelistedWebsite', data: { website } },
     });
+    await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
+  },
+  async [ActionTypes.WEBSITE_ALREADY_WHITELISTED]({ dispatch }, { id, accept }) {
+    await respond(id, { accept });
     await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
   },
   async [ActionTypes.WHITELIST_WEBSITE]({ dispatch }, { id, accept }) {

@@ -69,6 +69,17 @@ export default defineComponent({
           // TODO replace action names with enums
           case 'enable':
           case 'keplrEnable':
+            const websites = await this.$store.dispatch(GlobalEmerisActionTypes.GET_WHITELISTED_WEBSITES);
+            //  already enabled website
+            if (websites && websites.find((website) => website.origin === pending[0].origin)) {
+              console.log('website already whitelisted', websites, pending[0]);
+              this.$store.dispatch(GlobalEmerisActionTypes.WEBSITE_ALREADY_WHITELISTED, {
+                id: pending[0].id,
+                accept: true,
+              });
+              window.close();
+              return;
+            }
             this.$router.push({ path: '/whitelist' });
             break;
           case 'signTransaction':
