@@ -119,10 +119,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
     });
     await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
   },
-  async [ActionTypes.WEBSITE_ALREADY_WHITELISTED]({ dispatch }, { id, accept }) {
-    await respond(id, { accept });
-    await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
-  },
   async [ActionTypes.WHITELIST_WEBSITE]({ dispatch }, { id, accept }) {
     await respond(id, { accept });
     await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
