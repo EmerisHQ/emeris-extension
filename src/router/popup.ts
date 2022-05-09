@@ -14,6 +14,7 @@ import AccountRename from '../views/AccountRename.vue';
 import Accounts from '../views/Accounts.vue';
 import ExtensionReset from '../views/ExtensionReset.vue';
 import ExtensionResetConfirm from '../views/ExtensionResetConfirm.vue';
+import ExtensionResetConfirmed from '../views/ExtensionResetConfirmed.vue';
 import HdPath from '../views/HDPath.vue';
 import Home from '../views/Home.vue';
 import LedgerError from '../views/LedgerError.vue';
@@ -121,6 +122,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/extensionReset/confirm',
     name: 'Extension Reset',
     component: ExtensionResetConfirm,
+  },
+  {
+    path: '/extensionReset/confirmed',
+    name: 'Extension Reset Confirmed',
+    component: ExtensionResetConfirmed,
   },
   {
     path: '/backup',
