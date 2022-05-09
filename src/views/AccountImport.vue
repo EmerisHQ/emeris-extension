@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account" :back-to="'/'">
+    <Header title="Import account" :back-to="'/accountImportInfo'">
       <a
         :style="{
           opacity: !mnemonic || hasInvalidChar || unknownWords.length > 0 ? 0.6 : 1,
@@ -10,22 +10,24 @@
       >
     </Header>
     <div class="form" @keyup.enter="submit">
-      <span class="my-4">Enter your recovery phrase</span>
+      <span class="my-4">Enter your secret recovery phrase</span>
       <div class="mb-4">
         <MnemonicInput v-model="mnemonic" placeholder="Your recovery phrase" />
       </div>
       <span v-if="errorText" class="form-info error">{{ errorText }}</span>
-      <a @click="infoOpen = true">What’s a recovery phrase?</a>
+      <a @click="infoOpen = true">What’s a secret recovery phrase?</a>
       <div class="mt-auto">
         <Button type="submit" name="Import" :disabled="isMnemonicInvalid" @click="submit" />
       </div>
     </div>
     <Slideout :open="infoOpen" @update:open="infoOpen = $event">
-      <h1 class="mb-4">What’s a recovery phrase?</h1>
+      <h1 class="mb-4">What’s a secret recovery phrase?</h1>
       <div class="secondary-text mb-6">
-        These phrases are usually 12 or 24 words long. Each word in the phrase tends to be unrelated to another. Wallet
-        providers will usually provide you a mnemonic phrase when you open a new account, this phrase will help you to
-        import your wallet.
+        A secret recovery phrase is series of words (usually 12 or 24) used to generate the encryption keys that give
+        you access to your crypto account. If your device is stolen or lost, you can regain access to your account by
+        importing the secret recovery phrase into another crypto wallet. So always store it securely (for example,
+        written down and hidden somewhere safe), and never share it with anyone, since whoever has it can access your
+        account, sign transactions, and steal your assets.
       </div>
       <Button name="Ok" @click="() => (infoOpen = false)" />
     </Slideout>
@@ -34,7 +36,7 @@
 
 <script setup lang="ts">
 import { Secp256k1HdWallet } from '@cosmjs/amino';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -113,14 +115,6 @@ watch(mnemonic, async (newValue: string) => {
         invalidRecoveryPhraseWarning.value = true;
       }
     }
-  }
-});
-
-onMounted(async () => {
-  const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
-
-  if (!hasPassword) {
-    router.push({ path: '/passwordCreate', query: { returnTo: '/accountImport' } });
   }
 });
 </script>

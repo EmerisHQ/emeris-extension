@@ -6,6 +6,7 @@ import AccountBackup from '../views/AccountBackup.vue';
 import AccountCreate from '../views/AccountCreate.vue';
 import AccountCreationResume from '../views/AccountCreationResume.vue';
 import AccountImport from '../views/AccountImport.vue';
+import AccountImportInfo from '../views/AccountImportInfo.vue';
 import AccountImportLedger from '../views/AccountImportLedger.vue';
 import AccountImportLedgerConnect from '../views/AccountImportLedgerConnect.vue';
 import AccountReady from '../views/AccountReady.vue';
@@ -102,6 +103,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/accountImport',
     name: 'Account Import',
     component: AccountImport,
+  },
+  {
+    path: '/accountImportInfo',
+    name: 'Account Import Info',
+    component: AccountImportInfo,
   },
   {
     path: '/accountImportHdPath',
