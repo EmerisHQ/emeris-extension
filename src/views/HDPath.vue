@@ -1,33 +1,37 @@
 <template>
   <div class="page">
     <Header title="Advanced" :back-to="$route.query.previous" />
-    <div class="form" @keyup.enter="submit">
-      <span style="margin-top: 16px; margin-bottom: 16px">HD derivation path</span>
-      <div style="display: flex; flex-direction: row; margin-bottom: 16px">
-        <span style="line-height: 48px; margin-right: 8px" class="secondary-text">m/44’/...’/</span>
-        <div style="margin-right: 8px; width: 76px; position: relative" :class="{ error: accountError }">
+    <div class="form">
+      <span class="mt-1 mb-4">HD derivation path</span>
+      <div class="flex mb-4 flex-row">
+        <span class="secondary-text mr-0.5 leading-10">m/44’/...’/</span>
+        <div class="mr-0.5 relative w-20" :class="{ error: accountError }">
           <Input v-model="account" /><span style="position: absolute; right: 19px; top: 13px; z-index: 10">’</span>
         </div>
-        <div
-          style="margin-right: 8px; width: 76px; display: flex; align-items: center; justify-content: center"
-          :class="{ error: changeError }"
-        >
+        <div class="mr-0.5 flex items-center justify-center w-20" :class="{ error: changeError }">
           <!-- We can not actually change the account change in ledger-cosmos-js -->
           {{ change }}
         </div>
-        <div style="margin-right: 8px; width: 76px" :class="{ error: addressIndexError }">
+        <div class="mr-0.5 w-20" :class="{ error: addressIndexError }">
           <Input v-model="addressIndex" />
         </div>
       </div>
-      <a @click="infoOpen = true">What is an HD derivation path?</a>
+      <span v-if="hasError" class="text-negative-text my-4 -text-1">Invalid derivation path</span>
+      <a class="cursor-pointer" @click="infoOpen = true">What is an HD derivation path?</a>
       <Slideout :open="infoOpen" @update:open="infoOpen = $event">
-        <h1 style="margin-bottom: 16px">What does it mean HD derivation path?</h1>
-        <div class="secondary-text" style="margin-bottom: 24px">
-          Derivation path, help you to have multiple accounts under one recovery phrase, please make sure to understand
-          before to set it. What each number represents: m / purpose' / coin_type' / account' / change / address_index
+        <p class="mb-4 font-medium text-2 text-center">What is an HD derivation path?</p>
+        <div class="secondary-text mb-4">
+          Derivation paths are an advanced feature that enable you to have multiple accounts under one secret recovery
+          phrase. Please be sure you understand how derivation paths work before using them. <br /><br />
+          What each number represents: m / purpose' / coin_type' / account' / change / address_index
         </div>
         <Button name="Ok" @click="() => (infoOpen = false)" />
       </Slideout>
+
+      <div class="buttons mt-auto">
+        <Button name="Confirm" :disabled="hasError" @click="submit" />
+        <Button name="Cancel" variant="link" @click="$router.push($route.query.previous)" />
+      </div>
     </div>
   </div>
 </template>
@@ -71,6 +75,9 @@ export default defineComponent({
   computed: {
     newAccount() {
       return this.$store.state.extension.newAccount;
+    },
+    hasError() {
+      return this.accountError || this.changeError || this.addressIndexError;
     },
   },
   watch: {
