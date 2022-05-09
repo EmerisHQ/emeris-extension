@@ -1,15 +1,16 @@
 <template>
   <div class="page">
-    <div style="margin-top: 100px">
-      <Icon name="InformationIcon" icon-size="2" style="margin-bottom: 24px" />
-      <h1>Are you sure you want to reset your wallet?</h1>
+    <Header title="Forgot password" />
+    <div class="mt-20">
+      <Icon name="InformationIcon" icon-size="2" class="mb-1.5" />
+      <p class="font-medium text-2 text-center">Are you sure you want to reset your wallet?</p>
+      <p class="secondary-text mt-4 mb-1.5 text-center">
+        To avoid permanently losing access to your assets, ensure you have backed up the secret recovery phrases for all
+        your accounts.
+      </p>
     </div>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
-      <Button class="reset-btn" name="Reset wallet" style="margin-bottom: 24px" @click="submit" />
+    <div class="mt-auto">
+      <Button class="reset-btn mt-1.5" name="Yes, reset Emeris wallet" @click="submit" />
       <router-link to="/">
         <Button name="Cancel" variant="link" />
       </router-link>
@@ -22,18 +23,20 @@ import { defineComponent } from 'vue';
 
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
+import Header from '@@/components/Header.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
 export default defineComponent({
-  name: 'Extension Reset',
+  name: 'Extension Reset Confirm',
   components: {
     Button,
     Icon,
+    Header,
   },
   methods: {
     async submit() {
       await this.$store.dispatch(GlobalEmerisActionTypes.EXTENSION_RESET);
-      this.$router.push('/welcome');
+      this.$router.push('/extensionReset/confirmed');
     },
   },
 });
