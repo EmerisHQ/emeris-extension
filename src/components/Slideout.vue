@@ -17,11 +17,6 @@ export default {
   props: {
     open: { type: Boolean, required: true },
   },
-  mounted() {
-    // we need to calculate the element size as it is dynamic based on the slot
-    this.$refs.slideout.style.bottom = '-' + this.$refs.slideout.offsetHeight + 'px';
-    this.$refs.slideout.style.visibility = 'inherit';
-  },
 };
 </script>
 <style lang="scss" scoped>
@@ -41,7 +36,7 @@ export default {
   background: #171717;
   border-radius: 16px 16px 0px 0px;
   position: fixed;
-  //   bottom: -467px;
+  bottom: -110vh;
   width: 100%;
   left: 0;
   padding: 24px;
@@ -49,6 +44,7 @@ export default {
 
   &.open {
     bottom: 0 !important;
+    visibility: inherit;
   }
 }
 </style>
