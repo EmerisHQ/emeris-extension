@@ -17,7 +17,7 @@ test.describe('Account Create', () => {
     await page.fill('[placeholder="Enter a password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
-    await page.fill('[placeholder="Account Name"]', 'Test Account Created');
+    await page.fill('[placeholder="Surfer"]', 'Test Account Created');
     await page.click('text=Continue');
     await page.click('text=Back up later');
     await page.click('text=I understand');
@@ -34,7 +34,7 @@ test.describe('Account Create', () => {
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
 
-    await page.fill('[placeholder="Account Name"]', 'Test Account Created');
+    await page.fill('[placeholder="Surfer"]', 'Test Account Created');
     await page.click('text=Continue');
 
     // test backing up

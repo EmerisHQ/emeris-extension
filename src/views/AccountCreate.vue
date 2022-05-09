@@ -1,30 +1,28 @@
 <template>
   <div class="page">
     <Header title="Account Name" />
-    <span class="secondary-text mt-4 mb-6">
-      If you have multiple accounts this will help you to find the right one
-    </span>
-    <div class="mb-4">
-      <Input v-model="name" placeholder="Account Name" />
-      <span v-if="error" class="form-info error">Name already in use</span>
+    <div class="w-3/4 mx-auto mt-10">
+      <div
+        class="bg-brand w-16 h-16 rounded-full text-center font-medium text-2 text-inverse pt-3.5 mx-auto shadow-brand"
+      >
+        {{ nameFirstLetter }}
+      </div>
+      <div class="my-6">
+        <input
+          v-model="name"
+          type="text"
+          class="w-full border-none !bg-transparent text-center font-medium text-2 focus:outline-none focus:border-none"
+          :class="{ 'text-negative-text': error || nameHasSpecialCharacters }"
+          placeholder="Surfer"
+          style="caret-color: rgba(255, 255, 255, 0.5)"
+        />
+        <p v-if="errorText" class="form-info error text-center mt-6">
+          {{ errorText }}
+        </p>
+      </div>
     </div>
     <div class="mt-auto">
-      <div class="mb-8 flex terms-of-use">
-        <Icon
-          name="InformationIcon"
-          style="margin-right: 9px; transform: rotate(180deg)"
-          icon-size="1"
-          class="secondary-text"
-        />
-        <div>
-          <span class="secondary-text">By continuing you agree to </span
-          ><a href="/" style="opacity: 1" @click.prevent="open('https://emeris.com/terms')">Terms of Use</a
-          ><span class="secondary-text"> & </span
-          ><a href="" @click.prevent="open('https://emeris.com/privacy')">Privacy Policy</a
-          ><span class="secondary-text"> of Emeris wallet</span>
-        </div>
-      </div>
-      <Button name="Continue" :disabled="!name" @click="submit" />
+      <Button name="Continue" :disabled="buttonDisabled" @click="submit" />
     </div>
   </div>
 </template>
@@ -35,8 +33,6 @@ import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
-import Icon from '@/components/ui/Icon.vue';
-import Input from '@/components/ui/Input.vue';
 import Header from '@@/components/Header.vue';
 import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
@@ -45,14 +41,28 @@ import wordlist from '@@/wordlists/english.json';
 
 export default defineComponent({
   name: 'Create Account',
-  components: { Button, Input, Header, Icon },
+  components: { Button, Header },
   computed: {
     ...mapState({
       wallet: (state: RootState) => state.extension.wallet,
       newAccount: (state: RootState) => state.extension.newAccount,
     }),
+    nameHasSpecialCharacters() {
+      return /[^a-zA-Z0-9\s]/.test(this.name);
+    },
     error() {
       return this.wallet && this.wallet.find(({ accountName }) => accountName === this.name);
+    },
+    nameFirstLetter() {
+      return this.name && this.name.length > 0 ? this.name.slice(0, 1) : 'S';
+    },
+    buttonDisabled() {
+      return !this.name || this.error || this.nameHasSpecialCharacters;
+    },
+    errorText() {
+      if (this.error) return 'You already used this name for another account. Choose another name.';
+      if (this.nameHasSpecialCharacters) return 'Name cannot contain special characters, only numbers and letters.';
+      return '';
     },
   },
   data: () => ({
@@ -78,7 +88,7 @@ export default defineComponent({
     let name;
     let i = 1;
     do {
-      name = 'Account ' + i++;
+      name = 'Surfer ' + i++;
     } while (accounts.find(({ accountName }) => accountName === name));
 
     this.name = name;
@@ -89,8 +99,6 @@ export default defineComponent({
   },
   methods: {
     async submit() {
-      if (this.error) return;
-
       try {
         const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
 
@@ -128,5 +136,8 @@ export default defineComponent({
 <style scoped>
 .terms-of-use {
   font-size: 13px;
+}
+.shadow-brand {
+  box-shadow: 0.1rem 0.2rem 0.5rem 0.02rem var(--primary);
 }
 </style>
