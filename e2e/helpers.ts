@@ -20,7 +20,7 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
   await page.click('[type=submit]');
 
   await page.waitForTimeout(500); // needed as the view overwrite the input on load
-  await page.fill('[placeholder="Account Name"]', name);
+  await page.fill('[placeholder="Surfer"]', name);
   await page.click('text=Continue');
 
   await page.click('text=Continue');
