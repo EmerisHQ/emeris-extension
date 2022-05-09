@@ -24,6 +24,7 @@ import { AbstractTxResult } from '@@/types/transactions';
 export class ProxyEmeris implements IEmeris {
   loaded: boolean;
   keplr: object;
+  isWalletUnlocked: boolean;
   private queuedRequests: Map<
     string,
     {
@@ -31,12 +32,15 @@ export class ProxyEmeris implements IEmeris {
       rejecter: (err: Error) => void;
     }
   >;
+
   constructor() {
     this.loaded = true;
     this.queuedRequests = new Map();
+    this.isWalletUnlocked = false;
 
     window.addEventListener('message', this.responseHandler.bind(this));
   }
+
   private async responseHandler(event) {
     // We only accept messages from ourselves
     if (event.source != window) {
@@ -60,6 +64,7 @@ export class ProxyEmeris implements IEmeris {
 
     this.queuedRequests.delete(event.data.data.id);
   }
+
   private async sendRequest(request: ExtensionRequest): Promise<ExtensionResponse> {
     const requestId = uuidv4();
 
@@ -80,6 +85,7 @@ export class ProxyEmeris implements IEmeris {
 
     return await response;
   }
+
   async getAddress(chainId: string): Promise<string> {
     const request = {
       action: 'getAddress',
@@ -88,6 +94,7 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as GetAddressRequest);
     return response.data as string;
   }
+
   async getPublicKey(chainId: string, accountName?: string): Promise<Uint8Array> {
     const request = {
       action: 'getPublicKey',
@@ -96,6 +103,7 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as GetPublicKeyRequest);
     return response.data as Uint8Array;
   }
+
   async isHWWallet(): Promise<boolean> {
     const request = {
       action: 'isHWWallet',
@@ -104,6 +112,7 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as IsHWWalletRequest);
     return response.data as boolean;
   }
+
   async supportedChains(): Promise<string[]> {
     const request = {
       action: 'supportedChains',
@@ -112,6 +121,7 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as SupportedChainsRequest);
     return response.data as string[];
   }
+
   async getAccountName(): Promise<string> {
     const request = {
       action: 'getAccountName',
@@ -120,6 +130,7 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as GetAccountNameRequest);
     return response.data as string;
   }
+
   async hasWallet(): Promise<boolean> {
     const request = {
       action: 'hasWallet',
@@ -127,6 +138,19 @@ export class ProxyEmeris implements IEmeris {
     };
     const response = await this.sendRequest(request as HasWalletRequest);
     return response.data as boolean;
+  }
+
+  private async requestUnlockWallet(): Promise<boolean> {
+    if (this.isWalletUnlocked) return true;
+    window.browser.runtime.onMessage.addListener((message) => {
+      if (message.type === 'emerisPopupClosed') {
+        console.log('message emerisPopupClosed received in proxyEmeris scripts');
+      }
+    });
+    console.warn('Wallet is currently locked. Enter password to interact.');
+    await this.enable();
+    // continues
+    return true;
   }
 
   async signTransaction({
@@ -145,6 +169,7 @@ export class ProxyEmeris implements IEmeris {
     };
     memo?: string;
   }): Promise<Uint8Array> {
+    await this.requestUnlockWallet();
     const request = {
       action: 'signTransaction',
       data: { messages, chainId, signingAddress, fee, memo },
@@ -212,7 +237,8 @@ export class ProxyEmeris implements IEmeris {
       action: 'enable',
       data: {},
     };
-    const response = await this.sendRequest(request as ApproveOriginRequest);
+    const { response } = await this.sendRequest(request as ApproveOriginRequest);
+    if (!!response.data) this.isWalletUnlocked = true;
     return response.data as boolean;
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 async function setup() {
   const browser = (await import('webextension-polyfill')).default;
 

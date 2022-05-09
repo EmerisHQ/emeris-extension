@@ -108,6 +108,15 @@ export default defineComponent({
           store.dispatch(GlobalEmerisActionTypes.GET_PENDING);
         }
       });
+
+      // Notify background script when popup is opened
+      // browser.runtime.sendMessage({
+      //   type: 'fromPopup',
+      //   data: { action: 'popupOpened' },
+      // });
+
+      // Allows background script to know when popup is closed
+      browser.runtime.connect({ name: 'emerisPopup' });
     });
   },
 });
