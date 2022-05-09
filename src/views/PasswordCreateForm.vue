@@ -10,6 +10,7 @@
     >
       <Input
         v-model="password"
+        end-slot-clickable
         :placeholder="passwordChange ? 'Enter new password' : 'Enter password'"
         :type="passwordVisible ? 'text' : 'password'"
       >
@@ -37,34 +38,34 @@
       />
     </div>
     <span class="form-info" :class="{ error: password && !length, success: password && length }"
-      ><Icon v-if="password && length" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
-      <Icon v-if="password && !length" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />Minimum 8
+      ><Icon v-if="password && length" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !length" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />Minimum 8
       characters</span
     >
     <span class="form-info" :class="{ error: password && !upperCaseChar, success: password && upperCaseChar }"
-      ><Icon v-if="password && upperCaseChar" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
-      <Icon v-if="password && !upperCaseChar" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />At
+      ><Icon v-if="password && upperCaseChar" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !upperCaseChar" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />At
       least one upper case</span
     >
     <span class="form-info" :class="{ error: password && !symbolChar, success: password && symbolChar }"
-      ><Icon v-if="password && symbolChar" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
-      <Icon v-if="password && !symbolChar" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />At least
+      ><Icon v-if="password && symbolChar" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !symbolChar" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />At least
       one symbol</span
     >
     <span class="form-info" :class="{ error: password && !digitChar, success: password && digitChar }"
-      ><Icon v-if="password && digitChar" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
-      <Icon v-if="password && !digitChar" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />At least
+      ><Icon v-if="password && digitChar" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !digitChar" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />At least
       one digit</span
     >
     <span
       v-if="passwordRepeated"
       class="form-info"
       :class="{ error: passwordRepeated && !match, success: passwordRepeated && match }"
-      ><Icon v-if="passwordRepeated && match" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
+      ><Icon v-if="passwordRepeated && match" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
       <Icon
         v-if="passwordRepeated && !match"
         name="CloseIcon"
-        :icon-size="0.8"
+        :icon-size="0.7"
         class="mr-2 inline-flex mt-0.5"
       />Passwords {{ passwordRepeated && match ? '' : 'do not ' }}match</span
     >
