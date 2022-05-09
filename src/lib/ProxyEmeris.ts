@@ -42,6 +42,7 @@ export class ProxyEmeris implements IEmeris {
   }
 
   private async responseHandler(event) {
+    console.log('proxy message', event);
     // We only accept messages from ourselves
     if (event.source != window) {
       return;
@@ -144,9 +145,13 @@ export class ProxyEmeris implements IEmeris {
     warningMessage = 'Wallet is currently locked. Enter password to interact.',
   ): Promise<boolean> {
     if (this.isWalletUnlocked) return true;
-    document.addEventListener('emerisPopupClosed', (event) => {
-      console.log('message emerisPopupClosed received in proxyEmeris scripts', event);
+    window.addEventListener('emerisPopupClosed', (m) => {
+      console.log('emerisPopupClosed', m);
     });
+    window.addEventListener('message', (m) => {
+      console.log('message', m);
+    });
+
     // browser.runtime.onMessage.addListener((message) => {
     //   if (message.type === 'emerisPopupClosed') {
     //     console.log('message emerisPopupClosed received in proxyEmeris scripts');

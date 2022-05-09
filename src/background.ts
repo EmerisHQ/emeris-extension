@@ -49,7 +49,7 @@ browser.runtime.onConnect.addListener((port) => {
       browser.tabs
         .query({ currentWindow: true, active: true })
         .then(([tab]) => {
-          if (tab && tab.id) browser.tabs.sendMessage(tab.id, { type: 'emerisPopupClosed' });
+          if (tab && tab.id) browser.tabs.sendMessage(tab.id, { type: 'fromEmerisExtension', action: 'popupClosed' });
         })
         .catch((e) => console.warn('message error', e));
     });

@@ -60,6 +60,14 @@ async function setup() {
     if (message.type === 'lastAccountUpdated') {
       window.dispatchEvent(new Event('emeris_account_changed'));
     }
+    if (message.type === 'emerisPopupClosed') {
+      window.dispatchEvent(new Event('emerisPopupClosed'));
+    }
+    // browser.runtime.onMessage.addListener((message) => {
+    //   if (message.type === 'emerisPopupClosed') {
+    //     console.log('message emerisPopupClosed received in proxyEmeris scripts');
+    //   }
+    // });
   });
 }
 setup();
