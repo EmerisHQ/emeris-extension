@@ -140,14 +140,19 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
 
-  private async requestUnlockWallet(): Promise<boolean> {
+  private async requestUnlockWallet(
+    warningMessage = 'Wallet is currently locked. Enter password to interact.',
+  ): Promise<boolean> {
     if (this.isWalletUnlocked) return true;
-    window.browser.runtime.onMessage.addListener((message) => {
-      if (message.type === 'emerisPopupClosed') {
-        console.log('message emerisPopupClosed received in proxyEmeris scripts');
-      }
+    document.addEventListener('emerisPopupClosed', (event) => {
+      console.log('message emerisPopupClosed received in proxyEmeris scripts', event);
     });
-    console.warn('Wallet is currently locked. Enter password to interact.');
+    // browser.runtime.onMessage.addListener((message) => {
+    //   if (message.type === 'emerisPopupClosed') {
+    //     console.log('message emerisPopupClosed received in proxyEmeris scripts');
+    //   }
+    // });
+    console.warn(warningMessage);
     await this.enable();
     // continues
     return true;
@@ -169,7 +174,7 @@ export class ProxyEmeris implements IEmeris {
     };
     memo?: string;
   }): Promise<Uint8Array> {
-    await this.requestUnlockWallet();
+    await this.requestUnlockWallet('Wallet locked. Add password to sign transactions.');
     const request = {
       action: 'signTransaction',
       data: { messages, chainId, signingAddress, fee, memo },
