@@ -5,9 +5,8 @@ on: pull_request
 jobs:
   build_and_deploy:
     runs-on: self-hosted
-
     steps:
-      - name: Checkout
+      - name: Check out repository code
         uses: actions/checkout@v2
 
       - name: Add checkout key for demeris repo
@@ -16,23 +15,21 @@ jobs:
           ssh-private-key: ${{ secrets.DEMERIS_SSH_PRIVATE_KEY }}
       - run: git submodule init && git submodule update
 
-      - name: Cache node_modules
-        uses: actions/cache@v2
+      - uses: actions/setup-node@v2
         with:
-          path: node_modules
-          key: node_modules-${{ hashFiles('**/yarn.lock') }}
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: |
+            ./package-lock.json
 
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-          cache: npm
-
-      - name: Install Dependencies
-        run: yarn install
-
-      - name: Build
-        run: NODE_OPTIONS="--max_old_space_size=8192" yarn run build:web
+      - name: build artifacts
+        run: |
+          npm ci
+          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build:web
+        env:
+          # Put in secrets
+          VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
+          VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
       - name: Deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
