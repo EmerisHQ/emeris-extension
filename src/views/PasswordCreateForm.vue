@@ -1,13 +1,11 @@
 <template>
   <div class="form" @keyup.enter="submit">
-    <span class="secondary-text" style="margin-top: 16px; margin-bottom: 24px"
-      >You will need this password to unlock your wallet.</span
-    >
+    <span class="secondary-text mb-6">You will need this password to unlock your wallet.</span>
     <div
-      style="margin-bottom: 16px"
+      class="mb-4"
       :class="{
-        error: password && passwordInvalid,
-        success: password && !passwordInvalid,
+        error: password && isPasswordInvalid,
+        success: password && !isPasswordInvalid,
       }"
     >
       <Input
@@ -17,7 +15,6 @@
       >
         <template #end>
           <a v-if="password" class="cursor-pointer" @click="() => (passwordVisible = !passwordVisible)">
-            <!-- <Icon name="ThreeDotsIcon" :icon-size="1" /> -->
             <img
               :class="passwordVisible ? 'w-4 h-4' : 'w-4 h-3 mt-0.5'"
               :src="passwordVisible ? '/images/EyeSlash.png' : '/images/Eye.png'"
@@ -27,7 +24,7 @@
       </Input>
     </div>
     <div
-      style="margin-bottom: 24px"
+      class="mb-6"
       :class="{
         error: passwordRepeated && !match,
         success: passwordRepeated && match,
@@ -36,45 +33,45 @@
       <Input
         v-model="passwordRepeated"
         :placeholder="passwordChange ? 'Confirm new password' : 'Confirm password'"
-        type="password"
+        :type="passwordVisible ? 'text' : 'password'"
       />
     </div>
     <span class="form-info" :class="{ error: password && !length, success: password && length }"
-      ><Icon v-if="password && length" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
-      <Icon v-if="password && !length" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />Minimum 8
+      ><Icon v-if="password && length" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !length" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />Minimum 8
       characters</span
     >
     <span class="form-info" :class="{ error: password && !upperCaseChar, success: password && upperCaseChar }"
-      ><Icon v-if="password && upperCaseChar" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
-      <Icon v-if="password && !upperCaseChar" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />At least one
-      upper case</span
+      ><Icon v-if="password && upperCaseChar" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !upperCaseChar" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />At
+      least one upper case</span
     >
     <span class="form-info" :class="{ error: password && !symbolChar, success: password && symbolChar }"
-      ><Icon v-if="password && symbolChar" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
-      <Icon v-if="password && !symbolChar" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />At least one
-      symbol</span
+      ><Icon v-if="password && symbolChar" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !symbolChar" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />At least
+      one symbol</span
     >
     <span class="form-info" :class="{ error: password && !digitChar, success: password && digitChar }"
-      ><Icon v-if="password && digitChar" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
-      <Icon v-if="password && !digitChar" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />At least one
-      digit</span
+      ><Icon v-if="password && digitChar" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !digitChar" name="CloseIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />At least
+      one digit</span
     >
     <span
       v-if="passwordRepeated"
       class="form-info"
       :class="{ error: passwordRepeated && !match, success: passwordRepeated && match }"
-      ><Icon v-if="passwordRepeated && match" name="CheckIcon" icon-size="0.9" class="mr-2 inline-flex" />
-      <Icon v-if="passwordRepeated && !match" name="CloseIcon" icon-size="0.9" class="mr-2 inline-flex" />Passwords
-      {{ passwordRepeated && match ? '' : 'do not ' }}match</span
+      ><Icon v-if="passwordRepeated && match" name="CheckIcon" :icon-size="0.8" class="mr-2 inline-flex mt-0.5" />
+      <Icon
+        v-if="passwordRepeated && !match"
+        name="CloseIcon"
+        :icon-size="0.8"
+        class="mr-2 inline-flex mt-0.5"
+      />Passwords {{ passwordRepeated && match ? '' : 'do not ' }}match</span
     >
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
-      <div style="margin-bottom: 32px; font-size: 13px">
+    <div class="mt-auto">
+      <div class="mb-2 -text-1">
         <span class="secondary-text">By continuing you agree to </span
-        ><a href="/" style="opacity: 1" @click.prevent="open('https://emeris.com/terms')">Terms of Use</a
+        ><a href="/" class="opacity-100" @click.prevent="open('https://emeris.com/terms')">Terms of Use</a
         ><span class="secondary-text"> & </span
         ><a href="" @click.prevent="open('https://emeris.com/privacy')">Privacy Policy</a
         ><span class="secondary-text"> of Emeris wallet</span>
@@ -82,7 +79,7 @@
       <Button
         :name="passwordChange ? 'Change password' : 'Continue'"
         type="submit"
-        :disabled="buttonDisabled"
+        :disabled="isButtonDisabled"
         @click="
           () => {
             submit();
@@ -129,11 +126,11 @@ export default defineComponent({
     ...mapState({
       wallet: (state: RootState) => state.extension.wallet,
     }),
-    passwordInvalid() {
+    isPasswordInvalid() {
       return !this.length || !this.upperCaseChar || !this.symbolChar || !this.digitChar;
     },
-    buttonDisabled() {
-      return this.passwordInvalid || !this.match;
+    isButtonDisabled() {
+      return this.isPasswordInvalid || !this.match;
     },
   },
   watch: {
