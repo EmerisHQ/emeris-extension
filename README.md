@@ -14,6 +14,9 @@ Browser extension to hold keys and sign transactions for Emeris as well as other
 8. Go to `chrome://extensions` and ensure you are in Developer mode
 9. Drag the `dist` folder into this screen to install the Emeris Extension
 
+## Updating the Demeris repo inside the extension repo
+To update the Demeris code inside of the extension repo, please use `git submodule update --recursive --remote --merge`
+
 ## Most efficient way of doing development
 
 Unfortunately right now there is no hot-reloading. After every change, the extension will have to build again.
