@@ -2,27 +2,24 @@
   <div class="page">
     <Header title="Advanced" :back-to="$route.query.previous" />
     <div class="form" @keyup.enter="submit">
-      <span style="margin-top: 16px; margin-bottom: 16px">HD derivation path</span>
-      <div style="display: flex; flex-direction: row; margin-bottom: 16px">
-        <span style="line-height: 48px; margin-right: 8px" class="secondary-text">m/44’/...’/</span>
-        <div style="margin-right: 8px; width: 76px; position: relative" :class="{ error: accountError }">
-          <Input v-model="account" /><span style="position: absolute; right: 19px; top: 13px; z-index: 10">’</span>
+      <span class="my-4">HD derivation path</span>
+      <div class="flex mb-4">
+        <span class="mr-2 leading-[48px] secondary-text">m/44’/...’/</span>
+        <div class="relative mr-2 w-20" :class="{ error: accountError }">
+          <Input v-model="account" /><span class="absolute right-5 top-3.5 z-10">’</span>
         </div>
-        <div
-          style="margin-right: 8px; width: 76px; display: flex; align-items: center; justify-content: center"
-          :class="{ error: changeError }"
-        >
+        <div class="mr-2 w-20 flex items-center justify-center" :class="{ error: changeError }">
           <!-- We can not actually change the account change in ledger-cosmos-js -->
           {{ change }}
         </div>
-        <div style="margin-right: 8px; width: 76px" :class="{ error: addressIndexError }">
+        <div class="mr-2 w-20" :class="{ error: addressIndexError }">
           <Input v-model="addressIndex" />
         </div>
       </div>
       <a @click="infoOpen = true">What is an HD derivation path?</a>
       <Slideout :open="infoOpen" @update:open="infoOpen = $event">
-        <h1 style="margin-bottom: 16px">What does it mean HD derivation path?</h1>
-        <div class="secondary-text" style="margin-bottom: 24px">
+        <h1 class="mb-4">What does it mean HD derivation path?</h1>
+        <div class="secondary-text mb-6">
           Derivation path, help you to have multiple accounts under one recovery phrase, please make sure to understand
           before to set it. What each number represents: m / purpose' / coin_type' / account' / change / address_index
         </div>
