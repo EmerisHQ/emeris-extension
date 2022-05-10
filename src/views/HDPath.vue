@@ -32,7 +32,7 @@
       <h1 class="mb-4">What is an HD derivation path?</h1>
       <div class="secondary-text mb-6">
         Derivation paths enable you to have multiple accounts under one secret recovery phrase. This is an advanced
-        feature, so be sure you understand how derivation paths work before using them. <br />
+        feature, so be sure you understand how derivation paths work before using them. <br /><br />
         What each number represents: m / purpose' / coin_type' / account' / change / address_index
       </div>
       <Button name="Ok" @click="() => (infoOpen = false)" />
