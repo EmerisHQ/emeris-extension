@@ -94,6 +94,6 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 :deep(input) {
-  text-align: center;
+  @apply text-center;
 }
 </style>
