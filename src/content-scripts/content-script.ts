@@ -25,11 +25,11 @@ async function setup() {
   window.addEventListener('message', async (event: MessageEvent) => {
     // We only accept messages from ourselves
 
-    if (event.source != window) {
+    if (event.source !== window) {
       return;
     }
     // We only  deal with messages to the extension
-    if (event.data.type != 'toEmerisExtension') {
+    if (event.data.type !== 'toEmerisExtension') {
       return;
     }
     // Do some basic validation
@@ -39,7 +39,6 @@ async function setup() {
     event.data.data.origin = event.origin;
     try {
       const response = await sendMessage(event.data.data);
-
       window.postMessage({ type: 'fromEmerisExtension', data: response }, event.origin);
     } catch (err) {
       window.postMessage(
@@ -60,14 +59,13 @@ async function setup() {
     if (message.type === 'lastAccountUpdated') {
       window.dispatchEvent(new Event('emeris_account_changed'));
     }
-    if (message.type === 'emerisPopupClosed') {
-      window.dispatchEvent(new Event('emerisPopupClosed'));
+    // relay to current tab that extension popup was closed
+    if (message.type === 'fromEmerisExtension' && message.action === 'onPopupClosed') {
+      window.postMessage({
+        type: 'fromEmerisExtension',
+        action: 'onPopupClosed',
+      });
     }
-    // browser.runtime.onMessage.addListener((message) => {
-    //   if (message.type === 'emerisPopupClosed') {
-    //     console.log('message emerisPopupClosed received in proxyEmeris scripts');
-    //   }
-    // });
   });
 }
 setup();

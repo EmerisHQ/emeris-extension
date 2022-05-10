@@ -5,7 +5,6 @@ import EmerisStorage, { EmerisStorageMode } from './lib/EmerisStorage';
 
 const storage = new EmerisStorage(EmerisStorageMode.LOCAL);
 const emeris = new Emeris(storage);
-// let isPopupOpen = false;
 
 const pageHandler = async (request) => {
   await emeris.isInitialized();
@@ -24,34 +23,41 @@ const pageHandler = async (request) => {
   }
 };
 
+const sendMessageToActiveTab = (message) => {
+  browser.tabs
+    .query({ currentWindow: true, active: true })
+    .then(([tab]) => {
+      if (tab && tab.id) browser.tabs.sendMessage(tab.id, message);
+    })
+    .catch((e) => console.warn('message error', e));
+};
+
 const messageHandler = async (request) => {
+  console.log('background messagehandler', request);
   await emeris.isInitialized();
-  if (request.type == 'fromPopup') {
+  console.log('background messagehandler isInitialized');
+  if (request.type === 'fromPopup') {
     const result = await emeris.popupHandler(request);
-    // if (request.data.action === 'popupOpened') {
-    //   console.log('emerisPopup has been opened');
-    //   isPopupOpen = true;
-    // }
     return result;
   }
+
+  if (request.action === 'getEmerisStatus') {
+    console.log('background messageHandler request.type getEmerisStatus');
+    const result = await emeris.contentScriptsHandler('getEmerisStatus');
+    console.log('background messageHandler request.type getEmerisStatus response', result);
+
+    sendMessageToActiveTab({ type: 'fromEmerisExtension', action: 'getEmerisStatus' });
+  }
+
   return await pageHandler(request);
 };
 browser.runtime.onMessage.addListener(messageHandler);
 
-// detect popup status
+// detect extension popup onClosed event
 browser.runtime.onConnect.addListener((port) => {
   if (port.name === 'emerisPopup') {
     port.onDisconnect.addListener(async () => {
-      console.log('emerisPopup has been closed');
-      // isPopupOpen = false;
-      // abort enable promise if wallet is locked and popup closes
-
-      browser.tabs
-        .query({ currentWindow: true, active: true })
-        .then(([tab]) => {
-          if (tab && tab.id) browser.tabs.sendMessage(tab.id, { type: 'fromEmerisExtension', action: 'popupClosed' });
-        })
-        .catch((e) => console.warn('message error', e));
+      sendMessageToActiveTab({ type: 'fromEmerisExtension', action: 'popupClosed' });
     });
   }
 });

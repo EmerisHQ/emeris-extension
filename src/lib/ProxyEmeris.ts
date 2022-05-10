@@ -17,7 +17,6 @@ import {
   SignTransactionRequest,
   SupportedChainsRequest,
 } from '@@/types/api';
-import { IEmeris } from '@@/types/emeris';
 import { DisplayAccount, IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
 
@@ -25,6 +24,7 @@ export class ProxyEmeris implements IEmeris {
   loaded: boolean;
   keplr: object;
   isWalletUnlocked: boolean;
+
   private queuedRequests: Map<
     string,
     {
@@ -42,15 +42,30 @@ export class ProxyEmeris implements IEmeris {
   }
 
   private async responseHandler(event) {
-    console.log('proxy message', event);
     // We only accept messages from ourselves
-    if (event.source != window) {
+    if (event.source !== window) {
       return;
     }
     // We only deal with messages to the extension
-    if (event.data.type != 'fromEmerisExtension') {
+    if (event.data.type !== 'fromEmerisExtension') {
       return;
     }
+
+    // Clear action queue if wallet is locked and popup closes
+    // to avoid queueing failed methods
+    // if (event.data.action === 'onPopupClosed') {
+    //   console.log('proxy - popup closed');
+    //   console.log('isWalletUnlocked?', this.isWalletUnlocked);
+    //   if (!this.isWalletUnlocked) {
+    //     // reject all queued promises
+    //     this.queuedRequests.forEach((r, requestedAction) =>
+    //       r.rejecter(new Error(`Wallet must be unlocked to allow ${requestedAction}.`)),
+    //     );
+    //     this.queuedRequests.clear();
+    //     console.log('proxy - clear queue', this.queuedRequests);
+    //   }
+    //   return;
+    // }
 
     const request = this.queuedRequests.get(event.data.data.id);
     if (!request) {
@@ -67,6 +82,7 @@ export class ProxyEmeris implements IEmeris {
   }
 
   private async sendRequest(request: ExtensionRequest): Promise<ExtensionResponse> {
+    console.log('proxy sendRequest start');
     const requestId = uuidv4();
 
     const fullRequest: RoutedExtensionRequest = {
@@ -75,15 +91,15 @@ export class ProxyEmeris implements IEmeris {
     };
 
     let resolver, rejecter;
-
     const response: Promise<ExtensionResponse> = new Promise((resolve, reject) => {
       resolver = resolve;
       rejecter = reject;
     });
+    console.log('proxy sendRequest fullRequest', fullRequest);
 
     this.queuedRequests.set(requestId, { resolver, rejecter });
     window.postMessage(fullRequest, window.location.origin);
-
+    console.log('proxy postMessage', fullRequest);
     return await response;
   }
 
@@ -94,6 +110,21 @@ export class ProxyEmeris implements IEmeris {
     };
     const response = await this.sendRequest(request as GetAddressRequest);
     return response.data as string;
+  }
+
+  private async getExtensionStatus() {
+    console.log('proxy getExtensionStatus start');
+    const request = {
+      action: 'getEmerisStatus',
+    };
+    try {
+      const response = await this.sendRequest(request as ExtensionRequest);
+      console.log('getEmerisStatus response', response);
+      return response.data as string;
+    } catch (e) {
+      console.log('error getExtensionStatus', e);
+    }
+    return 'failed getExtensionStatus';
   }
 
   async getPublicKey(chainId: string, accountName?: string): Promise<Uint8Array> {
@@ -144,22 +175,11 @@ export class ProxyEmeris implements IEmeris {
   private async requestUnlockWallet(
     warningMessage = 'Wallet is currently locked. Enter password to interact.',
   ): Promise<boolean> {
+    await this.getExtensionStatus();
     if (this.isWalletUnlocked) return true;
-    window.addEventListener('emerisPopupClosed', (m) => {
-      console.log('emerisPopupClosed', m);
-    });
-    window.addEventListener('message', (m) => {
-      console.log('message', m);
-    });
-
-    // browser.runtime.onMessage.addListener((message) => {
-    //   if (message.type === 'emerisPopupClosed') {
-    //     console.log('message emerisPopupClosed received in proxyEmeris scripts');
-    //   }
-    // });
     console.warn(warningMessage);
     await this.enable();
-    // continues
+    this.isWalletUnlocked = true;
     return true;
   }
 
@@ -247,9 +267,11 @@ export class ProxyEmeris implements IEmeris {
       action: 'enable',
       data: {},
     };
+    console.log('enable request', request);
     const { response } = await this.sendRequest(request as ApproveOriginRequest);
-    if (!!response.data) this.isWalletUnlocked = true;
-    return response.data as boolean;
+    console.log('enable response', response);
+    if (!!response?.data) this.isWalletUnlocked = true;
+    return response?.data as boolean;
   }
 
   async getCosmJsAccounts(chainId: string): Promise<any> {

@@ -174,6 +174,15 @@ export class Emeris implements IEmeris {
       }
     }
   }
+  async contentScriptsHandler(message): Promise<unknown> {
+    console.log('emeris contentScriptsHandler', message);
+    switch (message) {
+      case 'getEmerisStatus':
+        console.log('case getEmerisStatus');
+        return { unlocked: !!this.password, websiteAuthorized: this.isPermitted(), hasWallet: this.hasWallet() };
+    }
+    return 'fail';
+  }
   async popupHandler(message: RoutedInternalRequest): Promise<unknown> {
     switch (message?.data.action) {
       case 'getPending':

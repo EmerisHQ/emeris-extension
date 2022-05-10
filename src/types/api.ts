@@ -17,6 +17,9 @@ export type ApproveOriginRequest =
   | (Request & {
       action: 'keplrEnable';
     });
+export type GetWalletStatusRequest = Request & {
+  action: 'getEmerisStatus';
+};
 export type GetRawTransactionRequest = Request & {
   action: 'getRawTransaction';
   data: EmerisTransactions.TransactionSignRequest & {
@@ -201,9 +204,11 @@ export type ExtensionRequest =
   | GetAddressRequest
   | GetPublicKeyRequest
   | GetCosmJsAccounts
+  | GetWalletStatusRequest
   | IsHWWalletRequest
   | SupportedChainsRequest
   | GetAccountNameRequest
+  | GetWalletStatusRequest
   | ActiveAccountRequest
   | HasWalletRequest;
 export type PopupRequest =
