@@ -597,6 +597,7 @@ export class Emeris implements IEmeris {
     return true;
   }
   async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
+    //  TODO : need to check whether this is allowed.(to not check per-chain)
     if (await this.storage.isWhitelistedWebsite(request.origin)) {
       return true;
     }
