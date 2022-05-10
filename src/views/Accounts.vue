@@ -8,11 +8,9 @@
       <img :src="'/images/Avatar.svg'" style="width: 40px; height: 40px" />
       <div style="cursor: pointer">
         <h2 style="font-weight: 600">{{ account.accountName }}</h2>
-        <span v-if="backedUp(account)" class="secondary-text"
-          ><TotalPrice :balances="balances(account)" small-decimals
-        /></span>
+        <span v-if="backedUp(account)" class="secondary-text"><SumBalances :balances="balances(account)" /></span>
         <span v-else
-          ><TotalPrice
+          ><SumBalances
             :balances="balances(account)"
             small-decimals
             style="display: inline-block"
@@ -91,12 +89,12 @@
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
-import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
 import { GlobalActionTypes } from '@/store';
 import Header from '@@/components/Header.vue';
 import Slideout from '@@/components/Slideout.vue';
+import SumBalances from '@@/components/SumBalances.vue';
 import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
@@ -118,7 +116,7 @@ export default defineComponent({
     Icon,
     Header,
     Slideout,
-    TotalPrice,
+    SumBalances,
   },
   data: () => ({
     editWallet: null,
@@ -145,7 +143,9 @@ export default defineComponent({
       this.$router.push('/accountRename/' + this.editWalletIndex);
     },
     goToAccount(account) {
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, { accountName: account.accountName });
+      this.$store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
+        accountName: account.accountName,
+      });
       this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
       this.$store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
       this.$router.push('/portfolio');
