@@ -18,7 +18,7 @@
       </div>
       <span v-if="hdPathError" class="form-info error mb-4">Invalid derivation path</span>
 
-      <a class="text-xs" @click="infoOpen = true">What is an HD derivation path?</a>
+      <a class="text-sm" @click="infoOpen = true">What is an HD derivation path?</a>
 
       <div class="mt-auto">
         <Button name="Confirm" class="mb-2" :disabled="hdPathError" @click="updateHdPath" />

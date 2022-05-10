@@ -9,6 +9,7 @@ import AccountImport from '../views/AccountImport.vue';
 import AccountImportInfo from '../views/AccountImportInfo.vue';
 import AccountImportLedger from '../views/AccountImportLedger.vue';
 import AccountImportLedgerConnect from '../views/AccountImportLedgerConnect.vue';
+import AccountImportReady from '../views/AccountImportReady.vue';
 import AccountReady from '../views/AccountReady.vue';
 import AccountRemove from '../views/AccountRemove.vue';
 import AccountRename from '../views/AccountRename.vue';
@@ -153,6 +154,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/backup/confirm',
     name: 'Recovery Confirm',
     component: MnemonicConfirm,
+  },
+  {
+    path: '/accountImportReady',
+    name: 'Account Import Ready',
+    component: AccountImportReady,
   },
   {
     path: '/accountReady',

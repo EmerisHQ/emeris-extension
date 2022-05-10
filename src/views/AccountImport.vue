@@ -15,7 +15,7 @@
         <MnemonicInput v-model="mnemonic" placeholder="Your recovery phrase" />
       </div>
       <span v-if="errorText" class="form-info error">{{ errorText }}</span>
-      <a @click="infoOpen = true">What’s a secret recovery phrase?</a>
+      <a class="text-sm" @click="infoOpen = true">What’s a secret recovery phrase?</a>
       <div class="mt-auto">
         <Button type="submit" name="Import" :disabled="isMnemonicInvalid" @click="submit" />
       </div>
