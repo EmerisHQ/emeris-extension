@@ -108,7 +108,9 @@ export const actions: ActionTree<State, RootState> & Actions = {
       type: 'fromPopup',
       data: { action: 'getWhitelistedWebsite' },
     });
-    commit(MutationTypes.SET_WHITELISTED_WEBSITES, whitelistWebsites);
+    if (whitelistWebsites) commit(MutationTypes.SET_WHITELISTED_WEBSITES, whitelistWebsites);
+    else commit(MutationTypes.SET_WHITELISTED_WEBSITES, []);
+    return whitelistWebsites;
   },
   async [ActionTypes.REMOVE_WHITELISTED_WEBSITE]({ dispatch }, { website }) {
     await browser.runtime.sendMessage({

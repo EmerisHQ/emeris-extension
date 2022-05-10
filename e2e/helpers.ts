@@ -51,3 +51,19 @@ export const enableWebsite = async (context, page) => {
   ]);
   await popup.click('text=Accept');
 };
+
+export const keplrEnableWebsite = async (context, page) => {
+  await page.goto(`https://www.google.com/`);
+
+  await emerisLoaded(page);
+
+  const [popup] = await Promise.all([
+    // It is important to call waitForEvent before click to set up waiting.
+    context.waitForEvent('page'), // the background worker opens a new page which is the popup
+    // Opens popup.
+    page.evaluate(() => {
+      window.emeris.enable('cosmos-hub');
+    }),
+  ]);
+  await popup.click('text=Accept');
+};
