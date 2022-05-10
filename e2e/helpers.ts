@@ -62,7 +62,7 @@ export const keplrEnableWebsite = async (context, page) => {
     context.waitForEvent('page'), // the background worker opens a new page which is the popup
     // Opens popup.
     page.evaluate(() => {
-      window.emeris.keplrEnable();
+      window.emeris.enable('cosmos-hub');
     }),
   ]);
   await popup.click('text=Accept');
