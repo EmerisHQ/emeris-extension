@@ -10,6 +10,7 @@
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' vite build --mode development",
     "dev:watch": "NODE_OPTIONS='--max-old-space-size=8192' vite build --watch --mode development & NODE_OPTIONS='--max-old-space-size=8192' vite -c vite.scripts.config.js build --watch --mode development",
     "lint": "eslint -c .eslintrc.js --fix  'src/**/*.{ts,js,tsx,vue}'",
+    "lint:quiet": "eslint -c .eslintrc.js --fix --quiet 'src/**/*.{ts,js,tsx,vue}'",
     "postbuild": "NODE_OPTIONS='--max-old-space-size=8192' vite -c vite.scripts.config.js build --mode production",
     "postdev": "NODE_OPTIONS='--max-old-space-size=8192' vite -c vite.scripts.config.js build --mode development",
     "postinstall": "git submodule init",
@@ -150,7 +151,7 @@
       "prettier --write"
     ],
     "*.{js,ts,tsx,vue}": [
-      "npm run lint"
+      "npm run lint:quiet"
     ]
   },
   "simple-git-hooks": {

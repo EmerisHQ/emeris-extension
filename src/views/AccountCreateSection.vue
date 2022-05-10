@@ -6,9 +6,7 @@
     <router-link :to="{ name: 'Account Import Info' }">
       <Button name="Import Account" variant="secondary" />
     </router-link>
-    <!-- <router-link to="/ledger?next=/ledger/connect"> -->
     <Button name="Import Ledger" variant="link" @click="toLedger" />
-    <!-- </router-link> -->
   </div>
 </template>
 
