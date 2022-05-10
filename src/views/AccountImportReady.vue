@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <img class="mx-auto mt-40 w-12" :src="'/images/CheckIcon.svg'" />
+    <img class="mx-auto mt-12 w-full" src="/images/SurferPortal.png" />
     <h1 class="mb-5" name>Account imported</h1>
     <div class="secondary-text mb-6 text-center">Welcome to the world of cross-chain DeFi with Emeris!</div>
     <router-link to="/" class="mt-auto">
