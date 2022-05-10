@@ -4,17 +4,9 @@
     subtitle="You closed the extension window before finishing your account creation. Do you wish to continue?"
   >
     <template #icon>
-      <img
-        :src="'/images/DotsIcon.svg'"
-        style="width: 46px; margin-left: auto; margin-right: auto; margin-bottom: 35px"
-      />
+      <img :src="'/images/DotsIcon.svg'" class="mx-auto mb-9 w-12" />
     </template>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-      class="buttons"
-    >
+    <div class="mt-auto buttons">
       <Button name="Continue" @click="resume" />
       <Button name="Cancel" variant="link" @click="abort" />
     </div>
@@ -50,10 +42,9 @@ export default defineComponent({
   },
 });
 </script>
+
 <style scoped>
 .wordmark {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
+  @apply mx-auto block;
 }
 </style>
