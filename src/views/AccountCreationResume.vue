@@ -13,34 +13,30 @@
   </ConfirmationScreen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import ConfirmationScreen from '@@/views/ConfirmationScreen.vue';
 
-export default defineComponent({
-  name: 'Account Creation Resume',
-  components: {
-    Button,
-    ConfirmationScreen,
-  },
-  methods: {
-    async resume() {
-      const newAccount = await this.$store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
-      if (newAccount.route.startsWith('/ledger')) {
-        window.open('popup.html#' + newAccount.route);
-      } else {
-        this.$router.push(newAccount.route);
-      }
-    },
-    async abort() {
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined);
-      this.$router.push('/');
-    },
-  },
-});
+const store = useStore();
+const router = useRouter();
+
+const resume = async () => {
+  const newAccount = await store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
+  if (newAccount.route.startsWith('/ledger')) {
+    window.open('popup.html#' + newAccount.route);
+  } else {
+    router.push(newAccount.route);
+  }
+};
+
+const abort = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined);
+  router.push('/');
+};
 </script>
 
 <style scoped>
