@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { emerisLoaded, enableWebsite } from './helpers';
+import { emerisLoaded, enableWebsite, keplrEnableWebsite } from './helpers';
 
 test.describe('Whitelisting', () => {
-  test('Request page whitelisting', async ({ page, context }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
 
@@ -14,7 +14,8 @@ test.describe('Whitelisting', () => {
         return window.emeris.supportedChains();
       }),
     ).toBe(false); // TODO the response should be a thrown error imo
-
+  });
+  test('Request page whitelisting', async ({ page, context }) => {
     await enableWebsite(context, page);
 
     // positive test
@@ -46,5 +47,21 @@ test.describe('Whitelisting', () => {
         return window.emeris.supportedChains();
       }),
     ).toBe(false); // TODO the response should be a thrown error imo
+  });
+  test('Request page whitelisting with keplrEnable', async ({ page, context }) => {
+    await keplrEnableWebsite(context, page);
+
+    // positive test
+    expect(
+      await page.evaluate(() => {
+        return window.emeris.supportedChains();
+      }),
+    ).not.toBe(false);
+
+    expect(
+      await page.evaluate(() => {
+        return window.emeris.enable();
+      }),
+    ).toBe(true);
   });
 });

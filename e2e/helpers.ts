@@ -15,6 +15,8 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
     await page.click('text=Continue');
   }
 
+  await page.click('text=Continue');
+
   const mnemonic = defaultMnemonic;
   await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
   await page.click('[type=submit]');
@@ -47,6 +49,22 @@ export const enableWebsite = async (context, page) => {
     // Opens popup.
     page.evaluate(() => {
       window.emeris.enable();
+    }),
+  ]);
+  await popup.click('text=Accept');
+};
+
+export const keplrEnableWebsite = async (context, page) => {
+  await page.goto(`https://www.google.com/`);
+
+  await emerisLoaded(page);
+
+  const [popup] = await Promise.all([
+    // It is important to call waitForEvent before click to set up waiting.
+    context.waitForEvent('page'), // the background worker opens a new page which is the popup
+    // Opens popup.
+    page.evaluate(() => {
+      window.emeris.enable('cosmos-hub');
     }),
   ]);
   await popup.click('text=Accept');
