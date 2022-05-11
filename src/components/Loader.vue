@@ -1,20 +1,13 @@
 <template>
-  <div style="position: fixed; width: 100%; height: 100%; background-color: var(--bg); top: 0; left: 0">
-    <EphemerisSpinner
-      style="width: 200px; margin-left: auto; margin-right: auto; margin-bottom: 100px; margin-top: 100px"
-    />
-    <div style="text-align: center; width: 100%; margin-top: 28px">
-      <span class="secondary-text">Please wait</span>
+  <div class="relative h-full bg-bg flex flex-col items-center justify-center">
+    <div class="flex items-center justify-center mb-5">
+      <EphemerisSpinner class="mx-auto h-20 w-20" />
+      <img class="absolute w-5 h-5 mx-auto" src="/images/GradientCircle.svg" />
     </div>
+    <p class="text-center w-full secondary-text">Please wait</p>
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import EphemerisSpinner from '@/components/ui/EphemerisSpinner.vue';
-export default {
-  name: 'Loader',
-  components: { EphemerisSpinner },
-};
 </script>
-
-<style></style>
