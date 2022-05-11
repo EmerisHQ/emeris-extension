@@ -23,12 +23,12 @@ const pageHandler = async (request) => {
   }
 };
 
-const messageHandler = async (request) => {
+const messageHandler = async (request, sender) => {
   await emeris.isInitialized();
-  if (request.type == 'fromPopup') {
-    const result = await emeris.popupHandler(request);
-    return result;
+  const isInternalRequest = !sender.tab;
+  if (isInternalRequest) {
+    return emeris.popupHandler(request);
   }
-  return await pageHandler(request);
+  return pageHandler(request);
 };
 browser.runtime.onMessage.addListener(messageHandler);
