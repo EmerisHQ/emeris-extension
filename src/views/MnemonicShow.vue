@@ -2,33 +2,25 @@
   <Loader v-if="!account.accountMnemonic" />
   <div v-else class="page">
     <Header title="Recovery phrase" />
-    <span class="secondary-text" style="margin-bottom: 36px"
-      >Please write down your {{ account.accountMnemonic.trim().split(' ').length }} words in a safe space manually on
-      paper</span
-    >
-    <div class="words" style="margin-bottom: 20px">
+    <span class="secondary-text mb-9">
+      Please write down your {{ account.accountMnemonic.trim().split(' ').length }} words in a safe space manually on
+      paper
+    </span>
+    <div class="words mb-5">
       <div v-for="(word, index) in account.accountMnemonic.trim().split(' ')" :key="index" class="word">
         <div class="number">{{ index }}</div>
         <span>{{ word }}</span>
       </div>
     </div>
-    <a
-      v-if="copied"
-      style="margin-bottom: 38px; font-size: 13px; color: #89ff9b; flex-direction: row; display: flex"
-      @click="copy"
+    <a v-if="copied" class="flex mb-9 text-sm text-positive" @click="copy">
+      <Icon name="InformationIcon" :icon-size="1" class="mr-2" />Copied for 2 minutes</a
     >
-      <Icon name="InformationIcon" :icon-size="1" style="margin-right: 8px" />Copied for 2 minutes</a
-    >
-    <a v-else style="margin-bottom: 38px; font-size: 13px" @click="copy">Click to copy</a>
+    <a v-else class="mb-9 text-sm" @click="copy">Click to copy</a>
 
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
+    <div class="mt-auto">
       <Checkbox
         v-model="checked"
-        style="margin-bottom: 24px"
+        class="mb-6"
         label="I have backed up my recovery phrase, I understand that if I lose my recovery phrase, I will lose my
           funds"
       />
