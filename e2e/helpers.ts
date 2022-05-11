@@ -15,6 +15,8 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
     await page.click('text=Continue');
   }
 
+  await page.click('text=Continue');
+
   const mnemonic = defaultMnemonic;
   await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
   await page.click('[type=submit]');
