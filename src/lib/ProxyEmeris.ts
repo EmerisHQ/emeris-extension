@@ -36,6 +36,7 @@ export class ProxyEmeris implements IEmeris {
     this.queuedRequests = new Map();
 
     window.addEventListener('message', this.responseHandler.bind(this));
+    window.dispatchEvent(new Event('emeris-extension-loaded'));
   }
   private async responseHandler(event) {
     // We only accept messages from ourselves

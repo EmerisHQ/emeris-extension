@@ -1,15 +1,16 @@
+function injectScript(file: string) {
+  const container = document.head || document.documentElement;
+  const scriptElement = document.createElement('script');
+
+  scriptElement.src = file;
+  scriptElement.type = 'module';
+  container.insertBefore(scriptElement, container.children[0]);
+  console.log('Emeris Extension loaded');
+}
+
 async function setup() {
   const browser = (await import('webextension-polyfill')).default;
 
-  function injectScript(file: string) {
-    const container = document.head || document.documentElement;
-    const scriptElement = document.createElement('script');
-
-    scriptElement.src = file;
-    scriptElement.type = 'module';
-    container.insertBefore(scriptElement, container.children[0]);
-    console.log('Emeris Extension loaded');
-  }
   const injected = browser.runtime.getURL('/inject-emeris.js');
   injectScript(injected);
 
