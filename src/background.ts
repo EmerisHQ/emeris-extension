@@ -27,6 +27,7 @@ const messageHandler = async (request, sender) => {
   await emeris.isInitialized();
   const isInternalRequest = !sender.tab;
   if (isInternalRequest) {
+    request.type = 'fromPopup';
     return emeris.popupHandler(request);
   }
   return pageHandler(request);
