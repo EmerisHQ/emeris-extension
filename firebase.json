@@ -1,0 +1,6 @@
+{
+  "hosting": {
+    "target": "extension",
+    "public": "dist"
+  }
+}
