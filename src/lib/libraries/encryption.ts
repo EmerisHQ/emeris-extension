@@ -6,7 +6,7 @@ const getSecureKey = (passwordInput) => {
   const salt = new buffer.SlowBuffer(process.env.VITE_ENCRYPTION_SALT.normalize('NFKC'));
 
   // key creation should take 500ms
-  const N = 65536,
+  const N = process.env.VITE_UNSECURE_KEYS ? 2 : 65536,
     r = 8,
     p = 1;
   const dkLen = 32;

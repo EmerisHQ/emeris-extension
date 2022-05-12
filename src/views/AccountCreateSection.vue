@@ -3,7 +3,7 @@
     <router-link :to="{ name: 'Create Wallet' }">
       <Button name="Create Account" />
     </router-link>
-    <router-link :to="{ name: 'Account Import' }">
+    <router-link :to="{ name: 'Account Import Info' }">
       <Button name="Import Account" variant="secondary" />
     </router-link>
     <Button name="Import Ledger" variant="link" @click="toLedger" />

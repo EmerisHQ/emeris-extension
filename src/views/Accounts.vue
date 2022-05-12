@@ -74,7 +74,7 @@
         <Button name="Create account" variant="link" />
       </router-link>
       <hr style="opacity: 0.14; margin-bottom: 4px" />
-      <router-link :to="{ name: 'Account Import' }" style="margin-bottom: 4px; color: white">
+      <router-link :to="{ name: 'Account Import Info' }" style="margin-bottom: 4px; color: white">
         <Button name="Import account" variant="link" />
       </router-link>
       <hr style="opacity: 0.14; margin-bottom: 4px" />
