@@ -16,21 +16,27 @@ export default class EmerisStorage {
     this.storageMode = storageMode;
   }
   async getWhitelistedWebsites(password: string): Promise<{ origin: string }[]> {
+    if (!password) return [];
+
     const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
     const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
     return whitelistedWebsites;
   }
   async isWhitelistedWebsite(password: string, origin: string): Promise<boolean> {
+    if (!password) return false;
+
     const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
     if (!result.whitelistedWebsites) {
       return false;
     } else {
       const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
-      const hasPermission = whitelistedWebsites.find((permission) => permission.origin == origin);
+      const hasPermission = whitelistedWebsites.find((permission) => permission.origin === origin);
       return !!hasPermission;
     }
   }
   async addWhitelistedWebsite(password: string, origin: string): Promise<boolean> {
+    if (!password) return false;
+
     try {
       const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
       let whitelistedWebsites;
@@ -48,6 +54,8 @@ export default class EmerisStorage {
     }
   }
   async deleteWhitelistedWebsite(password: string, origin: string): Promise<boolean> {
+    if (!password) return false;
+
     try {
       const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
       const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
