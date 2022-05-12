@@ -1,3 +1,5 @@
+import { IEmeris } from '@@/types/emeris';
+
 function injectScript(file: string) {
   const container = document.head || document.documentElement;
   const scriptElement = document.createElement('script');
@@ -9,6 +11,19 @@ function injectScript(file: string) {
 }
 
 async function setup() {
+  window.emeris = {
+    init: () => {
+      return new Promise((resolve) => {
+        window.addEventListener(
+          'emeris-extension-loaded',
+          () => {
+            resolve(undefined);
+          },
+          { once: true },
+        );
+      });
+    },
+  } as IEmeris;
   const browser = (await import('webextension-polyfill')).default;
 
   const injected = browser.runtime.getURL('/inject-emeris.js');

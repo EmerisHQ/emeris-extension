@@ -22,6 +22,7 @@ import { DisplayAccount, IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
 
 export class ProxyEmeris implements IEmeris {
+  private loadPromise = null;
   loaded: boolean;
   keplr: object;
   private queuedRequests: Map<
@@ -37,6 +38,9 @@ export class ProxyEmeris implements IEmeris {
 
     window.addEventListener('message', this.responseHandler.bind(this));
     window.dispatchEvent(new Event('emeris-extension-loaded'));
+  }
+  public async init() {
+    return Promise.resolve(true);
   }
   private async responseHandler(event) {
     // We only accept messages from ourselves
