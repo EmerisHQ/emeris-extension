@@ -22,7 +22,6 @@ import { DisplayAccount, IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
 
 export class ProxyEmeris implements IEmeris {
-  private loadPromise = null;
   loaded: boolean;
   keplr: object;
   private queuedRequests: Map<
