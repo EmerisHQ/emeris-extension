@@ -123,6 +123,8 @@ test.describe('Account Create', () => {
         await page.fill('[placeholder="Confirm password"]', '123456A$');
         await page.click('text=Continue');
       }
+
+      await page.click('text=Continue');
     });
 
     test.afterEach(async ({ page }) => {

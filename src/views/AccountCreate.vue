@@ -122,7 +122,7 @@ export default defineComponent({
         // if the account is imported we don't need to show the backup seed screen
         let nextRoute;
         if (this.newAccount.setupState === AccountCreateStates.COMPLETE) {
-          nextRoute = '/accountReady';
+          nextRoute = '/accountImportReady';
         } else {
           nextRoute = '/backup';
         }
