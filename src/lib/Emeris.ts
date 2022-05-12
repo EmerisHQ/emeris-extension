@@ -406,7 +406,7 @@ export class Emeris implements IEmeris {
     return await libs[chain.library].getPublicKey(account, chain);
   }
   async isPermitted(origin: string): Promise<boolean> {
-    return await this.storage.isWhitelistedWebsite(origin);
+    return await this.storage.isWhitelistedWebsite(this.password, origin);
   }
   async isHWWallet(_req: IsHWWalletRequest): Promise<boolean> {
     return false;
