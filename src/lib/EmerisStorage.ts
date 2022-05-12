@@ -13,7 +13,8 @@ const getSecureKey = (passwordInput) => {
   const password = new buffer.SlowBuffer(passwordInput.normalize('NFKC'));
   const salt = new buffer.SlowBuffer(process.env.VITE_ENCRYPTION_SALT.normalize('NFKC'));
 
-  const N = 32768,
+  // key creation should take 500ms
+  const N = 65536,
     r = 8,
     p = 1;
   const dkLen = 32;
