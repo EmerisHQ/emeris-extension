@@ -7,7 +7,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Add checkout key for demeris repo
         uses: webfactory/ssh-agent@v0.5.4
@@ -15,12 +15,13 @@ jobs:
           ssh-private-key: ${{ secrets.DEMERIS_SSH_PRIVATE_KEY }}
       - run: git submodule init && git submodule update
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'npm'
+          cache: 'yarn'
           cache-dependency-path: |
-            ./package-lock.json
+            ./yarn.lock
+      - run: yarn --frozen-lockfile
 
       - name: build artifacts
         run: |
