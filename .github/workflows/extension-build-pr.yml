@@ -30,7 +30,7 @@ jobs:
 
       - name: build artifacts
         run: |
-          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
+          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" yarn build
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
