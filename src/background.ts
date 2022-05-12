@@ -24,13 +24,15 @@ const pageHandler = async (request) => {
 };
 
 const messageHandler = async (request, sender) => {
+  if (sender.id !== browser.runtime.id) {
+    throw new Error('Only messaging from popup or content-script is allowed');
+  }
   await emeris.isInitialized();
-  const isInternalRequest = sender.id === browser.runtime.id;
-  if (isInternalRequest) {
+  request.type = sender.origin.startsWith('chrome-extension://') ? 'fromPopup' : 'fromContentScript';
+  if (request.type === 'fromPopup') {
     request.type = 'fromPopup';
     return emeris.popupHandler(request);
   }
-  delete request.type;
   return pageHandler(request);
 };
 browser.runtime.onMessage.addListener(messageHandler);
