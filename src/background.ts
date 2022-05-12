@@ -25,11 +25,12 @@ const pageHandler = async (request) => {
 
 const messageHandler = async (request, sender) => {
   await emeris.isInitialized();
-  const isInternalRequest = !sender.tab;
+  const isInternalRequest = sender.id === browser.runtime.id;
   if (isInternalRequest) {
     request.type = 'fromPopup';
     return emeris.popupHandler(request);
   }
+  delete request.type;
   return pageHandler(request);
 };
 browser.runtime.onMessage.addListener(messageHandler);
