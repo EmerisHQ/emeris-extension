@@ -75,6 +75,22 @@ module.exports = {
           },
         ],
       },
+      animation: {
+        'golden-ring-1': 'ring-spin-1 4s cubic-bezier(0.165, 0.84, 0.44, 1) infinite',
+        'golden-ring-2': 'ring-spin-2 4s cubic-bezier(0.165, 0.84, 0.44, 1) infinite',
+      },
+      keyframes: {
+        'ring-spin-1': {
+          '0%': { transform: 'rotate(-37deg)' },
+          '50%': { transform: 'rotate(143deg)' },
+          '100%': { transform: 'rotate(323deg)' },
+        },
+        'ring-spin-2': {
+          '0%': { transform: 'rotate(150deg)' },
+          '50%': { transform: 'rotate(-30deg)' },
+          '100%': { transform: 'rotate(-210deg)' },
+        },
+      },
     },
     backgroundImage: {
       grain: 'url(/images/texture-grain.png)',
