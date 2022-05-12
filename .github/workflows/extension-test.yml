@@ -38,6 +38,8 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: yarn test:e2e
+        env: 
+          EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
 
       - uses: actions/upload-artifact@v2
         if: always()
