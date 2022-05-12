@@ -6,7 +6,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Add checkout key for demeris repo
         uses: webfactory/ssh-agent@v0.5.4
@@ -15,10 +15,12 @@ jobs:
 
       - run: git submodule init && git submodule update
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
+          cache-dependency-path: |
+            ./yarn.lock
       - run: yarn --frozen-lockfile
       
       - name: Install Playwright
@@ -26,7 +28,7 @@ jobs:
         
       - name: build artifacts
         run: |
-          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
+          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" yarn build
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
@@ -35,7 +37,7 @@ jobs:
       - name: Run headless test
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: npm run test:e2e
+          run: yarn test:e2e
         env: 
           EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
 
