@@ -36,52 +36,24 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/ui/Checkbox.vue';
 import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
 import Slideout from '@@/components/Slideout.vue';
-import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
-import { AccountCreateStates } from '@@/types';
 
-export default defineComponent({
-  name: 'Welcome',
-  components: {
-    Button,
-    ListCard,
-    Header,
-    Checkbox,
-    Slideout,
-  },
-  data: () => ({
-    backUpLater: false,
-    checked: false,
-  }),
-  computed: {
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
-    },
-  },
-  methods: {
-    onContinue() {
-      if (this.account && this.account.setupState !== AccountCreateStates.COMPLETE) {
-        const localStorageKey = `nextBackupCheck-${this.account.accountName}`;
-        const nowInSeconds = Math.floor(Date.now() / 1000);
-        //  display next backup check in an hour
-        window.localStorage.setItem(localStorageKey, `${nowInSeconds + 60 * 60}`);
-      }
-      this.$router.push('/accountReady');
-    },
-    goToShowMnemonic() {
-      this.$router.push({
-        path: '/backup/password',
-      });
-    },
-  },
-});
+const router = useRouter();
+
+const backUpLater = ref(false);
+const checked = ref(false);
+
+const goToShowMnemonic = () => {
+  router.push({ path: '/backup/password' });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -93,5 +65,12 @@ export default defineComponent({
 .text-inactive {
   background-color: #333333;
   color: #ffffff;
+}
+:deep(.checkbox__control) {
+  @apply border-text;
+
+  &:checked {
+    background: center/contain no-repeat url('@@/assets/Checkbox.svg');
+  }
 }
 </style>

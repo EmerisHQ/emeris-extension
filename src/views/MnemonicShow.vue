@@ -22,15 +22,17 @@
         v-model="checked"
         class="mb-6"
         label="I have backed up my recovery phrase, I understand that if I lose my recovery phrase, I will lose my
-          funds"
+          funds."
       />
       <Button name="Continue" :disabled="!checked" @click="submit" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/ui/Checkbox.vue';
@@ -39,70 +41,43 @@ import Header from '@@/components/Header.vue';
 import Loader from '@@/components/Loader.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
-export default defineComponent({
-  name: 'Mnemonic Show',
-  components: {
-    Button,
-    Header,
-    Checkbox,
-    Icon,
-    Loader,
-  },
-  data: () => ({
-    checked: false,
-    copied: null,
-  }),
-  computed: {
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
-    },
-  },
-  methods: {
-    submit() {
-      this.$router.push('/backup/confirm');
-    },
-    copy() {
-      navigator.clipboard.writeText(this.account.accountMnemonic);
-      if (this.copied) {
-        clearTimeout(this.copied);
-      }
-      this.copied = setTimeout(() => {
-        navigator.clipboard.writeText('');
-        this.copied = null;
-      }, 1000 * 120);
-    },
-  },
+const store = useStore();
+const router = useRouter();
+
+const checked = ref(false);
+const copied = ref(null);
+
+const account = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getAccount];
 });
+
+const submit = () => {
+  router.push('/backup/confirm');
+};
+const copy = () => {
+  navigator.clipboard.writeText(account.value.accountMnemonic);
+  if (copied.value) {
+    clearTimeout(copied.value);
+  }
+  copied.value = setTimeout(() => {
+    navigator.clipboard.writeText('');
+    copied.value = null;
+  }, 1000 * 120);
+};
 </script>
+
 <style lang="scss" scoped>
 .checkbox-card {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 16px;
-
-  background: #171717;
-  border-radius: 10px;
+  @apply flex items-start p-4 bg-darkBanner rounded-[10px];
 }
 
 .words {
   .word {
-    display: inline-flex;
-    margin-right: 16px;
-    margin-bottom: 16px;
+    @apply inline-flex mr-4 mb-4;
 
     .number {
-      margin-right: 8px;
-      background: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-weight: 600;
-      font-size: 13px;
-      line-height: 16px;
+      @apply mr-2 bg-text rounded-[50%] w-6 h-6 font-semibold text-sm pt-1 text-center;
       color: #000000;
-      padding-top: 4px;
-      text-align: center;
     }
 
     span {
@@ -112,10 +87,18 @@ export default defineComponent({
 }
 
 :deep(.checkbox) {
-  background-color: #171717;
+  @apply bg-darkBanner;
+
+  .checkbox__control {
+    @apply border-text;
+
+    &:checked {
+      background: center/contain no-repeat url('@@/assets/Checkbox.svg');
+    }
+  }
 
   .checkbox__label {
-    font-size: 13px;
+    @apply text-sm;
   }
 }
 </style>
