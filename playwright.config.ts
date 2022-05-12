@@ -41,6 +41,12 @@ const config: PlaywrightTestConfig = {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:8080',
     headless: false,
     video: 'on-first-retry',
+    /**
+     * Video on doesn't work in playwright when working on a chrome extension:
+     * https://github.com/microsoft/playwright/issues/5586
+     * https://github.com/microsoft/playwright/issues/5593
+     */
+    screenshot: 'only-on-failure',
   },
 
   /* Configure projects for major browsers */
