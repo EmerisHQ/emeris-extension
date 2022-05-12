@@ -80,5 +80,6 @@ export const keplrEnableWebsite = async (context, page) => {
   await popup.fill('[placeholder="Confirm password"]', '123456A$');
   await popup.click('text=Continue');
 
+  await expect(popup.locator('text=Accept >> visible=true')).toBeVisible();
   await popup.click('text=Accept');
 };
