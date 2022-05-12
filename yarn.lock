@@ -966,36 +966,29 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@emeris/chain-config@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.npmjs.org/@emeris/chain-config/-/chain-config-0.0.11.tgz"
-  integrity sha512-IL0sS2WB5tOlDmr5gJ/m2p2EL57LK83MeMRQ1TqnMsB7kRG7QU/Cls13+fmSoOl7R6ZjvILdFjjuda+FJMNmhw==
+"@emeris/chain-config@0.2.2", "@emeris/chain-config@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@emeris/chain-config/-/chain-config-0.2.2.tgz#ed2eeb7f1e9a0ddaf1acbee3b0608d2f59c8fcf3"
+  integrity sha512-hR8/BhTKtjUCcaCF2nfJmXq8+4W4AL/hOFfw/3tOcJFkO8vjHdC1LjKQvemUfGEVowEw8b4JuqEHA84cwuAoDQ==
   dependencies:
     isomorphic-fetch "^3.0.0"
 
-"@emeris/chain-config@^0.2.3-pr-174-b07c8c7690704c5b290ce4728aa7a83c668722e4.0+b07c8c7", "@emeris/chain-config@^0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0+04ee721":
-  version "0.2.3-pr-176-ec6792078977e5a2f7dd0ffd405d5c4196b56d00.0"
-  resolved "https://registry.npmjs.org/@emeris/chain-config/-/chain-config-0.2.3-pr-176-ec6792078977e5a2f7dd0ffd405d5c4196b56d00.0.tgz"
-  integrity sha512-bViiVb+qS6ZHDuEKT5K8c+cG1cpaxuarAaa8zqnR768t9zAIfEmD9mLaDuCkANqcI79rgnpNWilWl7NV5Jz1mQ==
-  dependencies:
-    isomorphic-fetch "^3.0.0"
-
-"@emeris/mapper@pr-175":
-  version "0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0"
-  resolved "https://registry.npmjs.org/@emeris/mapper/-/mapper-0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0.tgz"
-  integrity sha512-ukl2n1Vby8EkHthedvqJUZwHnvNJNY7OtJDx8KxmQtGm5BLYhJIfJ9Pc3ghD2Z6IQe9T7+lFMCoi6wXZOlJh6w==
+"@emeris/mapper@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@emeris/mapper/-/mapper-0.2.2.tgz#81b19cb232cc7b8b68b964ec8c29e606d642f342"
+  integrity sha512-rtK8ZRgFMekd87dQ9rujLjdfQSdYiBUN24NCkGa8cKwZVwliOf4s5iYRD/+Z4NBAizOyA/axdBHu3KctLJIERA==
   dependencies:
     "@clockwork-projects/cosmos-gaia-js" "^6.0.0"
     "@clockwork-projects/osmosis-labs-osmosis-js" "^6.1.0"
     "@cosmjs/amino" "^0.28.0"
-    "@emeris/chain-config" "^0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0+04ee721"
+    "@emeris/chain-config" "^0.2.2"
     bignumber.js "^9.0.2"
     protobufjs "^6.11.2"
 
-"@emeris/signer@pr-174":
-  version "0.2.3-pr-174-b07c8c7690704c5b290ce4728aa7a83c668722e4.0"
-  resolved "https://registry.npmjs.org/@emeris/signer/-/signer-0.2.3-pr-174-b07c8c7690704c5b290ce4728aa7a83c668722e4.0.tgz"
-  integrity sha512-3EOuMAx7nDVSal/o5/dNdAb8U2S2cd8m1r30YiQ/GdGPIKy/+4LnrCf5S1LVvpFbHCW2kx4SoC5/mK4QRKzx9A==
+"@emeris/signer@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@emeris/signer/-/signer-0.2.2.tgz#999705cdb306cd454fd29a6512401d6d95cd3491"
+  integrity sha512-OEZ9BKIGFqz5AoMEtbvtbtGR+t5NAoydCpoG0Xifhmp8VNPEEeP5VRPMSftDrA01Yjr8APGdbj/uWn9soFcnxA==
   dependencies:
     "@clockwork-projects/cosmos-gaia-js" "^6.0.0"
     "@clockwork-projects/osmosis-labs-osmosis-js" "^6.1.0"
@@ -1005,7 +998,7 @@
     "@cosmjs/ledger-amino" "^0.28.0"
     "@cosmjs/proto-signing" "^0.28.0"
     "@cosmjs/stargate" "^0.28.0"
-    "@emeris/chain-config" "^0.2.3-pr-174-b07c8c7690704c5b290ce4728aa7a83c668722e4.0+b07c8c7"
+    "@emeris/chain-config" "^0.2.2"
     "@ledgerhq/hw-transport-webusb" "^6.20.0"
     "@starport/vuex" "^0.1.58"
     "@terra-money/terra.js" "^1.8.10"
@@ -1013,10 +1006,10 @@
     "@types/w3c-web-hid" "^1.0.2"
     bech32 "^2.0.0"
 
-"@emeris/types@pr-175":
-  version "0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0"
-  resolved "https://registry.npmjs.org/@emeris/types/-/types-0.2.3-pr-175-04ee7219452aabca747e6b366363d07f7238aadf.0.tgz"
-  integrity sha512-/fhfdpRYuTbDZ8TObYjkCQrQGDfx0PNIK1Bpz1YNWWlCIEfmMdzfL94vjEO4t3wp8FJHpVta35kY9ukYUDOYEg==
+"@emeris/types@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@emeris/types/-/types-0.2.2.tgz#78d870a8bbe205248cb12b44e46b0e34912d133d"
+  integrity sha512-rMrszXqLQCL4rGvKPrPoa38TcgL7P0klF0Mg1REnHw9khnyom+z8oMo9BdbYAbk2nDf+Q7pEj0r8GB6rwFUz3Q==
   dependencies:
     "@sinclair/typebox" "^0.22.1"
 
