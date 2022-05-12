@@ -1,4 +1,5 @@
-import * as CryptoJS from 'crypto-js';
+import scrypt from 'scrypt-js';
+import buffer from 'scrypt-js/thirdparty/buffer';
 import browser from 'webextension-polyfill';
 
 import { SaveWalletError, UnlockWalletError } from '@@/errors';
@@ -7,6 +8,52 @@ export enum EmerisStorageMode {
   SYNC = 'sync',
   LOCAL = 'local',
 }
+
+const getSecureKey = (passwordInput) => {
+  const password = new buffer.SlowBuffer(passwordInput.normalize('NFKC'));
+  const salt = new buffer.SlowBuffer(process.env.VITE_ENCRYPTION_SALT.normalize('NFKC'));
+
+  const N = 32768,
+    r = 8,
+    p = 1;
+  const dkLen = 32;
+
+  const key = scrypt.syncScrypt(password, salt, N, r, p, dkLen);
+  return key;
+};
+
+const encrypt = async (value, password) => {
+  const key = getSecureKey(password);
+  const iv = Buffer.from(process.env.VITE_IV);
+  const key_encoded = await crypto.subtle.importKey('raw', key.buffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
+  const encrypted = await crypto.subtle.encrypt(
+    {
+      name: 'AES-GCM',
+      iv: iv,
+    },
+    key_encoded,
+    Buffer.from(value),
+  );
+  return Buffer.from(encrypted).toString('hex');
+};
+
+const decrypt = async (value, password) => {
+  const key = getSecureKey(password);
+  const iv = Buffer.from(process.env.VITE_IV);
+  const key_encoded = await crypto.subtle.importKey('raw', key.buffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
+  const decrypted = await crypto.subtle.decrypt(
+    {
+      name: 'AES-GCM',
+      iv: iv,
+    },
+    key_encoded,
+    Buffer.from(value, 'hex'),
+  );
+  const decoder = new TextDecoder();
+  const plaintext = decoder.decode(decrypted);
+  return plaintext;
+};
+
 export default class EmerisStorage {
   private storageMode: EmerisStorageMode;
 
@@ -108,7 +155,7 @@ export default class EmerisStorage {
   }
   private async saveWallet(wallet: EmerisWallet, password: string): Promise<boolean> {
     try {
-      const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(wallet), password).toString();
+      const encryptedWallet = await encrypt(JSON.stringify(wallet), password);
       await browser.storage[this.storageMode].set({ wallet: { walletData: encryptedWallet } });
       return true;
     } catch (e) {
@@ -123,13 +170,16 @@ export default class EmerisStorage {
         await this.saveWallet([], password); // create wallet object if not there
         return [];
       }
-      const wallet = JSON.parse(CryptoJS.AES.decrypt(encWallet.walletData, password).toString(CryptoJS.enc.Utf8));
+      const wallet = JSON.parse(await decrypt(encWallet.walletData, password));
       return wallet;
     } catch (e) {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
     }
   }
   async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    if (!oldPassword || !newPassword) {
+      throw new UnlockWalletError('Passwords need to be provided');
+    }
     try {
       const wallet = await this.unlockWallet(oldPassword);
       this.saveWallet(wallet, newPassword);
@@ -149,7 +199,7 @@ export default class EmerisStorage {
   async setPartialAccountCreationStep(partialAccountCreationStep, password) {
     if (password) {
       const encryptedPartialAccountCreationStep = partialAccountCreationStep
-        ? CryptoJS.AES.encrypt(JSON.stringify(partialAccountCreationStep), password).toString()
+        ? await encrypt(JSON.stringify(partialAccountCreationStep), password)
         : null;
       await browser.storage[this.storageMode].set({ partialAccountCreationStep: encryptedPartialAccountCreationStep });
     } else {
@@ -162,10 +212,7 @@ export default class EmerisStorage {
         this.storageMode
       ].get('partialAccountCreationStep');
       if (!encryptedPartialAccountCreationStep) return undefined;
-      const partialAccountCreationStep = JSON.parse(
-        CryptoJS.AES.decrypt(encryptedPartialAccountCreationStep, password).toString(CryptoJS.enc.Utf8),
-      );
-      return partialAccountCreationStep;
+      return await decrypt(encryptedPartialAccountCreationStep, password);
     } catch (e) {
       await browser.storage[this.storageMode].set({ partialAccountCreationStep: null }); // prevent a broken state and the information is not critical
       throw new UnlockWalletError('Could not unlock partialAccountCreationStep: ' + e);
