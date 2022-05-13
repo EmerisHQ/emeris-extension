@@ -1,8 +1,9 @@
 name: Extension Build Dev
-on: 
+on:
   push:
     branches:
       - develop
+  workflow_dispatch:
 defaults:
   run:
     working-directory: ./
