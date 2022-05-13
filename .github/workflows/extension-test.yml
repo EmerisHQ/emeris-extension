@@ -1,5 +1,6 @@
 name: Extension Test
-on: pull_request
+on: 
+  pull_request
 jobs:
   Extension-Test:
     runs-on: self-hosted
@@ -19,10 +20,10 @@ jobs:
           node-version: '16'
           cache: 'yarn'
       - run: yarn --frozen-lockfile
-
+      
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
-
+        
       - name: build artifacts
         run: |
           NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
@@ -30,13 +31,12 @@ jobs:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
-          VITE_UNSECURE_KEYS: true # key encryption is built to avoid brute force. but e2e is relying on parallelizm
 
       - name: Run headless test
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm run test:e2e
-        env:
+        env: 
           EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
 
       - uses: actions/upload-artifact@v2

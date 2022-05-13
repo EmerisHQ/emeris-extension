@@ -273,16 +273,16 @@ export class Emeris implements IEmeris {
         this.storage.extensionReset();
         return;
       case 'removeWhitelistedWebsite':
-        this.storage.deleteWhitelistedWebsite(this.password, message.data.data.website);
+        this.storage.deleteWhitelistedWebsite(message.data.data.website);
         return;
       case 'getWhitelistedWebsite':
-        return this.storage.getWhitelistedWebsites(this.password);
+        return this.storage.getWhitelistedWebsites();
       case 'addWhitelistedWebsite':
         // prevent dupes
-        const whitelistedWebsites = await this.storage.getWhitelistedWebsites(this.password);
+        const whitelistedWebsites = await this.storage.getWhitelistedWebsites();
         if (whitelistedWebsites.find((whitelistedWebsite) => whitelistedWebsite.origin === message.data.data.website))
           return true;
-        return this.storage.addWhitelistedWebsite(this.password, message.data.data.website);
+        return this.storage.addWhitelistedWebsite(message.data.data.website);
       case 'setPartialAccountCreationStep':
         return this.storage.setPartialAccountCreationStep(message.data.data, this.password);
       case 'getPartialAccountCreationStep':
@@ -406,7 +406,7 @@ export class Emeris implements IEmeris {
     return await libs[chain.library].getPublicKey(account, chain);
   }
   async isPermitted(origin: string): Promise<boolean> {
-    return await this.storage.isWhitelistedWebsite(this.password, origin);
+    return await this.storage.isWhitelistedWebsite(origin);
   }
   async isHWWallet(_req: IsHWWalletRequest): Promise<boolean> {
     return false;
@@ -569,14 +569,14 @@ export class Emeris implements IEmeris {
     return response;
   }
   async enable(request: ApproveOriginRequest): Promise<boolean> {
-    if (await this.storage.isWhitelistedWebsite(this.password, request.origin)) {
+    if (await this.storage.isWhitelistedWebsite(request.origin)) {
       return true;
     }
 
     request.id = uuidv4();
     const enabled = (await this.forwardToPopup(request)).accept as boolean;
     if (enabled) {
-      await this.storage.addWhitelistedWebsite(this.password, request.origin);
+      await this.storage.addWhitelistedWebsite(request.origin);
     }
     return enabled;
   }
@@ -598,7 +598,7 @@ export class Emeris implements IEmeris {
   }
   async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
     //  TODO : need to check whether this is allowed.(to not check per-chain)
-    if (await this.storage.isWhitelistedWebsite(this.password, request.origin)) {
+    if (await this.storage.isWhitelistedWebsite(request.origin)) {
       return true;
     }
     request.id = uuidv4();
@@ -623,7 +623,7 @@ export class Emeris implements IEmeris {
     }
     const enabled = (await this.forwardToPopup(request)).accept as boolean;
     if (enabled) {
-      await this.storage.addWhitelistedWebsite(this.password, request.origin);
+      await this.storage.addWhitelistedWebsite(request.origin);
     }
     return enabled;
   }
