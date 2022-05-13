@@ -58,8 +58,13 @@ export default defineComponent({
         window.close();
       }
 
+      // if the user has not yet created an account
+      if (!hasWallet || (wallet && wallet.length === 0)) {
+        this.$router.push('/welcome');
+        return;
+      }
       // if the use has a password set but the extension is not unlocked
-      if (hasWallet && !wallet) {
+      else if (hasWallet && !wallet) {
         this.$router.push('/welcomeBack');
         return;
       }
@@ -79,11 +84,6 @@ export default defineComponent({
           default:
             this.$router.push('/portfolio');
         }
-        return;
-      }
-      // if the user has not yet created an account
-      else if (!hasWallet || (wallet && wallet.length === 0)) {
-        this.$router.push('/welcome');
         return;
       }
 

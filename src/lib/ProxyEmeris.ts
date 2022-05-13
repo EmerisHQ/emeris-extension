@@ -17,7 +17,6 @@ import {
   SignTransactionRequest,
   SupportedChainsRequest,
 } from '@@/types/api';
-import { IEmeris } from '@@/types/emeris';
 import { DisplayAccount, IEmeris } from '@@/types/emeris';
 import { AbstractTxResult } from '@@/types/transactions';
 
@@ -40,6 +39,16 @@ export class ProxyEmeris implements IEmeris {
   }
   public async ready() {
     return Promise.resolve(true);
+  }
+  // TODO replace with proxy in constructor for all methods
+  // or find way for TS decorator to work with `this` (internal properties)
+  private async authenticatedCheck() {
+    if (!this.hasRequestsPermissions()) {
+      console.warn('Wallet locked or not yet created. Please create/unlock wallet before making requests.');
+      await this.enable();
+      return false;
+    }
+    return true;
   }
   private async responseHandler(event) {
     // We only accept messages from ourselves
@@ -78,7 +87,6 @@ export class ProxyEmeris implements IEmeris {
       resolver = resolve;
       rejecter = reject;
     });
-
     this.queuedRequests.set(requestId, { resolver, rejecter });
     window.postMessage(fullRequest, window.location.origin);
 
@@ -132,7 +140,14 @@ export class ProxyEmeris implements IEmeris {
     const response = await this.sendRequest(request as HasWalletRequest);
     return response.data as boolean;
   }
-
+  async hasRequestsPermissions(): Promise<boolean> {
+    const request = {
+      action: 'hasRequestsPermissions',
+      data: {},
+    };
+    const response = await this.sendRequest(request as HasWalletRequest);
+    return response.data as boolean;
+  }
   async signTransaction({
     messages,
     chainId,
@@ -149,6 +164,7 @@ export class ProxyEmeris implements IEmeris {
     };
     memo?: string;
   }): Promise<Uint8Array> {
+    if (!(await this.authenticatedCheck())) return;
     const request = {
       action: 'signTransaction',
       data: { messages, chainId, signingAddress, fee, memo },
@@ -186,7 +202,6 @@ export class ProxyEmeris implements IEmeris {
     }
     return response.data as AminoSignResponse;
   }
-
   async signAndBroadcastTransaction({
     messages,
     chainId,

@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "allowJs": true,
     "rootDirs": ["./src", "./demeris"],
     "sourceMap": true,
