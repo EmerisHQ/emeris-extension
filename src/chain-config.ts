@@ -5,17 +5,15 @@ const chainConfigApi = new ChainConfig(process.env.VUE_APP_EMERIS_PROD_ENDPOINT 
 
 const chainConfig: Promise<Record<string, Chain & { library: ChainLibraries }>> = new Promise(async (resolve) => {
   const chains = await chainConfigApi.getChains();
-  const chainsWithLibs = await Promise.all(
-    chains
-      .filter((chain) => chain.enabled)
-      .map(async (chain) => {
-        const lib = await chainConfigApi.getChainLibrary(chain.chain_name);
-        return {
-          ...chain,
-          library: lib,
-        };
-      }),
-  );
+  const chainsWithLibs = chains
+    .filter((chain) => chain.enabled)
+    .map((chain) => {
+      return {
+        ...chain,
+        library: ChainLibraries.cosmjs,
+      };
+    });
+
   const chainLookup = Object.fromEntries(chainsWithLibs.map((config) => [config.chain_name, config])) as Record<
     string,
     Chain & { library: ChainLibraries }
