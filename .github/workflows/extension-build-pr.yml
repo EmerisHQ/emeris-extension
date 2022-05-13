@@ -26,10 +26,10 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: |
             ./yarn.lock
-      - run: yarn --frozen-lockfile
 
       - name: build artifacts
         run: |
+          yarn install
           NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" yarn build
         env:
           # Put in secrets

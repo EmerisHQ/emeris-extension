@@ -22,11 +22,12 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: |
             ./yarn.lock
-      - run: yarn --frozen-lockfile
 
       - name: build artifacts
         continue-on-error: true
-        run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" yarn build:web
+        run: |
+          yarn install
+          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" yarn build:web
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
@@ -36,8 +37,8 @@ jobs:
         continue-on-error: true
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EMERIS_HQ }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_EMERIS_HQ }}"
           target: extension
           expires: 7d
           projectId: emeris-hq
