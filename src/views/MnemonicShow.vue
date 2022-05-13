@@ -2,43 +2,37 @@
   <Loader v-if="!account.accountMnemonic" />
   <div v-else class="page">
     <Header title="Recovery phrase" />
-    <span class="secondary-text" style="margin-bottom: 36px"
-      >Please write down your {{ account.accountMnemonic.trim().split(' ').length }} words in a safe space manually on
-      paper</span
-    >
-    <div class="words" style="margin-bottom: 20px">
+    <span class="secondary-text mb-9">
+      Please write down your {{ account.accountMnemonic.trim().split(' ').length }} words in a safe space manually on
+      paper
+    </span>
+    <div class="words mb-5">
       <div v-for="(word, index) in account.accountMnemonic.trim().split(' ')" :key="index" class="word">
         <div class="number">{{ index }}</div>
         <span>{{ word }}</span>
       </div>
     </div>
-    <a
-      v-if="copied"
-      style="margin-bottom: 38px; font-size: 13px; color: #89ff9b; flex-direction: row; display: flex"
-      @click="copy"
+    <a v-if="copied" class="flex mb-9 text-sm text-positive" @click="copy">
+      <Icon name="InformationIcon" :icon-size="1" class="mr-2" />Copied for 2 minutes</a
     >
-      <Icon name="InformationIcon" :icon-size="1" style="margin-right: 8px" />Copied for 2 minutes</a
-    >
-    <a v-else style="margin-bottom: 38px; font-size: 13px" @click="copy">Click to copy</a>
+    <a v-else class="mb-9 text-sm" @click="copy">Click to copy</a>
 
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
+    <div class="mt-auto">
       <Checkbox
         v-model="checked"
-        style="margin-bottom: 24px"
+        class="mb-6"
         label="I have backed up my recovery phrase, I understand that if I lose my recovery phrase, I will lose my
-          funds"
+          funds."
       />
       <Button name="Continue" :disabled="!checked" @click="submit" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/ui/Checkbox.vue';
@@ -47,70 +41,43 @@ import Header from '@@/components/Header.vue';
 import Loader from '@@/components/Loader.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
-export default defineComponent({
-  name: 'Mnemonic Show',
-  components: {
-    Button,
-    Header,
-    Checkbox,
-    Icon,
-    Loader,
-  },
-  data: () => ({
-    checked: false,
-    copied: null,
-  }),
-  computed: {
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
-    },
-  },
-  methods: {
-    submit() {
-      this.$router.push('/backup/confirm');
-    },
-    copy() {
-      navigator.clipboard.writeText(this.account.accountMnemonic);
-      if (this.copied) {
-        clearTimeout(this.copied);
-      }
-      this.copied = setTimeout(() => {
-        navigator.clipboard.writeText('');
-        this.copied = null;
-      }, 1000 * 120);
-    },
-  },
+const store = useStore();
+const router = useRouter();
+
+const checked = ref(false);
+const copied = ref(null);
+
+const account = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getAccount];
 });
+
+const submit = () => {
+  router.push('/backup/confirm');
+};
+const copy = () => {
+  navigator.clipboard.writeText(account.value.accountMnemonic);
+  if (copied.value) {
+    clearTimeout(copied.value);
+  }
+  copied.value = setTimeout(() => {
+    navigator.clipboard.writeText('');
+    copied.value = null;
+  }, 1000 * 120);
+};
 </script>
+
 <style lang="scss" scoped>
 .checkbox-card {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 16px;
-
-  background: #171717;
-  border-radius: 10px;
+  @apply flex items-start p-4 bg-darkBanner rounded-[10px];
 }
 
 .words {
   .word {
-    display: inline-flex;
-    margin-right: 16px;
-    margin-bottom: 16px;
+    @apply inline-flex mr-4 mb-4;
 
     .number {
-      margin-right: 8px;
-      background: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-weight: 600;
-      font-size: 13px;
-      line-height: 16px;
+      @apply mr-2 bg-text rounded-[50%] w-6 h-6 font-semibold text-sm pt-1 text-center;
       color: #000000;
-      padding-top: 4px;
-      text-align: center;
     }
 
     span {
@@ -120,10 +87,18 @@ export default defineComponent({
 }
 
 :deep(.checkbox) {
-  background-color: #171717;
+  @apply bg-darkBanner;
+
+  .checkbox__control {
+    @apply border-text;
+
+    &:checked {
+      background: center/contain no-repeat url('@@/assets/Checkbox.svg');
+    }
+  }
 
   .checkbox__label {
-    font-size: 13px;
+    @apply text-sm;
   }
 }
 </style>
