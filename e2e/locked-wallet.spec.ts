@@ -1,52 +1,95 @@
+/* eslint-disable max-lines-per-function */
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { emerisLoaded, enableWebsite, importAccount, defaultCosmosAddress } from './helpers';
+import { defaultCosmosAddress, emerisLoaded } from './helpers';
 
-test.describe('Locked Wallet API calls', () => {
-  test('Send', async ({ context, page }) => {
-    await enableWebsite(context, page);
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
-    // await importAccount(page);
+test.describe('Locked Wallet - attempt operations:', () => {
+  test.only('signTransaction', async ({ page }) => {
     await page.goto(`https://www.google.com/`);
-    // await emerisLoaded(page);
+    await emerisLoaded(page);
 
-    // when the transaction popup shows, click accept
+    let lastConsoleWarnMessage;
+    page.on('console', (msg) => {
+      lastConsoleWarnMessage = msg.text();
+    });
+
     // context.waitForEvent('page').then(async (popup) => {
-      // await expect(popup.locator('.total-price')).not.toHaveText('$0.00'); // fees should display
-      // await popup.click('text=Accept');
+    // should show  create account page
+    // await page.pause();
+    // await expect(popup.locator('button:has-text("Create Account")')).toHaveCount(0);
+    // await expect(popup.locator('button:has-text("Create Account")')).toHaveText(/Create Account/);
+    // await popup.close();
+    // await expect(popup.locator('[data-testid=unlock-emeris-btn]')).toHaveText('Create Account');
+
+    // login
+    // await importAccount(popup);
+
+    // // then should show whitelist page
+    // await popup.click('text=Accept');
+
+    // // reject transaction
+    // // await popup.click('text=Reject');
+    // await popup.locator('button:has-text("Reject")').click();
+    // // await popup.close();
+    // return;
     // });
 
-    // const result = await page.evaluate((defaultCosmosAddress) => {
-    //   return window.emeris.signTransaction({
-    //     chainId: 'cosmos-hub',
-    //     signingAddress: defaultCosmosAddress,
-    //     messages: [
-    //       {
-    //         type: 'transfer',
-    //         data: {
-    //           amount: { denom: 'uatom', amount: 1 },
-    //           chain_name: 'cosmos-hub',
-    //           from_address: defaultCosmosAddress,
-    //           to_address: defaultCosmosAddress,
-    //         },
-    //       },
-    //     ],
-    //     fee: {
-    //       gas: '200000',
-    //       amount: [
-    //         {
-    //           amount: 20000000,
-    //           denom: 'uatom',
-    //         },
-    //       ],
-    //     },
-    //   });
-    // }, defaultCosmosAddress);
+    await page.evaluate(async (defaultCosmosAddress) => {
+      return window.emeris
+        .signTransaction({
+          chainId: 'cosmos-hub',
+          signingAddress: defaultCosmosAddress,
+          messages: [
+            {
+              type: 'transfer',
+              data: {
+                amount: { denom: 'uatom', amount: 1 },
+                chain_name: 'cosmos-hub',
+                from_address: defaultCosmosAddress,
+                to_address: defaultCosmosAddress,
+              },
+            },
+          ],
+          fee: {
+            gas: '200000',
+            amount: [
+              {
+                amount: 20000000,
+                denom: 'uatom',
+              },
+            ],
+          },
+        })
+        .then((r) => r)
+        .catch((e) => e);
+    }, defaultCosmosAddress);
 
-    // await expect(result).toBe(
-    //   '0a9f010a8a010a1c2f636f736d6f732e62616e6b2e763162657461312e4d736753656e64126a0a2d636f736d6f733163376732647565303970303635666e776d713870726838777761756879366165386a36767539122d636f736d6f733163376732647565303970303635666e776d713870726838777761756879366165386a367675391a0a0a057561746f6d120131121053656e74207769746820456d6572697312690a4e0a460a1f2f636f736d6f732e63727970746f2e736563703235366b312e5075624b657912230a2103addfaf462e25a64f906270d1927c7a48ec2d7859cd096ff7077459512830a35c12040a02087f12170a110a057561746f6d1208323030303030303010c09a0c1a40bd6efaa0de6dd67c7d02570f6de0acd75845ae58ce571e933d252a3e14e8c1de1bdaf072ee940bca84720dcff23c071217bb7413975431f304aba05664dda34d',
-    // );
+    await expect(lastConsoleWarnMessage).toBe(
+      'Wallet locked or not yet created. Please create/unlock wallet before making requests.',
+    );
+  });
 
-    
+  // test('getOfflineSigner', async ({ page, context }) => {
+  //   await page.goto(`https://www.google.com/`);
+  //   await emerisLoaded(page);
+
+  //   let lastConsoleWarnMessage;
+  //   page.on('console', (msg) => {
+  //     lastConsoleWarnMessage = msg.text();
+  //   });
+
+  //   // when the transaction popup shows, click accept
+  //   context.waitForEvent('page').then(async (popup) => {
+  //     // should show popup requesting password
+  //     // expect();
+  //     // await popup.click('text=Accept');
+  //   });
+
+  //   await page.evaluate(() => {
+  //     return window.emeris.getOfflineSigner('cosmoshub-4');
+  //   });
+
+  //   await expect(lastConsoleWarnMessage).toBe('Wallet locked. Add password to get offline signer.');
+  // });
 });
