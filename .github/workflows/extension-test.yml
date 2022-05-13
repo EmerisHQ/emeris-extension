@@ -1,6 +1,7 @@
 name: Extension Test
-on: 
-  pull_request
+on:
+  pull_request:
+  workflow_dispatch:
 jobs:
   Extension-Test:
     runs-on: self-hosted
