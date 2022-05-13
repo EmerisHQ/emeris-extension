@@ -115,11 +115,16 @@ export default defineComponent({
   },
   methods: {
     async submit() {
+      const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
       if (this.length && this.upperCaseChar && this.symbolChar && this.digitChar && this.match) {
-        if (this.wallet) {
-          await this.$store.dispatch(GlobalEmerisActionTypes.CHANGE_PASSWORD, { password: this.password });
+        if (hasWallet) {
+          await this.$store.dispatch(GlobalEmerisActionTypes.CHANGE_PASSWORD, {
+            password: this.password,
+          });
         } else {
-          await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, { password: this.password });
+          await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, {
+            password: this.password,
+          });
         }
         this.onContinue();
       }
