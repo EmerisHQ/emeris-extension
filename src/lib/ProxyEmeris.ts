@@ -38,7 +38,7 @@ export class ProxyEmeris implements IEmeris {
     window.addEventListener('message', this.responseHandler.bind(this));
     window.dispatchEvent(new Event('emeris-extension-loaded'));
   }
-  public async init() {
+  public async ready() {
     return Promise.resolve(true);
   }
   private async responseHandler(event) {

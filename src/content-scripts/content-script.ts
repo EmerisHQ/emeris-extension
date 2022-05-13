@@ -12,7 +12,7 @@ function injectScript(file: string) {
 
 async function setup() {
   window.emeris = {
-    init: () => {
+    ready: () => {
       return new Promise((resolve) => {
         window.addEventListener(
           'emeris-extension-loaded',

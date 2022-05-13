@@ -26,7 +26,7 @@ export interface DisplayAccount {
 
 export interface IEmeris {
   loaded: boolean;
-  init?: () => Promise<boolean>;
+  ready?: () => Promise<boolean>;
   getAddress?: (arg: string | GetAddressRequest) => Promise<string>;
   getPublicKey?: (arg: string | GetPublicKeyRequest) => Promise<Uint8Array>;
   isHWWallet?: (arg?: IsHWWalletRequest) => Promise<boolean>;
