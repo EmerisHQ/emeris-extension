@@ -23,7 +23,6 @@ jobs:
       - run: yarn --frozen-lockfile
 
       - name: build artifacts
-        continue-on-error: true
         run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build:web
         env:
           # Put in secrets
@@ -31,7 +30,6 @@ jobs:
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
       - name: Deploy
-        continue-on-error: true
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
