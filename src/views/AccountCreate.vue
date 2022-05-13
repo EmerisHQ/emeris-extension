@@ -1,6 +1,5 @@
 <template>
-  <Loader v-if="loading" />
-  <div v-else class="page">
+  <div class="page">
     <Header title="Account Name" />
     <div class="w-3/4 mx-auto mt-10">
       <div
@@ -35,7 +34,6 @@ import { mapState } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
-import Loader from '@@/components/Loader.vue';
 import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates } from '@@/types';
@@ -43,7 +41,7 @@ import wordlist from '@@/wordlists/english.json';
 
 export default defineComponent({
   name: 'Create Account',
-  components: { Button, Header, Loader },
+  components: { Button, Header },
   computed: {
     ...mapState({
       wallet: (state: RootState) => state.extension.wallet,
@@ -69,7 +67,6 @@ export default defineComponent({
   },
   data: () => ({
     name: undefined,
-    loading: false,
   }),
   watch: {
     name(name) {
@@ -82,10 +79,7 @@ export default defineComponent({
   async mounted() {
     const hasPassword = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
     if (!hasPassword) {
-      this.$router.push({
-        path: '/passwordCreate',
-        query: { returnTo: this.$route.fullPath },
-      });
+      this.$router.push({ path: '/passwordCreate', query: { returnTo: this.$route.fullPath } });
     }
 
     const accounts = (await this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET)) || [];
@@ -105,7 +99,6 @@ export default defineComponent({
   },
   methods: {
     async submit() {
-      this.loading = true;
       try {
         const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
 
@@ -132,7 +125,6 @@ export default defineComponent({
       } catch (err) {
         console.error(err);
       }
-      this.loading = false;
     },
     open(url) {
       window.open(url);
