@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { computed } from '@vue/runtime-core';
+import { computed, ref, watch } from '@vue/runtime-core';
 import orderBy from 'lodash.orderby';
 import { useStore } from 'vuex';
 
@@ -51,55 +51,56 @@ export default {
   props: {
     denom: { type: String, required: true },
   },
-  setup() {
+  setup(props) {
     const { nativeBalances } = useAccount();
     const store = useStore();
+    let displayNameAddedList = ref([]);
+    let recipientAddress = ref('');
+    let copied = ref(false);
 
     const assetsList = computed(() => {
       if (!store.getters[GlobalGetterTypes.API.getVerifiedDenoms]) return [];
       return orderBy(nativeBalances.value, (item) => (item.base_denom.startsWith('pool') ? 1 : -1));
     });
 
-    return { assetsList };
-  },
-  data: () => ({
-    displayNameAddedList: [],
-    recipientAddress: '',
-    copied: false,
-  }),
-  computed: {
-    asset() {
-      return this.displayNameAddedList.find((asset) => asset.base_denom === this.denom);
-    },
-  },
-  watch: {
-    async asset(asset) {
-      if (!asset) return;
-      this.recipientAddress = await this.$store.dispatch(GlobalEmerisActionTypes.GET_ADDRESS, {
-        chainId: asset.on_chain,
-      });
-    },
-    async assetsList(assetsList) {
-      this.displayNameAddedList = await Promise.all(
-        assetsList.map(async (asset) => {
-          return {
-            ...asset,
-            display_name: await getDisplayName(
-              asset.base_denom,
-              this.$store.getters[GlobalGetterTypes.API.getDexChain],
-            ),
-          };
-        }),
-      );
-    },
-  },
-  methods: {
-    pasteClip() {
-      navigator.clipboard.writeText(this.recipientAddress);
+    const asset = computed(() => {
+      return displayNameAddedList.value.find((asset) => asset.base_denom === props.denom);
+    });
 
-      if (this.copied) clearTimeout(this.copied);
-      this.copied = setTimeout(() => (this.copied = false), 3000);
-    },
+    const pasteClip = () => {
+      navigator.clipboard.writeText(recipientAddress.value);
+
+      if (copied.value) clearTimeout(copied.value);
+      copied.value = setTimeout(() => (copied.value = false), 3000);
+    };
+
+    watch(
+      () => assetsList.value,
+      async (value) => {
+        displayNameAddedList.value = await Promise.all(
+          value.map(async (asset) => {
+            return {
+              ...asset,
+              display_name: await getDisplayName(asset.base_denom, store.getters[GlobalGetterTypes.API.getDexChain]),
+            };
+          }),
+        );
+      },
+      { immediate: true },
+    );
+
+    watch(
+      () => asset.value,
+      async (assetValue) => {
+        if (!assetValue) return;
+        recipientAddress.value = await store.dispatch(GlobalEmerisActionTypes.GET_ADDRESS, {
+          chainId: assetValue.on_chain,
+        });
+      },
+      { immediate: true },
+    );
+
+    return { assetsList, pasteClip, asset, recipientAddress, copied };
   },
 };
 </script>
