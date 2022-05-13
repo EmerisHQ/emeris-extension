@@ -1,9 +1,9 @@
 name: Extension Build
 on:
-  workflow_dispatch
   pull_request:
     paths:
       - '**'
+  workflow_dispatch:
 defaults:
   run:
     working-directory: ./
