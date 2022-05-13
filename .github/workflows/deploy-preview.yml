@@ -18,14 +18,11 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: |
-            ./package-lock.json
+          cache: 'yarn'
+      - run: yarn --frozen-lockfile
 
       - name: build artifacts
-        run: |
-          npm ci
-          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build:web
+        run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build:web
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
@@ -34,8 +31,8 @@ jobs:
       - name: Deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_EMERIS_HQ }}"
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EMERIS_HQ }}'
           target: extension
           expires: 7d
           projectId: emeris-hq
