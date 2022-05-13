@@ -4,6 +4,7 @@ on: pull_request
 
 jobs:
   build_and_deploy:
+    continue-on-error: true
     runs-on: self-hosted
     steps:
       - name: Check out repository code
