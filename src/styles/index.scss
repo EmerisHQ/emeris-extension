@@ -119,7 +119,11 @@ input:not(.checkbox__control) {
 
 .checkbox {
   background: #212121;
-  border: none;
+  @apply border-none cursor-pointer;
+
+  .checkbox__control {
+    @apply cursor-pointer;
+  }
 }
 
 // typography

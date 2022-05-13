@@ -38,6 +38,7 @@ export const emerisLoaded = async (page) => {
   }
 };
 
+// TODO refactor both functions
 export const enableWebsite = async (context, page) => {
   await page.goto(`https://www.google.com/`);
 
@@ -51,6 +52,12 @@ export const enableWebsite = async (context, page) => {
       window.emeris.enable();
     }),
   ]);
+
+  await expect(popup.locator('[placeholder="Enter a password"] >> visible=true')).toBeVisible();
+  await popup.fill('[placeholder="Enter a password"]', '123456A$');
+  await popup.fill('[placeholder="Confirm password"]', '123456A$');
+  await popup.click('text=Continue');
+
   await popup.click('text=Accept');
 };
 
@@ -67,5 +74,12 @@ export const keplrEnableWebsite = async (context, page) => {
       window.emeris.enable('cosmos-hub');
     }),
   ]);
+
+  await expect(popup.locator('[placeholder="Enter a password"] >> visible=true')).toBeVisible();
+  await popup.fill('[placeholder="Enter a password"]', '123456A$');
+  await popup.fill('[placeholder="Confirm password"]', '123456A$');
+  await popup.click('text=Continue');
+
+  await expect(popup.locator('text=Accept >> visible=true')).toBeVisible();
   await popup.click('text=Accept');
 };

@@ -4,13 +4,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import EmerisApp from '@@/components/EmerisApp.vue';
-
-export default defineComponent({
-  name: 'Home',
-  components: { EmerisApp },
-});
 </script>
+
+<style scoped>
+.home {
+  @apply h-full;
+}
+</style>
