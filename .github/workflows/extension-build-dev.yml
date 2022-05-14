@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
 defaults:
   run:
     working-directory: ./
@@ -18,15 +19,18 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.DEMERIS_SSH_PRIVATE_KEY }}
       - run: git submodule init && git submodule update
-
+          
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-          cache: 'yarn'
-      - run: yarn --frozen-lockfile
+          cache: 'npm'
+          cache-dependency-path: |            
+            ./package-lock.json            
 
       - name: build artifacts
-        run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
+        run: |
+          npm ci
+          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
@@ -38,11 +42,11 @@ jobs:
           directory: ./dist
           filename: release.zip
 
-      - uses: 'marvinpinto/action-automatic-releases@latest'
+      - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
-          automatic_release_tag: 'latest'
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
           prerelease: true
-          title: 'Development Build'
+          title: "Development Build"
           files: |
             ./dist/release.zip

@@ -6,9 +6,8 @@ import EmerisStorage, { EmerisStorageMode } from './lib/EmerisStorage';
 const storage = new EmerisStorage(EmerisStorageMode.LOCAL);
 const emeris = new Emeris(storage);
 
-const pageHandler = async (request, sender) => {
+const pageHandler = async (request) => {
   await emeris.isInitialized();
-  request.origin = sender.origin; // take the sender origin here to not allow a manipulated request
   if (request.id) {
     if (!emeris.loaded) {
       return { id: request.id, data: false };
@@ -34,6 +33,6 @@ const messageHandler = async (request, sender) => {
     request.type = 'fromPopup';
     return emeris.popupHandler(request);
   }
-  return pageHandler(request, sender);
+  return pageHandler(request);
 };
 browser.runtime.onMessage.addListener(messageHandler);
