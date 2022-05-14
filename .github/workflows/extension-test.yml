@@ -1,5 +1,7 @@
 name: Extension Test
-on: pull_request
+on:
+  pull_request:
+  workflow_dispatch:
 jobs:
   Extension-Test:
     runs-on: self-hosted
@@ -39,9 +41,12 @@ jobs:
         env:
           EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: |
+            playwright-report/
+            test-results/
           retention-days: 30
