@@ -153,7 +153,7 @@ export default class EmerisStorage {
     }
     try {
       const wallet = await this.unlockWallet(oldPassword);
-      this.saveWallet(wallet, newPassword);
+      await this.saveWallet(wallet, newPassword);
     } catch (e) {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
     }

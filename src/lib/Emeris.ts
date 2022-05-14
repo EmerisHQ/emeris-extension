@@ -128,8 +128,8 @@ export class Emeris implements IEmeris {
   }
   async changePassword(password: string): Promise<void> {
     try {
-      this.storage.changePassword(this.password, password);
-      this.unlockWallet(password);
+      await this.storage.changePassword(this.password, password);
+      await this.unlockWallet(password);
     } catch (e) {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
     }
@@ -164,7 +164,7 @@ export class Emeris implements IEmeris {
       try {
         await this.storage.setLastAccount(accountName);
         this.selectedAccount = accountName;
-        this.storeSession();
+        await this.storeSession();
 
         // send an event to all tabs that the account has changed
         const tabs = await browser.tabs.query({});
@@ -179,7 +179,7 @@ export class Emeris implements IEmeris {
       case 'getPending':
         return this.pending ?? [];
       case 'setLastAccount':
-        this.setLastAccount(message.data.data.accountName);
+        await this.setLastAccount(message.data.data.accountName);
         break;
       case 'getLastAccount':
         try {
@@ -197,8 +197,8 @@ export class Emeris implements IEmeris {
         await this.storage.saveAccount(message.data.data.account, this.password);
         try {
           this.wallet = await this.unlockWallet(this.password);
-          this.setLastAccount(message.data.data.account.accountName);
-          this.storeSession();
+          await this.setLastAccount(message.data.data.account.accountName);
+          await this.storeSession();
         } catch (e) {
           console.log(e);
         }
