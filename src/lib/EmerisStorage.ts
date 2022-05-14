@@ -19,6 +19,9 @@ export default class EmerisStorage {
     if (!password) return [];
 
     const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
+
+    if (!result.whitelistedWebsites) return [];
+
     const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
     return whitelistedWebsites;
   }
