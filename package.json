@@ -17,7 +17,7 @@
     "postinstall": "git submodule init",
     "prepare": "simple-git-hooks",
     "test:unit": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "VITE_UNSECURE_KEYS=true playwright test",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
