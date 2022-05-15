@@ -36,7 +36,7 @@ jobs:
       - name: Run headless test
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: npm run test:e2e -- -workers=4
+          run: npm run test:e2e -- --workers=4
         env:
           EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
           VITE_UNSECURE_KEYS: true # key encryption is built to avoid brute force. but e2e is relying on parallelizm
