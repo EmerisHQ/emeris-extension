@@ -17,7 +17,7 @@
     "postinstall": "git submodule init",
     "prepare": "simple-git-hooks",
     "test:unit": "vitest",
-    "test:e2e": "VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 playwright test --worker=2",
+    "test:e2e": "PWDEBUG=1 playwright test",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
