@@ -1,5 +1,6 @@
 <template>
-  <div class="page" style="text-align: center">
+  <Loader v-if="loading" />
+  <div v-else class="page" style="text-align: center">
     <Brandmark class="wordmark" />
     <p class="secondary-text">{{ url }} wants to connect to your wallet</p>
     <div class="box" style="margin-top: 96px">
@@ -35,16 +36,30 @@ export default {
       return pending && pending.length > 0 ? pending[0].origin : undefined;
     },
   },
-  mounted() {
+  async mounted() {
+    const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
+    if (!hasWallet) {
+      // if no password is set, first set a password
+      this.$router.push('/passwordCreate?returnTo=/');
+      return;
+    }
+
     this.$store.dispatch(GlobalEmerisActionTypes.GET_PENDING);
   },
   methods: {
     async close() {
-      await this.$store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, { id: this.pending.id, accept: false });
+      await this.$store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, {
+        id: this.pending.id,
+        accept: false,
+      });
       window.close();
     },
     async accept() {
-      await this.$store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, { id: this.pending.id, accept: true });
+      this.loading = true;
+      await this.$store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, {
+        id: this.pending.id,
+        accept: true,
+      });
       this.$router.push('/');
     },
   },
