@@ -1,5 +1,6 @@
 <template>
-  <div class="form" @keyup.enter="submit">
+  <Loader v-if="loading" />
+  <div class="form" @keyup.enter="submit" v-else>
     <span class="secondary-text" style="margin-top: 16px; margin-bottom: 24px"
       >You will need this password to unlock your wallet.</span
     >
@@ -74,6 +75,7 @@ import { mapState } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
+import Loader from '@@/components/Loader.vue';
 import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
@@ -82,6 +84,7 @@ export default defineComponent({
   components: {
     Button,
     Input,
+    Loader,
   },
   data: () => ({
     password: '',
@@ -92,6 +95,7 @@ export default defineComponent({
     symbolChar: false,
     digitChar: false,
     match: false,
+    loading: false,
   }),
   computed: {
     ...mapState({
@@ -115,6 +119,7 @@ export default defineComponent({
   },
   methods: {
     async submit() {
+      this.loading = true;
       const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
       if (this.length && this.upperCaseChar && this.symbolChar && this.digitChar && this.match) {
         if (hasWallet) {
