@@ -445,6 +445,11 @@
   resolved "https://registry.npmjs.org/@clockwork-projects/cosmos-gaia-js/-/cosmos-gaia-js-6.0.0.tgz"
   integrity sha512-MRlAj3n6MGPS841aElX9ubMh9na+7bgvxkdazUlDdLHOAU45EXTwGH8tltyo8QM3f1hYVhHzWXPc2jM8bzw1BA==
 
+"@clockwork-projects/crescent-network-crescent-js@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@clockwork-projects/crescent-network-crescent-js/-/crescent-network-crescent-js-1.0.0.tgz#e506ca9dcb65fd4173ee463994960f9c3d104507"
+  integrity sha512-7d8rBcmB2N8SdSuRboBO9QoL7aDkdgpHMqyA6W/iI8nDniH/fBkou4oETLz2WlNIzyM3lYs/IHRbzaw3XfYcpw==
+
 "@clockwork-projects/osmosis-labs-osmosis-js@^6.1.0":
   version "6.1.0"
   resolved "https://registry.npmjs.org/@clockwork-projects/osmosis-labs-osmosis-js/-/osmosis-labs-osmosis-js-6.1.0.tgz"
@@ -966,29 +971,30 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@emeris/chain-config@0.2.2", "@emeris/chain-config@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@emeris/chain-config/-/chain-config-0.2.2.tgz#ed2eeb7f1e9a0ddaf1acbee3b0608d2f59c8fcf3"
-  integrity sha512-hR8/BhTKtjUCcaCF2nfJmXq8+4W4AL/hOFfw/3tOcJFkO8vjHdC1LjKQvemUfGEVowEw8b4JuqEHA84cwuAoDQ==
+"@emeris/chain-config@0.3.0", "@emeris/chain-config@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@emeris/chain-config/-/chain-config-0.3.0.tgz#7c98bde438a35551679d004dca9ab40a2591ade7"
+  integrity sha512-9MzUS8ehE46e9no8YFYLlO+HRwy4Ot42FeVbtsKitVL7YP3iJfkObFZJefrXJO0wVMIaLakGawMVjiW1Rq0Sjw==
   dependencies:
     isomorphic-fetch "^3.0.0"
 
-"@emeris/mapper@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@emeris/mapper/-/mapper-0.2.2.tgz#81b19cb232cc7b8b68b964ec8c29e606d642f342"
-  integrity sha512-rtK8ZRgFMekd87dQ9rujLjdfQSdYiBUN24NCkGa8cKwZVwliOf4s5iYRD/+Z4NBAizOyA/axdBHu3KctLJIERA==
+"@emeris/mapper@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@emeris/mapper/-/mapper-0.3.0.tgz#b6a55cac4db129a216404cef38312aab1d53edae"
+  integrity sha512-YbtfhpAmjYI/p80aSISAD++PKXZl/NUXlGaOIUwYD97DnHe52o6agIvacD/g/h79PFEq4mwJDdO6o1i1jo7hog==
   dependencies:
     "@clockwork-projects/cosmos-gaia-js" "^6.0.0"
+    "@clockwork-projects/crescent-network-crescent-js" "^1.0.0"
     "@clockwork-projects/osmosis-labs-osmosis-js" "^6.1.0"
     "@cosmjs/amino" "^0.28.0"
-    "@emeris/chain-config" "^0.2.2"
+    "@emeris/chain-config" "^0.3.0"
     bignumber.js "^9.0.2"
     protobufjs "^6.11.2"
 
-"@emeris/signer@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@emeris/signer/-/signer-0.2.2.tgz#999705cdb306cd454fd29a6512401d6d95cd3491"
-  integrity sha512-OEZ9BKIGFqz5AoMEtbvtbtGR+t5NAoydCpoG0Xifhmp8VNPEEeP5VRPMSftDrA01Yjr8APGdbj/uWn9soFcnxA==
+"@emeris/signer@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@emeris/signer/-/signer-0.3.0.tgz#9e20d96378f5985b2437b1d8847b03ad55ad9fb7"
+  integrity sha512-O43myMomI+T0fg/JAHX3BYbX/w/Cs6ENHiwx6drLZ+gJ56b7H9pL/ilUp32GuGY2/H6Se4XqE33rG+fZAzKs3A==
   dependencies:
     "@clockwork-projects/cosmos-gaia-js" "^6.0.0"
     "@clockwork-projects/osmosis-labs-osmosis-js" "^6.1.0"
@@ -998,7 +1004,7 @@
     "@cosmjs/ledger-amino" "^0.28.0"
     "@cosmjs/proto-signing" "^0.28.0"
     "@cosmjs/stargate" "^0.28.0"
-    "@emeris/chain-config" "^0.2.2"
+    "@emeris/chain-config" "^0.3.0"
     "@ledgerhq/hw-transport-webusb" "^6.20.0"
     "@starport/vuex" "^0.1.58"
     "@terra-money/terra.js" "^1.8.10"
@@ -1006,10 +1012,10 @@
     "@types/w3c-web-hid" "^1.0.2"
     bech32 "^2.0.0"
 
-"@emeris/types@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@emeris/types/-/types-0.2.2.tgz#78d870a8bbe205248cb12b44e46b0e34912d133d"
-  integrity sha512-rMrszXqLQCL4rGvKPrPoa38TcgL7P0klF0Mg1REnHw9khnyom+z8oMo9BdbYAbk2nDf+Q7pEj0r8GB6rwFUz3Q==
+"@emeris/types@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@emeris/types/-/types-0.3.0.tgz#5433861ca16ca1efeec9a6cb3db421ba4730ba98"
+  integrity sha512-LiBp0O2lIUt36kwzVazxpe8LAM+f41HGpKJ9ITipoMjLZjoLLsaWNStVyAgcTMdMMKuFJsXuAC+B6xyDCHKdtg==
   dependencies:
     "@sinclair/typebox" "^0.22.1"
 
