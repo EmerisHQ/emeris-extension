@@ -1,5 +1,6 @@
 <template>
-  <div class="page" style="text-align: center">
+  <Loader v-if="loading" />
+  <div v-else class="page" style="text-align: center">
     <Brandmark class="wordmark" />
     <p class="secondary-text">{{ url }} wants to connect to your wallet</p>
     <div class="box" style="margin-top: 96px">
@@ -54,6 +55,7 @@ export default {
       window.close();
     },
     async accept() {
+      this.loading = true;
       await this.$store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, {
         id: this.pending.id,
         accept: true,
