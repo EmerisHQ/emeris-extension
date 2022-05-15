@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { emerisLoaded, enableWebsite, keplrEnableWebsite } from './helpers';
+import { emerisLoaded, enableWebsite } from './helpers';
 
 test.describe('Whitelisting', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,14 +32,15 @@ test.describe('Whitelisting', () => {
     ).toBe(true);
 
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
+    await expect(page.locator('text=Managed connected sites')).toBeVisible();
     await expect(page.locator('text=https://www.google.com').first()).toBeVisible();
 
     // disconnect page
     await page.click('text=disconnect');
     await page.click('text=Remove');
-    await expect(page.locator('test=Managed connected sites')).toBeVisible();
 
     // check if disconnected
+    await expect(page.locator('text=Managed connected sites')).toBeVisible();
     await expect(page.locator('text=https://www.google.com')).not.toBeVisible();
     await page.goto(`https://www.google.com`);
     await emerisLoaded(page);
@@ -49,8 +50,8 @@ test.describe('Whitelisting', () => {
       }),
     ).toBe(false); // TODO the response should be a thrown error imo
   });
-  test('Request page whitelisting with keplrEnable', async ({ page, context }) => {
-    await keplrEnableWebsite(context, page);
+  test('Request page whitelisting with keplr compatible enable command', async ({ page, context }) => {
+    await enableWebsite(context, page, true);
 
     // positive test
     expect(
