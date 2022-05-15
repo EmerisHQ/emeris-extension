@@ -154,7 +154,7 @@ main();
 
 ## Test E2E
 
-Tests need to have `VITE_UNSECURE_KEYS=true` as they run in parallel. Key creation is brute force protected and parallel runs causing the CPU to burn up. You need to adjust this
+Tests need to have `VITE_UNSECURE_KEYS=true` as they run in parallel. Key creation is brute force protected and parallel runs causing the CPU to burn up. You need to adjust this. Still running more then 2 worker can cause issues. Test on you own setup.
 
 Run:
 
@@ -164,9 +164,9 @@ For individual test debugging:
 
 ```
 # using test name
-VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test -g "Create Account"
+VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --worker=2 -g "Create Account"
 # using test file
-VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test e2e/cosmjs.spec.ts
+VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --worker=2 e2e/cosmjs.spec.ts
 ```
 
 For automatic tests:
