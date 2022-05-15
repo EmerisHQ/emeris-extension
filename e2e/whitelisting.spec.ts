@@ -37,6 +37,7 @@ test.describe('Whitelisting', () => {
     // disconnect page
     await page.click('text=disconnect');
     await page.click('text=Remove');
+    await expect(page.locator('test=Managed connected sites')).toBeVisible();
 
     // check if disconnected
     await expect(page.locator('text=https://www.google.com')).not.toBeVisible();
