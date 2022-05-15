@@ -38,8 +38,7 @@ export const emerisLoaded = async (page) => {
   }
 };
 
-// TODO refactor both functions
-export const enableWebsite = async (context, page) => {
+export const enableWebsite = async (context, page, withNetwork = false) => {
   await page.goto(`https://www.google.com/`);
 
   await emerisLoaded(page);
@@ -48,9 +47,9 @@ export const enableWebsite = async (context, page) => {
     // It is important to call waitForEvent before click to set up waiting.
     context.waitForEvent('page'), // the background worker opens a new page which is the popup
     // Opens popup.
-    page.evaluate(() => {
-      window.emeris.enable();
-    }),
+    page.evaluate((withNetwork) => {
+      window.emeris.enable(withNetwork ? 'cosmoshub-4' : undefined);
+    }, withNetwork),
   ]);
 
   await expect(popup.locator('[placeholder="Enter a password"] >> visible=true')).toBeVisible();
@@ -59,27 +58,5 @@ export const enableWebsite = async (context, page) => {
   await popup.click('text=Continue');
 
   await popup.click('text=Accept');
-};
-
-export const keplrEnableWebsite = async (context, page) => {
-  await page.goto(`https://www.google.com/`);
-
-  await emerisLoaded(page);
-
-  const [popup] = await Promise.all([
-    // It is important to call waitForEvent before click to set up waiting.
-    context.waitForEvent('page'), // the background worker opens a new page which is the popup
-    // Opens popup.
-    page.evaluate(() => {
-      window.emeris.enable('cosmos-hub');
-    }),
-  ]);
-
-  await expect(popup.locator('[placeholder="Enter a password"] >> visible=true')).toBeVisible();
-  await popup.fill('[placeholder="Enter a password"]', '123456A$');
-  await popup.fill('[placeholder="Confirm password"]', '123456A$');
-  await popup.click('text=Continue');
-
-  await expect(popup.locator('text=Accept >> visible=true')).toBeVisible();
-  await popup.click('text=Accept');
+  await popup.waitForEvent('close');
 };
