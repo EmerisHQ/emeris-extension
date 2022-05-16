@@ -52,8 +52,8 @@ export const enableWebsite = async (context, page, withNetwork = false) => {
     }, withNetwork),
   ]);
 
-  await expect(popup.locator('[placeholder="Enter a password"] >> visible=true')).toBeVisible();
-  await popup.fill('[placeholder="Enter a password"]', '123456A$');
+  await expect(popup.locator('[placeholder="Enter password"] >> visible=true')).toBeVisible();
+  await popup.fill('[placeholder="Enter password"]', '123456A$');
   await popup.fill('[placeholder="Confirm password"]', '123456A$');
   await popup.click('text=Continue');
 
