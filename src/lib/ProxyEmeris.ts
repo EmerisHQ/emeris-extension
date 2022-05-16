@@ -40,15 +40,24 @@ export class ProxyEmeris implements IEmeris {
   public async ready() {
     return Promise.resolve(true);
   }
-  // TODO replace with proxy in constructor for all methods
+
+  // TODO: replace with proxy in constructor for all methods
   // or find way for TS decorator to work with `this` (internal properties)
-  private async authenticatedCheck() {
-    if (!this.hasRequestsPermissions()) {
+  async authenticatedVerification() {
+    if (!(await this.canMakeRequests())) {
       console.warn('Wallet locked or not yet created. Please create/unlock wallet before making requests.');
-      await this.enable();
+      this.enable();
       return false;
     }
     return true;
+  }
+  async canMakeRequests(): Promise<boolean> {
+    const request = {
+      action: 'canMakeRequests',
+      data: {},
+    };
+    const response = await this.sendRequest(request as HasWalletRequest);
+    return response.data as boolean;
   }
   private async responseHandler(event) {
     // We only accept messages from ourselves
@@ -93,6 +102,7 @@ export class ProxyEmeris implements IEmeris {
     return await response;
   }
   async getAddress(chainId: string): Promise<string> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'getAddress',
       data: { chainId },
@@ -101,6 +111,7 @@ export class ProxyEmeris implements IEmeris {
     return response.data as string;
   }
   async getPublicKey(chainId: string, accountName?: string): Promise<Uint8Array> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'getPublicKey',
       data: { chainId, accountName },
@@ -109,6 +120,7 @@ export class ProxyEmeris implements IEmeris {
     return response.data as Uint8Array;
   }
   async isHWWallet(): Promise<boolean> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'isHWWallet',
       data: {},
@@ -117,6 +129,7 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
   async supportedChains(): Promise<string[]> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'supportedChains',
       data: {},
@@ -125,6 +138,7 @@ export class ProxyEmeris implements IEmeris {
     return response.data as string[];
   }
   async getAccountName(): Promise<string> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'getAccountName',
       data: {},
@@ -133,16 +147,9 @@ export class ProxyEmeris implements IEmeris {
     return response.data as string;
   }
   async hasWallet(): Promise<boolean> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'hasWallet',
-      data: {},
-    };
-    const response = await this.sendRequest(request as HasWalletRequest);
-    return response.data as boolean;
-  }
-  async hasRequestsPermissions(): Promise<boolean> {
-    const request = {
-      action: 'hasRequestsPermissions',
       data: {},
     };
     const response = await this.sendRequest(request as HasWalletRequest);
@@ -164,7 +171,7 @@ export class ProxyEmeris implements IEmeris {
     };
     memo?: string;
   }): Promise<Uint8Array> {
-    if (!(await this.authenticatedCheck())) return;
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'signTransaction',
       data: { messages, chainId, signingAddress, fee, memo },
@@ -175,7 +182,6 @@ export class ProxyEmeris implements IEmeris {
     }
     return response.data as Uint8Array;
   }
-
   async signTransactionForOfflineAminoSigner({
     messages,
     chainId,
@@ -192,6 +198,7 @@ export class ProxyEmeris implements IEmeris {
     };
     memo?: string;
   }): Promise<AminoSignResponse> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'signTransactionForOfflineAminoSigner',
       data: { messages, chainId, signingAddress, fee, memo },
@@ -218,6 +225,7 @@ export class ProxyEmeris implements IEmeris {
     };
     memo?: string;
   }): Promise<AbstractTxResult> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'signAndBroadcastTransaction',
       data: { messages, chainId, signingAddress, fee, memo },
@@ -236,6 +244,7 @@ export class ProxyEmeris implements IEmeris {
   }
 
   async getCosmJsAccounts(chainId: string): Promise<any> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'getCosmJsAccounts',
       data: {
@@ -256,6 +265,7 @@ export class ProxyEmeris implements IEmeris {
   }
 
   async getActiveAccount(chainId: string): Promise<DisplayAccount> {
+    if (!(await this.authenticatedVerification())) return;
     const request = {
       action: 'getActiveAccount',
       data: { chainId },
