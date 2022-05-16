@@ -15,9 +15,11 @@ export async function init(emeris: ProxyEmeris): Promise<void> {
     keplrEnable,
     getOfflineAminoSigner,
     getActiveAccount,
+    ready,
   } = emeris;
   window.emeris = {
     loaded,
+    ready: ready.bind(emeris),
     getAddress: getAddress.bind(emeris),
     getPublicKey: getPublicKey.bind(emeris),
     isHWWallet: isHWWallet.bind(emeris),

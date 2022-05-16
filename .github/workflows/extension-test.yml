@@ -7,7 +7,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Add checkout key for demeris repo
         uses: webfactory/ssh-agent@v0.5.4
@@ -16,18 +16,19 @@ jobs:
 
       - run: git submodule init && git submodule update
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
       - run: yarn --frozen-lockfile
-      
+
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
-        
+
       - name: build artifacts
         run: |
-          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
+          yarn install
+          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" yarn build
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
@@ -37,8 +38,9 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm run test:e2e
-        env: 
+        env:
           EXTENSION_ID: 'cklkpejioojjeiigffappdlcmnonmjek'
+          VITE_UNSECURE_KEYS: true # key encryption is built to avoid brute force. but e2e is relying on parallelizm
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
