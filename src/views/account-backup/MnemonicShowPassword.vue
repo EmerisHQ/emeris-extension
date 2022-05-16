@@ -11,6 +11,7 @@
 
       <div class="mt-auto">
         <ListCard
+          class="mb-4"
           :img="'/images/Secure.png'"
           caption="Never share your recovery phrase with anyone, store it securily."
         />
@@ -21,8 +22,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
@@ -31,36 +34,26 @@ import ListCard from '@@/components/ListCard.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
-export default defineComponent({
-  name: 'Mnemonic Show Password',
-  components: {
-    Button,
-    Header,
-    Input,
-    ListCard,
-  },
-  data: () => ({
-    password: undefined,
-    error: false,
-  }),
-  computed: {
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
-    },
-  },
-  methods: {
-    async submit() {
-      this.error = false;
-      try {
-        await this.$store.dispatch(GlobalEmerisActionTypes.GET_MNEMONIC, {
-          accountName: this.account.accountName,
-          password: this.password,
-        });
-        this.$router.push('/backup/show');
-      } catch (e) {
-        this.error = true;
-      }
-    },
-  },
+const store = useStore();
+const router = useRouter();
+
+const password = ref(undefined);
+const error = ref(undefined);
+
+const account = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getAccount];
 });
+
+const submit = async () => {
+  error.value = false;
+  try {
+    await store.dispatch(GlobalEmerisActionTypes.GET_MNEMONIC, {
+      accountName: account.value.accountName,
+      password: password.value,
+    });
+    router.push('/backup/show');
+  } catch (e) {
+    error.value = true;
+  }
+};
 </script>
