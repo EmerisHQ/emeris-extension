@@ -4,8 +4,8 @@ import { expect } from '@playwright/test';
 import { test } from './extension-setup';
 import { defaultCosmosAddress, emerisLoaded } from './helpers';
 
-test.describe('Locked Wallet - attempt operations:', () => {
-  test.only('signTransaction', async ({ page }) => {
+test.describe('Locked Wallet - attempt API requests:', () => {
+  test('signTransaction', async ({ page }) => {
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
 
@@ -13,27 +13,6 @@ test.describe('Locked Wallet - attempt operations:', () => {
     page.on('console', (msg) => {
       lastConsoleWarnMessage = msg.text();
     });
-
-    // context.waitForEvent('page').then(async (popup) => {
-    // should show  create account page
-    // await page.pause();
-    // await expect(popup.locator('button:has-text("Create Account")')).toHaveCount(0);
-    // await expect(popup.locator('button:has-text("Create Account")')).toHaveText(/Create Account/);
-    // await popup.close();
-    // await expect(popup.locator('[data-testid=unlock-emeris-btn]')).toHaveText('Create Account');
-
-    // login
-    // await importAccount(popup);
-
-    // // then should show whitelist page
-    // await popup.click('text=Accept');
-
-    // // reject transaction
-    // // await popup.click('text=Reject');
-    // await popup.locator('button:has-text("Reject")').click();
-    // // await popup.close();
-    // return;
-    // });
 
     await page.evaluate(async (defaultCosmosAddress) => {
       return window.emeris
@@ -61,8 +40,7 @@ test.describe('Locked Wallet - attempt operations:', () => {
             ],
           },
         })
-        .then((r) => r)
-        .catch((e) => e);
+        .then((r) => r);
     }, defaultCosmosAddress);
 
     await expect(lastConsoleWarnMessage).toBe(
@@ -70,26 +48,21 @@ test.describe('Locked Wallet - attempt operations:', () => {
     );
   });
 
-  // test('getOfflineSigner', async ({ page, context }) => {
-  //   await page.goto(`https://www.google.com/`);
-  //   await emerisLoaded(page);
+  test('getAddress', async ({ page }) => {
+    await page.goto(`https://www.google.com/`);
+    await emerisLoaded(page);
 
-  //   let lastConsoleWarnMessage;
-  //   page.on('console', (msg) => {
-  //     lastConsoleWarnMessage = msg.text();
-  //   });
+    let lastConsoleWarnMessage;
+    page.on('console', (msg) => {
+      lastConsoleWarnMessage = msg.text();
+    });
 
-  //   // when the transaction popup shows, click accept
-  //   context.waitForEvent('page').then(async (popup) => {
-  //     // should show popup requesting password
-  //     // expect();
-  //     // await popup.click('text=Accept');
-  //   });
+    await page.evaluate(async () => {
+      return window.emeris.getAddress({ chainId: 'cosmos-hub' }).then((r) => r);
+    });
 
-  //   await page.evaluate(() => {
-  //     return window.emeris.getOfflineSigner('cosmoshub-4');
-  //   });
-
-  //   await expect(lastConsoleWarnMessage).toBe('Wallet locked. Add password to get offline signer.');
-  // });
+    await expect(lastConsoleWarnMessage).toBe(
+      'Wallet locked or not yet created. Please create/unlock wallet before making requests.',
+    );
+  });
 });
