@@ -119,9 +119,9 @@ export const actions: ActionTree<State, RootState> & Actions = {
     });
     await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
   },
-  async [ActionTypes.WHITELIST_WEBSITE]({ dispatch }, { id, accept }) {
+  async [ActionTypes.WHITELIST_WEBSITE]({}, { id, accept }) {
     await respond(id, { accept });
-    await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES);
+    // await dispatch(ActionTypes.GET_WHITELISTED_WEBSITES); // the list is not necessary updated at this point and the page needing the websites loads the data individually
   },
   // TODO potentially refactor and split signing with ledger from signing in the background
   async [ActionTypes.ACCEPT_TRANSACTION]({}, { id, action, broadcastable, ...transaction }) {
