@@ -51,7 +51,7 @@ export const emerisLoaded = async (page) => {
   }
 };
 
-export const enableWebsite = async (context, page, withNetwork = false) => {
+export const enableWebsite = async (context, page, withNetwork = false, isLoggedIn = false) => {
   await page.goto(`https://www.google.com/`);
 
   await emerisLoaded(page);
@@ -65,10 +65,12 @@ export const enableWebsite = async (context, page, withNetwork = false) => {
     }, withNetwork),
   ]);
 
-  await expect(popup.locator('[placeholder="Enter password"] >> visible=true')).toBeVisible();
-  await popup.fill('[placeholder="Enter password"]', '123456A$');
-  await popup.fill('[placeholder="Confirm password"]', '123456A$');
-  await popup.click('text=Continue');
+  if (!isLoggedIn) {
+    await expect(popup.locator('[placeholder="Enter a password"] >> visible=true')).toBeVisible();
+    await popup.fill('[placeholder="Enter password"]', '123456A$');
+    await popup.fill('[placeholder="Confirm password"]', '123456A$');
+    await popup.click('text=Continue');
+  }
 
   await popup.click('text=Accept');
   await popup.waitForEvent('close');
