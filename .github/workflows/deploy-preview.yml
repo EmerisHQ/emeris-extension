@@ -10,7 +10,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Add checkout key for demeris repo
         uses: webfactory/ssh-agent@v0.5.4
@@ -18,18 +18,15 @@ jobs:
           ssh-private-key: ${{ secrets.DEMERIS_SSH_PRIVATE_KEY }}
       - run: git submodule init && git submodule update
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: |
-            ./package-lock.json
+          cache: 'yarn'
+      - run: yarn --frozen-lockfile
 
       - name: build artifacts
         continue-on-error: true
-        run: |
-          npm ci
-          NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build:web
+        run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build:web
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
@@ -39,8 +36,8 @@ jobs:
         continue-on-error: true
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_EMERIS_HQ }}"
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EMERIS_HQ }}'
           target: extension
           expires: 7d
           projectId: emeris-hq
