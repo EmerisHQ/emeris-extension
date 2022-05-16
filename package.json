@@ -146,7 +146,7 @@
     "vue-tsc": "^0.33.7"
   },
   "resolutions": {
-    "**/@emeris/signer/**/axios": "0.21.2"
+    "**/@emeris/signer/@starport/vuex/@confio/relayer/axios": "0.21.2"
   },
   "engines": {
     "node": "16.x"
