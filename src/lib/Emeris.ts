@@ -406,7 +406,7 @@ export class Emeris implements IEmeris {
   async hasWallet(): Promise<boolean> {
     return await this.storage.hasWallet();
   }
-  hasRequestsPermissions(): boolean {
+  hasRequestPermissions(): boolean {
     return !!this.password && !!this.wallet && this.wallet.length > 0;
   }
   async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
