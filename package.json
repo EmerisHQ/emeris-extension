@@ -23,6 +23,7 @@
   "dependencies": {
     "@cosmjs/amino": "0.28.0",
     "@cosmjs/cosmwasm-stargate": "0.28.0",
+    "@clockwork-projects/crescent-network-crescent-js": "^1.0.0",
     "@cosmjs/crypto": "0.28.0",
     "@cosmjs/encoding": "0.28.0",
     "@cosmjs/faucet-client": "0.28.0",
