@@ -80,6 +80,7 @@ test.describe('Account Create', () => {
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
 
     // test if address shows correctly
+    await page.pause();
     await page.click('text=Receive assets');
     await page.click('text=Atom');
     await expect(page.locator('text=cosmos1')).toHaveText(defaultCosmosAddress);
