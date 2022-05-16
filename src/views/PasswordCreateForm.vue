@@ -1,6 +1,9 @@
 <template>
-  <div class="form" @keyup.enter="submit">
-    <span class="secondary-text mb-6">You will need this password to unlock your wallet.</span>
+  <Loader v-if="loading" />
+  <div class="form" @keyup.enter="submit" v-else>
+    <span class="secondary-text" style="margin-top: 16px; margin-bottom: 24px"
+      >You will need this password to unlock your wallet.</span
+    >
     <div
       class="mb-4"
       :class="{
@@ -98,6 +101,7 @@ import { mapState } from 'vuex';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
 import Input from '@/components/ui/Input.vue';
+import Loader from '@@/components/Loader.vue';
 import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
@@ -107,6 +111,7 @@ export default defineComponent({
     Button,
     Icon,
     Input,
+    Loader,
   },
   props: {
     onContinue: { type: Function, required: true },
@@ -122,6 +127,7 @@ export default defineComponent({
     symbolChar: false,
     digitChar: false,
     match: false,
+    loading: false,
   }),
   computed: {
     ...mapState({
@@ -147,11 +153,17 @@ export default defineComponent({
   },
   methods: {
     async submit() {
+      this.loading = true;
+      const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
       if (this.length && this.upperCaseChar && this.symbolChar && this.digitChar && this.match) {
-        if (this.wallet) {
-          await this.$store.dispatch(GlobalEmerisActionTypes.CHANGE_PASSWORD, { password: this.password });
+        if (hasWallet) {
+          await this.$store.dispatch(GlobalEmerisActionTypes.CHANGE_PASSWORD, {
+            password: this.password,
+          });
         } else {
-          await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, { password: this.password });
+          await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, {
+            password: this.password,
+          });
         }
         this.onContinue();
       }

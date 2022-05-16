@@ -1,5 +1,6 @@
 <template>
-  <ConfirmationScreen :title="`Are you sure you want to disconnect from ${site.origin}?`">
+  <Loader v-if="loading" />
+  <ConfirmationScreen v-else :title="`Are you sure you want to disconnect from ${site.origin}?`">
     <div
       :style="{
         marginTop: 'auto',
@@ -25,6 +26,9 @@ export default defineComponent({
     Button,
     ConfirmationScreen,
   },
+  data: () => ({
+    loading: false,
+  }),
   computed: {
     site() {
       return this.$store.state.extension.whitelistedWebsites.find((site) => site.origin === this.url);
@@ -35,7 +39,11 @@ export default defineComponent({
   },
   methods: {
     async remove() {
-      await this.$store.dispatch(GlobalEmerisActionTypes.REMOVE_WHITELISTED_WEBSITE, { website: this.url });
+      this.loading = true;
+      await this.$store.dispatch(GlobalEmerisActionTypes.REMOVE_WHITELISTED_WEBSITE, {
+        website: this.url,
+      });
+      await this.$store.dispatch(GlobalEmerisActionTypes.GET_WHITELISTED_WEBSITES);
       this.$router.push('/whitelisted');
     },
   },
