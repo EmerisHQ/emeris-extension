@@ -1,9 +1,7 @@
 <template>
   <Loader v-if="loading" />
-  <div class="form" @keyup.enter="submit" v-else>
-    <span class="secondary-text" style="margin-top: 16px; margin-bottom: 24px"
-      >You will need this password to unlock your wallet.</span
-    >
+  <div v-else class="form" @keyup.enter="submit">
+    <span class="secondary-text mb-6">You will need this password to unlock your wallet.</span>
     <div
       class="mb-4"
       :class="{
