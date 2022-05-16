@@ -145,6 +145,9 @@
     "vitest": "^0.7.10",
     "vue-tsc": "^0.33.7"
   },
+  "resolutions": {
+    "**/@emeris/signer/**/axios": "0.21.2"
+  },
   "engines": {
     "node": "16.x"
   },
