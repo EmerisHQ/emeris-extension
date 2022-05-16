@@ -17,11 +17,19 @@ test.describe('Account Create', () => {
     await page.fill('[placeholder="Enter a password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
+
     await page.fill('[placeholder="Surfer"]', 'Test Account Created');
     await page.click('text=Continue');
+
+    await page.click('text=Show secret recovery phrase');
+
+    await page.fill('[placeholder="Password"]', '123456A$');
+    await page.click('text=Show mnemonic');
+
     await page.click('text=Back up later');
     await page.click('text=I understand');
     await page.click('text=Continue');
+
     await expect(page.locator('text=Test Account Created >> visible=true')).toBeVisible();
   });
 
@@ -38,7 +46,7 @@ test.describe('Account Create', () => {
     await page.click('text=Continue');
 
     // test backing up
-    await page.click('text=Back up now');
+    await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
@@ -49,7 +57,7 @@ test.describe('Account Create', () => {
       await page.click('text=Show mnemonic');
     }
 
-    const mnemonic = await page.locator('.word > span').allTextContents();
+    const mnemonic = await page.locator('.word').allTextContents();
     await page.click('text=I have backed up');
     await page.click('text=Continue');
 
@@ -67,13 +75,13 @@ test.describe('Account Create', () => {
     // test if seed shows correctly
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/backup`);
 
-    await page.click('text=Back up now');
+    await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
 
     await expect(page.locator('.words')).not.toHaveText('');
-    const mnemonic2 = await page.locator('.word > span').allTextContents();
+    const mnemonic2 = await page.locator('.word').allTextContents();
 
     expect(mnemonic.join(' ')).toEqual(mnemonic2.join(' '));
 
@@ -95,13 +103,13 @@ test.describe('Account Create', () => {
     // test if seed shows correctly
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/backup`);
 
-    await page.click('text=Back up now');
+    await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
 
     await expect(page.locator('.words')).not.toHaveText('');
-    const mnemonic2 = await page.locator('.word > span').allTextContents();
+    const mnemonic2 = await page.locator('.word').allTextContents();
 
     expect(defaultMnemonic).toEqual(mnemonic2.join(' '));
 
