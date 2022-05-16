@@ -1,6 +1,8 @@
 <template>
-  <div class="list-card-container">
-    <img :src="img" />
+  <div
+    class="list-card-container flex items-center justify-center self-stretch flex-none grow-0 order-none text-sm py-5 px-6 rounded-[10px]"
+  >
+    <img :src="img" class="mr-4 w-8" />
     <span>{{ caption }}</span>
   </div>
 </template>
@@ -16,33 +18,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .list-card-container {
-  /* Auto Layout */
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
-
-  background: linear-gradient(0deg, #171717 0%, #040404 100%);
+  background: linear-gradient(0deg, #262626 0%, #1b1b1b 105%);
   mix-blend-mode: normal;
   /* elevation/button */
-
   box-shadow: 3px 9px 32px -4px rgba(0, 0, 0, 0.07);
-  border-radius: 10px;
-
-  /* Inside Auto Layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-
-  font-size: 13px;
-}
-
-img {
-  margin-right: 16px;
-  width: 32px;
 }
 </style>

@@ -2,18 +2,14 @@
   <div class="page">
     <Header title="Back up account" />
     <div class="form" @keyup.enter="submit">
-      <span class="secondary-text" style="margin-bottom: 36px"
-        >If your device is lost or stolen, you will be able to recover your wallet. Write down your sentence on a paper
-        or in a password manager</span
-      >
+      <span class="secondary-text mb-8">
+        If your device is lost or stolen, you will be able to recover your wallet. Write down your sentence on a paper
+        or in a password manager
+      </span>
       <Input v-model="password" placeholder="Password" type="password" />
-      <div v-if="error" style="color: #ff6072; margin-top: 16px; text-align: center">Incorrect word. Try again.</div>
+      <div v-if="error" class="mt-4 text-center text-negative-text">Incorrect word, try again.</div>
 
-      <div
-        :style="{
-          marginTop: 'auto',
-        }"
-      >
+      <div class="mt-auto">
         <ListCard
           :img="'/images/Secure.png'"
           caption="Never share your recovery phrase with anyone, store it securily."

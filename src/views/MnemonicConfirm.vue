@@ -1,11 +1,11 @@
 <template>
   <div class="page">
     <Header title="Confirm recovery phrase" />
-    <img :src="'/images/Stepper-' + step + '.svg'" style="margin-bottom: 34px" />
-    <span class="secondary-text" style="margin-bottom: 48px"
-      >Select the <b>{{ positionWord }}</b> word in your recovery phrase</span
-    >
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; height: 192px">
+    <img :src="'/images/Stepper-' + step + '.svg'" class="mb-8" />
+    <p class="secondary-text mb-12">
+      Select the <span class="text-text">{{ positionWord }}</span> word in your recovery phrase
+    </p>
+    <div class="flex flex-wrap justify-between height-[192px]">
       <Button
         v-for="word in possibleWords"
         :key="word"
@@ -16,7 +16,7 @@
         @click="() => check(word)"
       />
     </div>
-    <div v-if="error" style="color: #ff6072; margin-top: 80px; text-align: center">Incorrect word. Try again.</div>
+    <p v-if="error" class="text-center mt-20 text-negative-text">Incorrect word, try again.</p>
   </div>
 </template>
 

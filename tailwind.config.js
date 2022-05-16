@@ -113,8 +113,13 @@ module.exports = {
       inverse: 'var(--inverse)',
       bg: 'var(--bg)',
       darkBanner: 'var(--darkBanner)',
-      fg: 'var(--fg)',
-      'fg-solid': 'var(--fg-solid)',
+      surface: {
+        2: 'var(--surface-2)',
+      },
+      fg: {
+        DEFAULT: 'var(--fg)',
+        solid: 'var(--fg-solid)',
+      },
       border: 'var(--border)',
       link: {
         DEFAULT: 'var(--link)',
