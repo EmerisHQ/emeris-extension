@@ -1,14 +1,12 @@
-name: Extension Build Dev
+name: Deploy to Preview Channel
+
 on:
-  push:
-    branches:
-      - develop
+  pull_request:
   workflow_dispatch:
-defaults:
-  run:
-    working-directory: ./
+
 jobs:
-  Extension-Build:
+  build_and_deploy:
+    continue-on-error: true
     runs-on: self-hosted
     steps:
       - name: Check out repository code
@@ -20,30 +18,26 @@ jobs:
           ssh-private-key: ${{ secrets.DEMERIS_SSH_PRIVATE_KEY }}
       - run: git submodule init && git submodule update
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
       - run: yarn --frozen-lockfile
 
       - name: build artifacts
-        run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
+        continue-on-error: true
+        run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build:web
         env:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
 
-      - uses: thedoctor0/zip-release@master
+      - name: Deploy
+        continue-on-error: true
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          type: 'zip'
-          directory: ./dist
-          filename: release.zip
-
-      - uses: 'marvinpinto/action-automatic-releases@latest'
-        with:
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
-          automatic_release_tag: 'latest'
-          prerelease: true
-          title: 'Development Build'
-          files: |
-            ./dist/release.zip
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EMERIS_HQ }}'
+          target: extension
+          expires: 7d
+          projectId: emeris-hq

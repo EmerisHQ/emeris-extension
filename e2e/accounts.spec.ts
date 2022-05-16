@@ -49,6 +49,7 @@ test.describe('Account Create', () => {
       await page.click('text=Show mnemonic');
     }
 
+    await expect(page.locator('.word:first-child >> visible=true')).toBeVisible();
     const mnemonic = await page.locator('.word > span').allTextContents();
     await page.click('text=I have backed up');
     await page.click('text=Continue');
@@ -122,6 +123,8 @@ test.describe('Account Create', () => {
         await page.fill('[placeholder="Confirm password"]', '123456A$');
         await page.click('text=Continue');
       }
+
+      await page.click('text=Continue');
     });
 
     test.afterEach(async ({ page }) => {

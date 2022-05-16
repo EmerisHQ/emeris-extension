@@ -41,7 +41,8 @@
       </div>
     </template>
     <template v-else-if="tab === 'Data'">
-      <div class="p-4 rounded-xl" style="background: #171717">
+      <Loader v-if="!rawTransaction" />
+      <div v-else class="p-4 rounded-xl" style="background: #171717">
         <h4 class="text-0 mb-3">Custom transaction</h4>
         <Yaml v-if="rawTransaction" :json="rawTransaction" />
       </div>
@@ -78,7 +79,7 @@
       </div>
       <div style="display: flex; flex-direction: row">
         <Button name="Reject" variant="secondary" style="margin-right: 16px; flex: 1" @click="cancel" />
-        <Button name="Accept" style="flex: 1" :disabled="!rawTransaction" @click="accept" />
+        <Button name="Accept" style="flex: 1" @click="accept" />
       </div>
     </div>
     <Slideout :open="editMemo" @update:open="editMemo = $event">
@@ -112,6 +113,7 @@ import { defineComponent } from 'vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import { keyHashfromAddress } from '@/utils/basic';
+import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
 import Message from '@@/components/Transactions/Message.vue';
@@ -139,6 +141,7 @@ export default defineComponent({
     Slideout,
     Input,
     SumBalances,
+    Loader,
   },
   data: (): TxReviewData => ({
     tab: 'Details',
