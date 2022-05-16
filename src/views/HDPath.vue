@@ -19,6 +19,11 @@
       <span v-if="hdPathError" class="form-info error mb-4">Invalid derivation path</span>
 
       <a class="text-sm" @click="infoOpen = true">What is an HD derivation path?</a>
+
+      <div class="mt-auto">
+        <Button name="Confirm" :disabled="hdPathError" @click="updateHdPath" />
+        <Button name="Cancel" variant="link" @click="$router.push($route.query.previous)" />
+      </div>
     </form>
 
     <Slideout :open="infoOpen" @update:open="infoOpen = $event">
@@ -30,11 +35,6 @@
       </div>
       <Button name="Ok" @click="() => (infoOpen = false)" />
     </Slideout>
-
-    <div class="mt-auto">
-      <Button name="Confirm" :disabled="hdPathError" @click="updateHdPath" />
-      <Button name="Cancel" variant="link" @click="$router.push($route.query.previous)" />
-    </div>
   </div>
 </template>
 
