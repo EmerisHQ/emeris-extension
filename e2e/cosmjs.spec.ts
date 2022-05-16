@@ -1,27 +1,11 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultCosmosAddress, emerisLoaded, importAccount } from './helpers';
-
-export const enableWebsite = async (context, page) => {
-  await page.goto(`https://www.google.com/`);
-
-  await emerisLoaded(page);
-
-  const [popup] = await Promise.all([
-    // It is important to call waitForEvent before click to set up waiting.
-    context.waitForEvent('page'), // the background worker opens a new page which is the popup
-    // Opens popup.
-    page.evaluate(() => {
-      window.emeris.enable('cosmoshub-4');
-    }),
-  ]);
-  await popup.click('text=Accept');
-};
+import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from './helpers';
 
 test.describe('CosmJs', () => {
   test('OfflineSigner', async ({ context, page }) => {
-    await enableWebsite(context, page);
+    await enableWebsite(context, page, true);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
@@ -98,7 +82,7 @@ test.describe('CosmJs', () => {
   });
 
   test('Get accounts', async ({ context, page }) => {
-    await enableWebsite(context, page);
+    await enableWebsite(context, page, true);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://www.google.com/`);
@@ -149,44 +133,5 @@ test.describe('CosmJs', () => {
         },
       },
     ]);
-  });
-
-  test('Request page whitelisting', async ({ page, context }) => {
-    await page.goto(`https://www.google.com/`);
-    await emerisLoaded(page);
-
-    // negative test
-    expect(
-      await page.evaluate(() => {
-        return window.emeris.supportedChains();
-      }),
-    ).toBe(false); // TODO the response should be a thrown error imo
-
-    await enableWebsite(context, page);
-
-    // positive test
-    expect(
-      async () =>
-        await page.evaluate(() => {
-          return window.emeris.supportedChains();
-        }),
-    ).not.toBe(false);
-
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
-    await expect(page.locator('text=https://www.google.com').first()).toBeVisible();
-
-    // disconnect page
-    await page.click('text=disconnect');
-    await page.click('text=Remove');
-
-    // check if disconnected
-    await expect(page.locator('text=https://www.google.com')).not.toBeVisible();
-    await page.goto(`https://www.google.com`);
-    await emerisLoaded(page);
-    expect(
-      await page.evaluate(() => {
-        return window.emeris.supportedChains();
-      }),
-    ).toBe(false); // TODO the response should be a thrown error imo
   });
 });

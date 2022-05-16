@@ -25,6 +25,7 @@ export default () => {
       sourcemap: process.env.NODE_ENV != 'production' ? 'inline' : false,
       rollupOptions: {
         input: {
+          index: path.resolve(__dirname, './index.html'),
           popup: path.resolve(__dirname, './popup.html'),
         },
         plugins: [

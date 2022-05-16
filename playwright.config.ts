@@ -13,7 +13,7 @@ import { devices } from '@playwright/test';
 const config: PlaywrightTestConfig = {
   testDir: './e2e',
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 60 * 1000, // quiet high because of encryption taking a long time. maybe optimise
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -40,6 +40,13 @@ const config: PlaywrightTestConfig = {
     trace: 'on-first-retry',
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:8080',
     headless: false,
+    video: 'on-first-retry',
+    /**
+     * Video on doesn't work in playwright when working on a chrome extension:
+     * https://github.com/microsoft/playwright/issues/5586
+     * https://github.com/microsoft/playwright/issues/5593
+     */
+    screenshot: 'only-on-failure',
   },
 
   /* Configure projects for major browsers */

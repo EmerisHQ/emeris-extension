@@ -9,11 +9,13 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
   await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
   await page.click('text=Import Account >> visible=true');
 
-  if (await page.$('[placeholder="Enter a password"]')) {
-    await page.fill('[placeholder="Enter a password"]', '123456A$');
+  if (await page.$('[placeholder="Enter password"]')) {
+    await page.fill('[placeholder="Enter password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
   }
+
+  await page.click('text=Continue');
 
   const mnemonic = defaultMnemonic;
   await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
@@ -36,7 +38,7 @@ export const emerisLoaded = async (page) => {
   }
 };
 
-export const enableWebsite = async (context, page) => {
+export const enableWebsite = async (context, page, withNetwork = false) => {
   await page.goto(`https://www.google.com/`);
 
   await emerisLoaded(page);
@@ -45,9 +47,16 @@ export const enableWebsite = async (context, page) => {
     // It is important to call waitForEvent before click to set up waiting.
     context.waitForEvent('page'), // the background worker opens a new page which is the popup
     // Opens popup.
-    page.evaluate(() => {
-      window.emeris.enable();
-    }),
+    page.evaluate((withNetwork) => {
+      window.emeris.enable(withNetwork ? 'cosmoshub-4' : undefined);
+    }, withNetwork),
   ]);
+
+  await expect(popup.locator('[placeholder="Enter password"] >> visible=true')).toBeVisible();
+  await popup.fill('[placeholder="Enter password"]', '123456A$');
+  await popup.fill('[placeholder="Confirm password"]', '123456A$');
+  await popup.click('text=Continue');
+
   await popup.click('text=Accept');
+  await popup.waitForEvent('close');
 };

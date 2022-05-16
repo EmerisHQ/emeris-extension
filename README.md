@@ -15,6 +15,7 @@ Browser extension to hold keys and sign transactions for Emeris as well as other
 9. Drag the `dist` folder into this screen to install the Emeris Extension
 
 ## Updating the Demeris repo inside the extension repo
+
 To update the Demeris code inside of the extension repo, please use `git submodule update --recursive --remote --merge`
 
 ## Most efficient way of doing development
@@ -153,13 +154,20 @@ main();
 
 ## Test E2E
 
+Tests need to have `VITE_UNSECURE_KEYS=true` as they run in parallel. Key creation is brute force protected and parallel runs causing the CPU to burn up. You need to adjust this. Still running more then 2 worker can cause issues. Test on you own setup.
+
 Run:
 
 `EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek npx playwright test`
 
-For individual test runs (replace the string with the test name):
+For individual test debugging:
 
-`EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test -g "Create Account"`
+```
+# using test name
+VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --worker=2 -g "Create Account"
+# using test file
+VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --worker=2 e2e/cosmjs.spec.ts
+```
 
 For automatic tests:
 
