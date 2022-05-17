@@ -5,17 +5,14 @@
       Back up your secret recovery phrase to recover your account if your device is lost.
     </span>
     <ListCard
-      class="mb-3"
       :img="'/images/Secure.png'"
       caption="A secret recovery phrase is the key to your account. Keep it secret."
     />
     <ListCard
-      class="mb-3"
       :img="'/images/NeverShare.png'"
       caption="Never share your secret recovery phrase with anyone—even Emeris Support (we won’t ask)."
     />
     <ListCard
-      class="mb-3"
       :img="'/images/ShieldKey.svg'"
       caption="Store it in a safe location (offline is usually best—somewhere waterproof and fireproof)."
     />

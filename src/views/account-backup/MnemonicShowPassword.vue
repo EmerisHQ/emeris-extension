@@ -11,7 +11,6 @@
 
       <div class="mt-auto">
         <ListCard
-          class="mb-4"
           :img="'/images/Secure.png'"
           caption="Never share your recovery phrase with anyone, store it securily."
         />
