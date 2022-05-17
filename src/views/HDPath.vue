@@ -82,7 +82,9 @@ const hdPathError = computed(() => {
 });
 
 onMounted(async () => {
-  await store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
+  if (!newAccount.value) {
+    await store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
+  }
   const accountHdPath = newAccount.value?.hdPath;
   if (accountHdPath) {
     account.value = accountHdPath[0];
