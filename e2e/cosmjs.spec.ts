@@ -5,7 +5,7 @@ import { test } from './extension-setup';
 import { defaultCosmosAddress, makeReadyForRequests } from './helpers';
 
 test.describe('CosmJs', () => {
-  test('OfflineSigner', async ({ context, page }) => {
+  test.only('OfflineSigner', async ({ context, page }) => {
     await makeReadyForRequests(context, page);
 
     const result = await page.evaluate((defaultCosmosAddress) => {
