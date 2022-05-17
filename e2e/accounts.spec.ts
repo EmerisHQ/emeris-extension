@@ -27,8 +27,8 @@ test.describe('Account Create', () => {
     await page.click('text=Show mnemonic');
 
     await page.click('text=Back up later');
-    await page.click('text=I understand');
-    await page.click('text=Continue');
+    await page.click('text=I understand that if I don’t back up my account, I risk losing access to it.');
+    await page.locator('.button-primary:has-text("Back up later")').click();
 
     await expect(page.locator('text=Test Account Created >> visible=true')).toBeVisible();
   });
