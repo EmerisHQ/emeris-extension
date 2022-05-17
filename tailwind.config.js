@@ -94,6 +94,7 @@ module.exports = {
     },
     backgroundImage: {
       grain: 'url(/images/texture-grain.png)',
+      'list-card-gradient': 'linear-gradient(0deg, var(--surface-2) 0%, #1b1b1b 105%)',
     },
     boxShadow: {
       button: '3px 9px 32px -4px rgba(0, 0, 0, 0.07)',

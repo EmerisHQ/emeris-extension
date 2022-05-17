@@ -7,20 +7,16 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'List Card',
-  props: {
-    img: { type: String, required: true },
-    caption: { type: String, required: true },
-  },
-};
+<script lang="ts" setup>
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = defineProps<{
+  img: string;
+  caption: string;
+}>();
 </script>
+
 <style lang="scss" scoped>
 .list-card-container {
-  background: linear-gradient(0deg, #262626 0%, #1b1b1b 105%);
-  mix-blend-mode: normal;
-  /* elevation/button */
-  box-shadow: 3px 9px 32px -4px rgba(0, 0, 0, 0.07);
+  @apply mix-blend-normal shadow-button bg-list-card-gradient;
 }
 </style>
