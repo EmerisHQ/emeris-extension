@@ -450,6 +450,11 @@
   resolved "https://registry.yarnpkg.com/@clockwork-projects/crescent-network-crescent-js/-/crescent-network-crescent-js-1.0.0.tgz#e506ca9dcb65fd4173ee463994960f9c3d104507"
   integrity sha512-7d8rBcmB2N8SdSuRboBO9QoL7aDkdgpHMqyA6W/iI8nDniH/fBkou4oETLz2WlNIzyM3lYs/IHRbzaw3XfYcpw==
 
+"@clockwork-projects/crescent-network-crescent-js@^1.0.0":
+  "integrity" "sha512-7d8rBcmB2N8SdSuRboBO9QoL7aDkdgpHMqyA6W/iI8nDniH/fBkou4oETLz2WlNIzyM3lYs/IHRbzaw3XfYcpw=="
+  "resolved" "https://registry.npmjs.org/@clockwork-projects/crescent-network-crescent-js/-/crescent-network-crescent-js-1.0.0.tgz"
+  "version" "1.0.0"
+
 "@clockwork-projects/osmosis-labs-osmosis-js@^6.1.0":
   version "6.1.0"
   resolved "https://registry.npmjs.org/@clockwork-projects/osmosis-labs-osmosis-js/-/osmosis-labs-osmosis-js-6.1.0.tgz"

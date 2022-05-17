@@ -21,15 +21,13 @@
       <a class="text-sm" @click="infoOpen = true">What is an HD derivation path?</a>
 
       <div class="mt-auto">
-        <Button name="Confirm" class="mb-2" :disabled="hdPathError" @click="updateHdPath" />
-        <router-link :to="route.query.previous">
-          <Button name="Cancel" variant="link" />
-        </router-link>
+        <Button name="Confirm" :disabled="hdPathError" @click="updateHdPath" />
+        <Button name="Cancel" variant="link" @click="$router.push($route.query.previous)" />
       </div>
     </form>
 
     <Slideout :open="infoOpen" @update:open="infoOpen = $event">
-      <h1 class="mb-4">What is an HD derivation path?</h1>
+      <p class="mb-4 font-medium text-1">What is an HD derivation path?</p>
       <div class="secondary-text mb-6">
         Derivation paths enable you to have multiple accounts under one secret recovery phrase. This is an advanced
         feature, so be sure you understand how derivation paths work before using them. <br /><br />
