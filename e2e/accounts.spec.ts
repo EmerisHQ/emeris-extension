@@ -121,6 +121,50 @@ test.describe('Account Create', () => {
     await expect(page.locator('text=Test Account Imported >> visible=true')).toBeVisible();
   });
 
+  test.describe('Import Account HD Path', () => {
+    test.beforeEach(async ({ page }) => {
+      await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
+      await page.click('text=Import Account >> visible=true');
+
+      if (await page.$('[placeholder="Enter password"]')) {
+        await page.fill('[placeholder="Enter password"]', '123456A$');
+        await page.fill('[placeholder="Confirm password"]', '123456A$');
+        await page.click('text=Continue');
+      }
+
+      await page.click('text=Continue');
+    });
+
+    test('Should save the HD path value introduced if it is correct', async ({ page }) => {
+      await page.click('text=Advanced');
+      await page.locator('input').first().fill('4');
+      await page.locator('input').first().press('Enter');
+
+      await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
+
+      await page.click('text=Advanced');
+      await expect(page.locator('input').first()).toHaveValue('4');
+    });
+
+    test('Should show an error if the HD path value is incorrect', async ({ page }) => {
+      await page.click('text=Advanced');
+      await page.locator('input').first().fill('.1');
+
+      await expect(page.locator('text=Invalid derivation path >> visible=true')).toBeVisible();
+      const confirmButtonDisabled = await page.locator('button', { hasText: 'Confirm' }).isDisabled();
+      await expect(confirmButtonDisabled).toBeTruthy();
+    });
+
+    test('Should not save the HD path value if Cancel is clicked', async ({ page }) => {
+      await page.click('text=Advanced');
+      await page.locator('input').first().fill('4');
+      await page.click('text=Cancel');
+
+      await page.click('text=Advanced');
+      await expect(page.locator('input').first()).toHaveValue('0');
+    });
+  });
+
   test.describe('Cannot Import Account', () => {
     let mnemonic = '';
 
