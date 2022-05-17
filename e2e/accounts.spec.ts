@@ -59,13 +59,15 @@ test.describe('Account Create', () => {
 
     await expect(page.locator('.word:first-child >> visible=true')).toBeVisible();
     const mnemonic = await page.locator('.word').allTextContents();
-    await page.click('text=I have backed up');
+    await page.click(
+      'text=I understand that if I lose my secret recovery phrase, I may lose access to my account and its assets. >> visible=true',
+    );
     await page.click('text=Continue');
 
     for (let i = 0; i <= 2; i++) {
-      const numberRegexp = /Select the (\d+)\w+ word in your recovery phrase/;
-      const numberPhrase = await page.locator(`text=word in your recovery phrase`).textContent();
-      const [, number] = numberRegexp.exec(numberPhrase);
+      const numberRegexp = /Select the (\d+)\w+ word in your secret recovery phrase./;
+      const numberPhrase = await page.locator('.select-word').allTextContents();
+      const [, number] = numberRegexp.exec(numberPhrase.join(' '));
       await page.click(`text=${mnemonic[Number(number) - 1]}`);
     }
 

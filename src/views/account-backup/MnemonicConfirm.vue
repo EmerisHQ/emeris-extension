@@ -2,7 +2,7 @@
   <div class="page">
     <Header title="Confirm secret recovery phrase" />
     <img :src="'/images/Stepper-' + step + '.svg'" class="h-5 mb-8" />
-    <p class="text-center mb-12">
+    <p class="select-word text-center mb-12">
       <span class="secondary-text">Select the </span>
       <span class="font-semibold text-text">{{ positionWord }}</span>
       <span class="secondary-text"> word in your secret recovery phrase.</span>
