@@ -4,7 +4,6 @@ import { GetterTree } from 'vuex';
 import { RootState } from '@/store';
 import { KeplrKeyData } from '@/types/user';
 import { Namespaced } from '@/types/util';
-import { keyHashfromAddress } from '@/utils/basic';
 
 import { GetterTypes } from './getter-types';
 import { USERState } from './state';
@@ -12,20 +11,20 @@ import { USERState } from './state';
 export type Getters = {
   [GetterTypes.getKeplr](state: USERState): KeplrKeyData;
   [GetterTypes.getGasLimit](state: USERState): number;
-  [GetterTypes.isSignedIn](state: USERState): boolean;
-  [GetterTypes.getKeyhashes](state: USERState): string[];
-  [GetterTypes.getCorrelationId](state: USERState): string;
-  [GetterTypes.getKeplrAccountName](state: USERState): string | null;
+  [GetterTypes.isSignedIn](state: USERState, getters, rootState, rootGetters): boolean;
+  [GetterTypes.getKeyhashes](state: USERState, getters, rootState, rootGetters): string[];
+  [GetterTypes.getCorrelationId](state: USERState, getters, rootState, rootGetters): string;
+  [GetterTypes.getKeplrAccountName](state: USERState, getters, rootState, rootGetters): string | null;
   [GetterTypes.isDemoAccount](state: USERState): boolean;
   [GetterTypes.hasSeenReedem](state: USERState): boolean;
   [GetterTypes.viewUnverified](state: USERState): boolean;
   [GetterTypes.viewLPAssetPools](state: USERState): boolean;
   [GetterTypes.allowCustomSlippage](state: USERState): boolean;
   [GetterTypes.getSlippagePerc](state: USERState): number;
-  [GetterTypes.getKeplrAddress](state): string;
+  [GetterTypes.getKeplrAddress](state: USERState, getters, rootState, rootGetters): string;
   [GetterTypes.theme](state: USERState): string;
   [GetterTypes.getPreferredGasPriceLevel](state: USERState): EmerisFees.GasPriceLevel;
-  [GetterTypes.isAllBalancesLoaded](state: USERState): boolean;
+  [GetterTypes.isAllBalancesLoaded](state: USERState, getters, rootState): boolean;
 };
 
 export type GlobalGetters = Namespaced<Getters, 'demerisUSER'>;
@@ -37,11 +36,11 @@ export const getters: GetterTree<USERState, RootState> & Getters = {
   [GetterTypes.getSlippagePerc]: (state) => {
     return state._Session.slippagePerc;
   },
-  [GetterTypes.isDemoAccount]: (state) => {
-    return state._Session.isDemoAccount;
+  [GetterTypes.isDemoAccount]: (_state) => {
+    return false;
   },
-  [GetterTypes.hasSeenReedem]: (state) => {
-    return state._Session.hasSeenRedeem;
+  [GetterTypes.hasSeenReedem]: (_state) => {
+    return false;
   },
   [GetterTypes.theme]: (state) => {
     return state._Session.theme;
@@ -49,37 +48,33 @@ export const getters: GetterTree<USERState, RootState> & Getters = {
   [GetterTypes.getPreferredGasPriceLevel]: (state) => {
     return state._Session.gasPriceLevel;
   },
-  [GetterTypes.getCorrelationId]: (state) => {
-    return state.correlationId;
+  [GetterTypes.getCorrelationId]: (_state, _getters, _rootState, rootGetters) => {
+    const account = rootGetters['extension/getAccount'];
+    return account?.keyHashes[0] ?? null;
   },
   [GetterTypes.allowCustomSlippage]: (state) => {
-    return state._Session.allowCustomSlippage;
+    return state._Session.customSlippage;
   },
-  [GetterTypes.viewUnverified]: (state) => {
-    return state._Session.viewUnverified;
+  [GetterTypes.viewUnverified]: (_state) => {
+    return false;
   },
-  [GetterTypes.viewLPAssetPools]: (state) => {
-    return state._Session.viewLPAssetPools;
+  [GetterTypes.viewLPAssetPools]: (_state) => {
+    return false;
   },
-  [GetterTypes.isSignedIn]: (state) => {
-    return state.keplr ? true : false;
+  [GetterTypes.isSignedIn]: (_state, _getters, _rootState, rootGetters) => {
+    return rootGetters['extension/getWallet'] ? true : false;
   },
-  [GetterTypes.getKeplrAccountName]: (state) => {
-    return state.keplr?.name ?? null;
+  [GetterTypes.getKeplrAccountName]: (_state, _getters, _rootState, rootGetters) => {
+    const account = rootGetters['extension/getAccount'];
+    return account?.accountName ?? null;
   },
-  [GetterTypes.getKeplrAddress]: (state) => {
-    if (state.keplr) {
-      return keyHashfromAddress(state.keplr.bech32Address);
-    } else {
-      return null;
-    }
+  [GetterTypes.getKeplrAddress]: (_state, _getters, _rootState, rootGetters) => {
+    const account = rootGetters['extension/getAccount'];
+    return account?.keyHashes[0] ?? null;
   },
-  [GetterTypes.getKeyhashes]: (state) => {
-    if (state.keplr && state.keplr.keyHashes) {
-      return state.keplr.keyHashes;
-    } else {
-      return null;
-    }
+  [GetterTypes.getKeyhashes]: (_state, _getters, _rootState, rootGetters) => {
+    const account = rootGetters['extension/getAccount'];
+    return account?.keyHashes ?? null;
   },
   [GetterTypes.getBalancesFirstLoad]: (state) => {
     return state.balancesFirstLoad;
