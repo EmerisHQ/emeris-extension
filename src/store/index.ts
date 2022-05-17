@@ -3,23 +3,23 @@ import { createStore, Store } from 'vuex';
 
 import init from '@/store/config';
 import {
-  DemerisStore as DemerisStoreAPI,
+  APIState as StateAPI,
   module as moduleAPI,
   namespace as namespaceAPI,
-  State as StateAPI,
+  NamespacedAPIStore as DemerisStoreAPI,
 } from '@/store/demeris-api';
 import {
-  DemerisStore as DemerisStoreTX,
   module as moduleTX,
   namespace as namespaceTX,
-  State as StateTX,
+  NamespacedTXStore as DemerisStoreTX,
+  TXState as StateTX,
 } from '@/store/demeris-tx';
 import {
-  DemerisStore as DemerisStoreUSER,
   module as moduleUSER,
   namespace as namespaceUSER,
-  State as StateUSER,
-} from '@/store/demeris-user';
+  NamespacedUSERStore as DemerisStoreUSER,
+  USERState as StateUSER,
+} from '@@/store/demeris-user';
 import { ExtensionStore, State as ExtensionState, store as extension } from '@@/store/extension';
 
 export type RootState = {
