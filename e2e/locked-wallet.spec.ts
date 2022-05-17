@@ -2,11 +2,11 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultCosmosAddress, emerisLoaded, makeReadyForRequests } from './helpers';
+import { defaultCosmosAddress, emerisLoaded, makeWalletReadyForRequests } from './helpers';
 
 test.describe('Unlocked Wallet - attempt API requests:', () => {
   test('signTransaction', async ({ page, context }) => {
-    await makeReadyForRequests(context, page);
+    await makeWalletReadyForRequests(context, page);
 
     let lastConsoleWarnMessage;
     page.on('console', (msg) => {

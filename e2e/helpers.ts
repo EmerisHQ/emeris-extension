@@ -76,7 +76,7 @@ export const enableWebsite = async (context, page, withNetwork = false, isLogged
   await popup.waitForEvent('close');
 };
 
-export const makeReadyForRequests = async (context, page) => {
+export const makeWalletReadyForRequests = async (context, page) => {
   await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
   await importAccount(page);
   await page.goto(`https://www.google.com/`);

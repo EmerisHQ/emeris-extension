@@ -2,11 +2,13 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultCosmosAddress, makeReadyForRequests } from './helpers';
+import { defaultCosmosAddress, makeWalletReadyForRequests } from './helpers';
 
 test.describe('CosmJs', () => {
-  test.only('OfflineSigner', async ({ context, page }) => {
-    await makeReadyForRequests(context, page);
+  test('OfflineSigner', async ({ context, page }) => {
+    await makeWalletReadyForRequests(context, page);
+
+    // await page.pause();
 
     const result = await page.evaluate((defaultCosmosAddress) => {
       return window.emeris
@@ -67,7 +69,7 @@ test.describe('CosmJs', () => {
   });
 
   test('Get accounts', async ({ context, page }) => {
-    await makeReadyForRequests(context, page);
+    await makeWalletReadyForRequests(context, page);
 
     const result = await page.evaluate(() => {
       return window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
