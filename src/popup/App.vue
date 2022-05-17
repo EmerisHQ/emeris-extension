@@ -22,6 +22,7 @@ export default defineComponent({
         'demerisAPI/' + MutationTypes.INIT,
         {
           endpoint: process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1',
+          hub_chain: 'cosmos-hub',
         },
         { root: true },
       );
@@ -102,17 +103,14 @@ export default defineComponent({
                       subscribe: true,
                     })
                     .then((prices) => {
-                      console.log(prices);
                       localStorage.setItem('prices', JSON.stringify(prices));
                     });
                 });
             })
             .catch((e) => {
-              console.log(e);
+              console.error(e);
             });
-        } catch (e) {
-          console.log(e);
-        }
+        } catch (e) {}
       };
       loadData();
     });

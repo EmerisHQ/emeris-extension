@@ -1,6 +1,7 @@
 import { InjectionKey } from 'vue';
 import { createStore, Store } from 'vuex';
 
+import { GlobalActionTypes } from '@/store';
 import init from '@/store/config';
 import {
   DemerisStore as DemerisStoreAPI,
@@ -50,6 +51,12 @@ export const rootstore = createStore<RootState>({
   },
 });
 init(rootstore); // add tendermint-liquidity module
+
+rootstore.subscribe((mutation) => {
+  if (mutation.type == 'tendermint.liquidity.v1beta1/QUERY' && mutation.payload.query == 'LiquidityPools') {
+    rootstore.dispatch(GlobalActionTypes.API.VALIDATE_POOLS, mutation.payload.value.pools);
+  }
+});
 
 export function useExtensionStore(): TypedExtensionStore {
   return rootstore as TypedExtensionStore;
