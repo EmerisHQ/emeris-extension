@@ -75,3 +75,22 @@ export const enableWebsite = async (context, page, withNetwork = false, isLogged
   await popup.click('text=Accept');
   await popup.waitForEvent('close');
 };
+
+export const makeReadyForRequests = async (context, page) => {
+  await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
+  await importAccount(page);
+  await page.goto(`https://www.google.com/`);
+  await emerisLoaded(page);
+
+  // whitelist accept
+  context.waitForEvent('page').then(async (popup) => {
+    await popup.click('text=Accept');
+  });
+
+  // when the transaction popup shows, click reject
+  context.waitForEvent('page').then(async (popup) => {
+    await popup.click('text=Reject');
+  });
+
+  await enableWebsite(context, page, true, true);
+};

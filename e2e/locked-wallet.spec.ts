@@ -2,26 +2,11 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from './helpers';
+import { defaultCosmosAddress, emerisLoaded, makeReadyForRequests } from './helpers';
 
 test.describe('Unlocked Wallet - attempt API requests:', () => {
   test('signTransaction', async ({ page, context }) => {
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
-    await importAccount(page);
-    await page.goto(`https://www.google.com/`);
-    await emerisLoaded(page);
-
-    // whitelist accept
-    context.waitForEvent('page').then(async (popup) => {
-      await popup.click('text=Accept');
-    });
-
-    // when the transaction popup shows, click reject
-    context.waitForEvent('page').then(async (popup) => {
-      await popup.click('text=Reject');
-    });
-
-    await enableWebsite(context, page, true, true);
+    await makeReadyForRequests(context, page);
 
     let lastConsoleWarnMessage;
     page.on('console', (msg) => {
