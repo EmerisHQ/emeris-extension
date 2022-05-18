@@ -6,6 +6,7 @@ import { defaultCosmosAddress, emerisLoaded, makeWalletReadyForRequests } from '
 
 test.describe('Unlocked Wallet - allowed API requests:', () => {
   test('signTransaction success', async ({ page, context }) => {
+    test.setTimeout(99999999);
     await makeWalletReadyForRequests(context, page);
 
     let lastConsoleWarnMessage;
@@ -15,8 +16,8 @@ test.describe('Unlocked Wallet - allowed API requests:', () => {
 
     // when the transaction popup shows, click reject
     context.waitForEvent('page').then(async (popup) => {
-      await expect(popup.locator('text=Reject')).toBeVisible();
-      await popup.click('text=Reject');
+      await expect(popup.locator('text=Accept')).toBeVisible();
+      await popup.click('text=Accept');
     });
 
     await page.evaluate(async (defaultCosmosAddress) => {
@@ -45,10 +46,7 @@ test.describe('Unlocked Wallet - allowed API requests:', () => {
             ],
           },
         })
-        .then((r) => {
-          r;
-          console.log('finished window emeris');
-        });
+        .then((r) => r);
     }, defaultCosmosAddress);
 
     await expect(lastConsoleWarnMessage).not.toBe(
