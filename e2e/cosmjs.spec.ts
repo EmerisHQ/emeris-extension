@@ -38,8 +38,6 @@ test.describe('CosmJs', () => {
         .then((r) => r);
     }, defaultCosmosAddress);
 
-    console.log('result', result);
-
     await expect(result).toStrictEqual({
       signature: {
         pub_key: { type: 'tendermint/PubKeySecp256k1', value: 'A63fr0YuJaZPkGJw0ZJ8ekjsLXhZzQlv9wd0WVEoMKNc' },

@@ -48,8 +48,7 @@ test.describe('Unlocked Wallet - allowed API requests:', () => {
         .then((r) => {
           r;
           console.log('finished window emeris');
-        })
-        .catch((e) => console.log(e));
+        });
     }, defaultCosmosAddress);
 
     await expect(lastConsoleWarnMessage).not.toBe(
