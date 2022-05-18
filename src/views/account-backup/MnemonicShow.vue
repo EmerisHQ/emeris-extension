@@ -5,10 +5,8 @@
     <span class="secondary-text mb-6">
       Write down the {{ account.accountMnemonic.trim().split(' ').length }} words below and store them in a safe place.
     </span>
-    <p class="words bg-surface-2 rounded-[10px] py-4 px-6 flex flex-wrap gap-x-4 gap-y-2 mb-5">
-      <span v-for="(word, index) in account.accountMnemonic.trim().split(' ')" :key="index" class="word">
-        {{ word }}
-      </span>
+    <p class="words bg-surface-2 rounded-[10px] py-4 px-6 flex flex-wrap leading-7 mb-5">
+      {{ account.accountMnemonic.trim() }}
     </p>
 
     <div class="mt-auto">
@@ -69,6 +67,10 @@ const submit = () => {
 </script>
 
 <style lang="scss" scoped>
+.words {
+  word-spacing: 0.75rem;
+}
+
 .checkbox-card {
   @apply flex items-start p-4 bg-darkBanner rounded-[10px];
 }
