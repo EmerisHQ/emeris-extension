@@ -1,7 +1,7 @@
 <template>
   <div class="buttons">
     <router-link :to="{ name: 'Create Wallet' }">
-      <Button name="Create Account" />
+      <Button name="Create account" />
     </router-link>
     <router-link :to="{ name: 'Account Import Info' }">
       <Button name="Import Account" variant="secondary" />

@@ -14,6 +14,7 @@ import AccountImportLedger from '../views/AccountImportLedger.vue';
 import AccountImportLedgerConnect from '../views/AccountImportLedgerConnect.vue';
 import AccountImportReady from '../views/AccountImportReady.vue';
 import AccountReady from '../views/AccountReady.vue';
+import AccountReadyNoBackup from '../views/AccountReadyNoBackup.vue';
 import AccountRemove from '../views/AccountRemove.vue';
 import AccountRename from '../views/AccountRename.vue';
 import Accounts from '../views/Accounts.vue';
@@ -164,6 +165,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/accountReady',
     name: 'Account Ready',
     component: AccountReady,
+  },
+  {
+    path: '/accountReadyNoBackup',
+    name: 'Account Ready No Backup',
+    component: AccountReadyNoBackup,
   },
   {
     path: '/ledger',
