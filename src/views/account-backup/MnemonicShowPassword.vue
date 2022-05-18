@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <Header title="Back up account" />
-    <div class="form" @keyup.enter="submit">
+    <form class="form" @submit.prevent="submit">
       <span class="secondary-text mb-8">
         If your device is lost or stolen, you will be able to recover your wallet. Write down your sentence on a paper
         or in a password manager
@@ -14,10 +14,10 @@
           :img="'/images/Secure.png'"
           caption="Never share your recovery phrase with anyone, store it securily."
         />
-        <Button type="submit" name="Show Mnemonic" @click="submit" />
-        <Button name="Cancel" variant="link" @click="$router.go(-1)" />
+        <Button type="submit" :disabled="!password" name="Show Mnemonic" @click="submit" />
+        <Button name="Cancel" variant="link" @click="router.go(-1)" />
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
