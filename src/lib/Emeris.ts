@@ -235,7 +235,8 @@ export class Emeris implements IEmeris {
         return this.getAddress(message.data);
       case 'getMnemonic':
         try {
-          const wallet = await this.unlockWallet(message.data.data.password);
+          const password = message.data.data.sessionActive ? this.password : message.data.data.password;
+          const wallet = await this.unlockWallet(password);
           if (wallet) {
             return wallet.find((x) => x.accountName == message.data.data.accountName);
           }

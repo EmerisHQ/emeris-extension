@@ -124,7 +124,7 @@ export default defineComponent({
         if (this.newAccount.setupState === AccountCreateStates.COMPLETE) {
           nextRoute = '/accountImportReady';
         } else {
-          nextRoute = '/backup';
+          nextRoute = '/backup?previous=/accountCreate';
         }
 
         await this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow
