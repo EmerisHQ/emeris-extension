@@ -6,7 +6,6 @@ import { defaultCosmosAddress, emerisLoaded, makeWalletReadyForRequests } from '
 
 test.describe('Unlocked Wallet - allowed API requests:', () => {
   test('signTransaction success', async ({ page, context }) => {
-    test.setTimeout(99999999);
     await makeWalletReadyForRequests(context, page);
 
     let lastConsoleWarnMessage;

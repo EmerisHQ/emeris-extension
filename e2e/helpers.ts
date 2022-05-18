@@ -19,7 +19,6 @@ export const accountCreate = async (page) => {
 
 export const importAccount = async (page, name = 'Test Account Imported') => {
   // Test import
-  // await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
   await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
   await page.click('text=Import Account >> visible=true');
 
@@ -28,10 +27,12 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
   }
+  await expect(page.locator('text=Continue')).toBeVisible();
   await page.click('text=Continue');
 
   const mnemonic = defaultMnemonic;
   await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
+  await expect(page.locator('[type=submit]')).toBeVisible();
   await page.click('[type=submit]');
   await expect(page.locator('[placeholder="Surfer"]')).toBeVisible();
   await page.fill('[placeholder="Surfer"]', name);
