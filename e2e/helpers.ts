@@ -19,6 +19,7 @@ export const accountCreate = async (page) => {
 
 export const importAccount = async (page, name = 'Test Account Imported') => {
   // Test import
+  // await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
   await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
   await page.click('text=Import Account >> visible=true');
 
@@ -27,28 +28,20 @@ export const importAccount = async (page, name = 'Test Account Imported') => {
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
   }
-
   await page.click('text=Continue');
 
   const mnemonic = defaultMnemonic;
   await page.fill('[placeholder="Your recovery phrase"]', mnemonic);
   await page.click('[type=submit]');
-
-  await page.waitForTimeout(500); // needed as the view overwrite the input on load
+  await expect(page.locator('[placeholder="Surfer"]')).toBeVisible();
   await page.fill('[placeholder="Surfer"]', name);
+  await expect(page.locator('text=Continue')).toBeVisible();
   await page.click('text=Continue');
-
-  await page.click('text=Continue');
+  await Promise.all([page.waitForURL('**/accountImportReady'), page.waitForNavigation()]);
 };
 
 export const emerisLoaded = async (page) => {
-  while (
-    await page.evaluate(() => {
-      return !window.emeris;
-    })
-  ) {
-    await page.waitForTimeout(500);
-  }
+  await page.waitForFunction(() => !!window.hasOwnProperty('emeris'));
 };
 
 export const enableWebsite = async (context, page, withNetwork = false, isLoggedIn = false) => {
@@ -66,7 +59,7 @@ export const enableWebsite = async (context, page, withNetwork = false, isLogged
   ]);
 
   if (!isLoggedIn) {
-    await expect(popup.locator('[placeholder="Enter a password"] >> visible=true')).toBeVisible();
+    await expect(popup.locator('[placeholder="Enter password"] >> visible=true')).toBeVisible();
     await popup.fill('[placeholder="Enter password"]', '123456A$');
     await popup.fill('[placeholder="Confirm password"]', '123456A$');
     await popup.click('text=Continue');
@@ -79,18 +72,8 @@ export const enableWebsite = async (context, page, withNetwork = false, isLogged
 export const makeWalletReadyForRequests = async (context, page) => {
   await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
   await importAccount(page);
+  await page.waitForURL('**/accountImportReady');
   await page.goto(`https://www.google.com/`);
   await emerisLoaded(page);
-
-  // whitelist accept
-  context.waitForEvent('page').then(async (popup) => {
-    await popup.click('text=Accept');
-  });
-
-  // when the transaction popup shows, click reject
-  context.waitForEvent('page').then(async (popup) => {
-    await popup.click('text=Reject');
-  });
-
   await enableWebsite(context, page, true, true);
 };

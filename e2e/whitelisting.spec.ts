@@ -1,38 +1,22 @@
+/* eslint-disable max-lines-per-function */
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { emerisLoaded, enableWebsite } from './helpers';
+import { emerisLoaded, makeWalletReadyForRequests } from './helpers';
 
 test.describe('Whitelisting', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`https://www.google.com/`);
-    await emerisLoaded(page);
-
-    // negative test
-    expect(
-      await page.evaluate(() => {
-        return window.emeris.supportedChains();
-      }),
-    ).toBe(false); // TODO the response should be a thrown error imo
-  });
   test('Request page whitelisting', async ({ page, context }) => {
-    await enableWebsite(context, page);
-
-    // positive test
-    expect(
-      await page.evaluate(() => {
-        return window.emeris.supportedChains();
-      }),
-    ).not.toBe(false);
+    await makeWalletReadyForRequests(context, page);
 
     expect(
       await page.evaluate(() => {
-        return window.emeris.enable();
+        return window.emeris.enable().then((r) => !!r);
       }),
     ).toBe(true);
 
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
     await expect(page.locator('text=Managed connected sites')).toBeVisible();
+    await expect(page.locator('[data-testId="whitelisted-websites"]')).toBeVisible();
     await expect(page.locator('text=https://www.google.com').first()).toBeVisible();
 
     // disconnect page
@@ -46,13 +30,13 @@ test.describe('Whitelisting', () => {
     await emerisLoaded(page);
     expect(
       await page.evaluate(() => {
-        return window.emeris.supportedChains();
+        return window.emeris.supportedChains().then((r) => !!r);
       }),
     ).toBe(false); // TODO the response should be a thrown error imo
   });
-  test('Request page whitelisting with keplr compatible enable command', async ({ page, context }) => {
-    await enableWebsite(context, page, true);
 
+  test('Request page whitelisting with keplr compatible enable command', async ({ page, context }) => {
+    await makeWalletReadyForRequests(context, page);
     // positive test
     expect(
       await page.evaluate(() => {

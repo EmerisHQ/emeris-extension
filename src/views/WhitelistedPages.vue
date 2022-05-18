@@ -2,7 +2,7 @@
   <div class="page">
     <Header title="" back-to="/settings" />
     <h1>Managed connected sites</h1>
-    <div v-for="site in whitelistedWebsites" :key="site.origin" class="website">
+    <div v-for="site in whitelistedWebsites" :key="site.origin" class="website" data-testId="whitelisted-websites">
       <Brandmark style="margin-top: auto; margin-bottom: auto; margin-right: 18px" />
       <div style="display: flex; flex-direction: column">
         <span>{{ site.origin }}</span>

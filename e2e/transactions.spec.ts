@@ -1,15 +1,12 @@
+/* eslint-disable max-lines-per-function */
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from './helpers';
+import { defaultCosmosAddress, makeWalletReadyForRequests } from './helpers';
 
 test.describe('Transactions', () => {
   test('Send', async ({ context, page }) => {
-    await enableWebsite(context, page);
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
-    await importAccount(page);
-    await page.goto(`https://www.google.com/`);
-    await emerisLoaded(page);
+    await makeWalletReadyForRequests(context, page);
 
     // when the transaction popup shows, click accept
     context.waitForEvent('page').then(async (popup) => {
@@ -53,11 +50,7 @@ test.describe('Transactions', () => {
     // Extend timeout for all tests running this hook by 30 seconds.
     testInfo.setTimeout(testInfo.timeout + 30000);
 
-    await enableWebsite(context, page);
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
-    await importAccount(page);
-    await page.goto(`https://www.google.com/`);
-    await emerisLoaded(page);
+    await makeWalletReadyForRequests(context, page);
 
     // when the transaction popup shows, click accept
     context.waitForEvent('page').then(async (popup) => {

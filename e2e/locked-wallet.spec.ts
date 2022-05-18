@@ -4,8 +4,8 @@ import { expect } from '@playwright/test';
 import { test } from './extension-setup';
 import { defaultCosmosAddress, emerisLoaded, makeWalletReadyForRequests } from './helpers';
 
-test.describe('Unlocked Wallet - attempt API requests:', () => {
-  test('signTransaction', async ({ page, context }) => {
+test.describe('Unlocked Wallet - allowed API requests:', () => {
+  test('signTransaction success', async ({ page, context }) => {
     await makeWalletReadyForRequests(context, page);
 
     let lastConsoleWarnMessage;
@@ -13,8 +13,13 @@ test.describe('Unlocked Wallet - attempt API requests:', () => {
       lastConsoleWarnMessage = msg.text();
     });
 
+    // when the transaction popup shows, click reject
+    context.waitForEvent('page').then(async (popup) => {
+      await expect(popup.locator('text=Reject')).toBeVisible();
+      await popup.click('text=Reject');
+    });
+
     await page.evaluate(async (defaultCosmosAddress) => {
-      console.log('started window emeris');
       return window.emeris
         .signTransaction({
           chainId: 'cosmos-hub',
@@ -47,15 +52,14 @@ test.describe('Unlocked Wallet - attempt API requests:', () => {
         .catch((e) => console.log(e));
     }, defaultCosmosAddress);
 
-    // await expect(page.textContent('body')).toContain('reject');
     await expect(lastConsoleWarnMessage).not.toBe(
       'Wallet locked or not yet created. Please create/unlock wallet before making requests.',
     );
   });
 });
 
-test.describe('Locked Wallet - attempt API requests:', () => {
-  test('signTransaction', async ({ page }) => {
+test.describe('Locked Wallet - blocked API requests:', () => {
+  test('signTransaction blocked', async ({ page }) => {
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
 
@@ -98,7 +102,7 @@ test.describe('Locked Wallet - attempt API requests:', () => {
     );
   });
 
-  test('getAddress', async ({ page }) => {
+  test('getAddress blocked', async ({ page }) => {
     await page.goto(`https://www.google.com/`);
     await emerisLoaded(page);
 

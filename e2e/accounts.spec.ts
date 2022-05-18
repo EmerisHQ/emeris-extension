@@ -2,8 +2,13 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { emerisLoaded, enableWebsite } from './helpers';
-import { accountCreate, defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers';
+import {
+  accountCreate,
+  defaultCosmosAddress,
+  defaultMnemonic,
+  importAccount,
+  makeWalletReadyForRequests
+} from './helpers';
 
 /* eslint-disable max-lines-per-function */
 test.describe('Account Create', () => {
@@ -27,7 +32,16 @@ test.describe('Account Create', () => {
     await accountCreate(page);
 
     // test backing up
-    await page.click('text=Show secret recovery phrase');
+    await page.click('text=Back up now');
+
+    await page.fill('[placeholder="Password"]', '123456A$');
+    await page.click('text=Show mnemonic');
+
+    // TODO there is a delay in the background until the wallet is available
+    while (await page.isVisible('text=Incorrect word. Try again.')) {
+      await expect(page.locator('text=Show mnemonic')).toBeVisible();
+      await page.click('text=Show mnemonic');
+    }
 
     await expect(page.locator('.words >> visible=true')).toBeVisible();
     const mnemonic = (await page.locator('.words').textContent()).split(' ');
@@ -76,7 +90,7 @@ test.describe('Account Create', () => {
 
   test('Import Account', async ({ page }) => {
     await importAccount(page);
-
+    await page.click('text=Continue');
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
 
     // test if address shows correctly
@@ -206,10 +220,10 @@ test.describe('Account Create', () => {
     }
 
     await importAccount(page);
-    await page.waitForTimeout(1 * 1000);
+
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accountAddAdditional`);
     await importAccount(page, 'Test Import Account 2');
-    await page.waitForTimeout(1 * 1000);
+
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
 
     const secondPage = await context.newPage();
@@ -220,11 +234,7 @@ test.describe('Account Create', () => {
   });
 
   test('Get active account', async ({ page, context }) => {
-    await enableWebsite(context, page);
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
-    await importAccount(page);
-    await page.goto(`https://www.google.com/`);
-    await emerisLoaded(page);
+    await makeWalletReadyForRequests(context, page);
 
     expect(
       await page.evaluate(() => {

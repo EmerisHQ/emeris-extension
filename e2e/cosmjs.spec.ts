@@ -6,9 +6,14 @@ import { defaultCosmosAddress, makeWalletReadyForRequests } from './helpers';
 
 test.describe('CosmJs', () => {
   test('OfflineSigner', async ({ context, page }) => {
+    test.setTimeout(120000);
     await makeWalletReadyForRequests(context, page);
 
-    // await page.pause();
+    // when the transaction popup shows, click reject
+    context.waitForEvent('page').then(async (popup) => {
+      await expect(popup.locator('text=Accept')).toBeVisible();
+      await popup.click('text=Accept');
+    });
 
     const result = await page.evaluate((defaultCosmosAddress) => {
       return window.emeris
@@ -30,10 +35,7 @@ test.describe('CosmJs', () => {
           ],
           memo: 'Sent with Emeris',
         })
-        .then((r) => {
-          console.log('result', r);
-          return r;
-        });
+        .then((r) => r);
     }, defaultCosmosAddress);
 
     console.log('result', result);
@@ -71,8 +73,8 @@ test.describe('CosmJs', () => {
   test('Get accounts', async ({ context, page }) => {
     await makeWalletReadyForRequests(context, page);
 
-    const result = await page.evaluate(() => {
-      return window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
+    const result = await page.evaluate(async () => {
+      return await window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
     });
 
     await expect(result).toStrictEqual([
