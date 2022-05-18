@@ -42,7 +42,9 @@ export class ProxyEmeris implements IEmeris {
   }
   async showPopupIfNotEnabled() {
     if (!(await this.hasRequestPermissions())) {
-      console.warn('Wallet locked or not yet created. Please create/unlock wallet before making requests.');
+      console.warn(
+        'Wallet not ready for requests. Please create/unlock wallet and whitelist current URL before making requests.',
+      );
       this.enable();
       return false;
     }
