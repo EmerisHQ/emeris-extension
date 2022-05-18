@@ -4,22 +4,16 @@
       <a @click="toHdPath">Advanced</a>
     </Header>
     <img :src="'/images/ImportLedgerBG.png'" class="background" />
-    <div
-      style="margin-bottom: 56px; margin-top: 72px; margin-left auto; margin-right: auto; display: block; margin-left: auto;"
-    >
-      <img :src="'/images/LedgerBox.svg'" style="width: 151px" />
+    <div class="block mx-auto mb-14 mt-[72px]">
+      <img class="w-[151px]" :src="'/images/LedgerBox.svg'" />
     </div>
     <ListCard :img="'/images/Step1.svg'" caption="Unlock & connect your Ledger device with your computer" />
     <ListCard :img="'/images/Step2.svg'" caption="Open the ‘Cosmos’ app on your Ledger device" />
 
-    <div v-if="error" style="color: #ff6072; margin-top: 16px; text-align: center">{{ error }}</div>
+    <div v-if="error" class="mt-4 text-center text-negative-text">{{ error }}</div>
 
-    <a class="secondary-text" style="margin-top: 24px">Having trouble connecting your Ledger?</a>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
+    <a class="secondary-text mt-6">Having trouble connecting your Ledger?</a>
+    <div class="mt-auto">
       <Button name="Connect Ledger" @click="next()" />
     </div>
   </div>

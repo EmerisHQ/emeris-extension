@@ -1,9 +1,10 @@
 <template>
   <div class="page">
-    <img class="mx-auto mt-40 w-12" :src="'/images/CheckIcon.svg'" />
-    <h1 class="mb-5" name>You’re all set</h1>
+    <img class="mx-auto mt-12 px-6 w-full" src="/images/SurferPortal.png" />
+    <h1 class="mt-8 mb-2">You’re all set</h1>
     <div class="secondary-text mb-6 text-center">
-      You have successfully created and backed up your new wallet. Enjoy exploring the new era of DeFi with Emeris.
+      You have successfully created and backed up your new account. Welcome to the world of cross-chain DeFi with
+      Emeris!
     </div>
     <router-link to="/" class="mt-auto">
       <Button name="Continue" />
@@ -11,68 +12,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import Button from '@/components/ui/Button.vue';
-import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
-
-export default defineComponent({
-  name: 'Account Ready',
-  components: {
-    Button,
-  },
-  computed: {
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
-    },
-  },
-});
 </script>
-<style scoped>
-.wordmark {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
-
-h1 {
-  position: relative;
-  display: block;
-  width: 327px;
-  height: 72px;
-  top: 32px;
-
-  /* 📕title/2 bold */
-
-  font-family: Inter;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 28px;
-  line-height: 127%;
-  /* or 36px */
-
-  text-align: center;
-  letter-spacing: -0.02em;
-
-  /* dark/text */
-
-  color: #ffffff;
-
-  /* Inside Auto Layout */
-
-  flex: none;
-  align-self: stretch;
-  flex-grow: 0;
-  margin: 0px 0px;
-}
-
-.buttons > *:not(:last-child) {
-  margin-bottom: 16px;
-  display: block;
-}
-
-:deep(.button-link) {
-  height: 48px;
-}
-</style>

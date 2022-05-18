@@ -3,7 +3,7 @@
     <Header title="Import account" :back-to="'/'" />
 
     <span class="secondary-text mb-4">Find the recovery phrase for the account you’d like to import.</span>
-    <a class="text-sm" @click="infoOpen = true">What’s a secret recovery phrase?</a>
+    <a class="text-sm mb-4" @click="infoOpen = true">What’s a secret recovery phrase?</a>
 
     <ListCard
       :img="'/images/NeverShare.png'"

@@ -158,15 +158,15 @@ Tests need to have `VITE_UNSECURE_KEYS=true` as they run in parallel. Key creati
 
 Run:
 
-`EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek npx playwright test`
+`VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek npx playwright test --workers=2`
 
 For individual test debugging:
 
 ```
 # using test name
-VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --worker=2 -g "Create Account"
+VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --workers=2 -g "Create Account"
 # using test file
-VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --worker=2 e2e/cosmjs.spec.ts
+VITE_UNSECURE_KEYS=true EXTENSION_ID=cklkpejioojjeiigffappdlcmnonmjek PWDEBUG=1 npx playwright test --workers=2 e2e/cosmjs.spec.ts
 ```
 
 For automatic tests:
