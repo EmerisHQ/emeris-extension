@@ -21,9 +21,9 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@clockwork-projects/crescent-network-crescent-js": "^1.0.0",
     "@cosmjs/amino": "0.28.0",
     "@cosmjs/cosmwasm-stargate": "0.28.0",
-    "@clockwork-projects/crescent-network-crescent-js": "^1.0.0",
     "@cosmjs/crypto": "0.28.0",
     "@cosmjs/encoding": "0.28.0",
     "@cosmjs/faucet-client": "0.28.0",
@@ -63,6 +63,7 @@
     "lodash.isequal": "^4.5.0",
     "lodash.maxby": "^4.6.0",
     "lodash.minby": "^4.6.0",
+    "lodash.noop": "^3.0.1",
     "lodash.orderby": "^4.6.0",
     "long": "^5.2.0",
     "mitt": "^3.0.0",

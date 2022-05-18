@@ -72,7 +72,7 @@ button:disabled {
 // inputs
 
 input:not(.checkbox__control) {
-  background: #262626; // TODO
+  @apply bg-surface-2;
 
   &:focus {
     background: #171717;

@@ -17,11 +17,19 @@ test.describe('Account Create', () => {
     await page.fill('[placeholder="Enter password"]', '123456A$');
     await page.fill('[placeholder="Confirm password"]', '123456A$');
     await page.click('text=Continue');
+
     await page.fill('[placeholder="Surfer"]', 'Test Account Created');
     await page.click('text=Continue');
+
+    await page.click('text=Show secret recovery phrase');
+
+    await page.fill('[placeholder="Password"]', '123456A$');
+    await page.click('text=Show mnemonic');
+
     await page.click('text=Back up later');
-    await page.click('text=I understand');
-    await page.click('text=Continue');
+    await page.click('text=I understand that if I don’t back up my account, I risk losing access to it.');
+    await page.locator('.button-primary:has-text("Back up later")').click();
+
     await expect(page.locator('text=Test Account Created >> visible=true')).toBeVisible();
   });
 
@@ -38,26 +46,28 @@ test.describe('Account Create', () => {
     await page.click('text=Continue');
 
     // test backing up
-    await page.click('text=Back up now');
+    await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
 
     // TODO there is a delay in the background until the wallet is available
-    while (await page.isVisible('text=Incorrect word. Try again.')) {
+    while (await page.isVisible('text=Incorrect word, try again.')) {
       await page.waitForTimeout(500);
       await page.click('text=Show mnemonic');
     }
 
     await expect(page.locator('.word:first-child >> visible=true')).toBeVisible();
-    const mnemonic = await page.locator('.word > span').allTextContents();
-    await page.click('text=I have backed up');
+    const mnemonic = await page.locator('.word').allTextContents();
+    await page.click(
+      'text=I understand that if I lose my secret recovery phrase, I may lose access to my account and its assets. >> visible=true',
+    );
     await page.click('text=Continue');
 
     for (let i = 0; i <= 2; i++) {
-      const numberRegexp = /Select the (\d+)\w+ word in your recovery phrase/;
-      const numberPhrase = await page.locator(`text=word in your recovery phrase`).textContent();
-      const [, number] = numberRegexp.exec(numberPhrase);
+      const numberRegexp = /Select the (\d+)\w+ word in your secret recovery phrase./;
+      const numberPhrase = await page.locator('.select-word').allTextContents();
+      const [, number] = numberRegexp.exec(numberPhrase.join(' '));
       await page.click(`text=${mnemonic[Number(number) - 1]}`);
     }
 
@@ -68,13 +78,13 @@ test.describe('Account Create', () => {
     // test if seed shows correctly
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/backup`);
 
-    await page.click('text=Back up now');
+    await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
 
     await expect(page.locator('.words')).not.toHaveText('');
-    const mnemonic2 = await page.locator('.word > span').allTextContents();
+    const mnemonic2 = await page.locator('.word').allTextContents();
 
     expect(mnemonic.join(' ')).toEqual(mnemonic2.join(' '));
 
@@ -96,19 +106,63 @@ test.describe('Account Create', () => {
     // test if seed shows correctly
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/backup`);
 
-    await page.click('text=Back up now');
+    await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
     await page.click('text=Show mnemonic');
 
     await expect(page.locator('.words')).not.toHaveText('');
-    const mnemonic2 = await page.locator('.word > span').allTextContents();
+    const mnemonic2 = await page.locator('.word').allTextContents();
 
     expect(defaultMnemonic).toEqual(mnemonic2.join(' '));
 
     // test if account shows in list
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
     await expect(page.locator('text=Test Account Imported >> visible=true')).toBeVisible();
+  });
+
+  test.describe('Import Account HD Path', () => {
+    test.beforeEach(async ({ page }) => {
+      await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
+      await page.click('text=Import Account >> visible=true');
+
+      if (await page.$('[placeholder="Enter password"]')) {
+        await page.fill('[placeholder="Enter password"]', '123456A$');
+        await page.fill('[placeholder="Confirm password"]', '123456A$');
+        await page.click('text=Continue');
+      }
+
+      await page.click('text=Continue');
+    });
+
+    test('Should save the HD path value introduced if it is correct', async ({ page }) => {
+      await page.click('text=Advanced');
+      await page.locator('input').first().fill('4');
+      await page.locator('input').first().press('Enter');
+
+      await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
+
+      await page.click('text=Advanced');
+      await expect(page.locator('input').first()).toHaveValue('4');
+    });
+
+    test('Should show an error if the HD path value is incorrect', async ({ page }) => {
+      await page.click('text=Advanced');
+      await page.locator('input').first().fill('.1');
+
+      await expect(page.locator('text=Invalid derivation path >> visible=true')).toBeVisible();
+      const confirmButtonDisabled = await page.locator('button', { hasText: 'Confirm' }).isDisabled();
+      await expect(confirmButtonDisabled).toBeTruthy();
+    });
+
+    test('Should not save the HD path value if Cancel is clicked', async ({ page }) => {
+      await page.click('text=Advanced');
+      await page.locator('input').first().fill('4');
+      await page.click('text=Cancel');
+
+      await page.click('text=Advanced');
+      await expect(page.locator('input').first()).toHaveValue('0');
+    });
   });
 
   test.describe('Cannot Import Account', () => {
