@@ -52,7 +52,7 @@ test.describe('Unlocked Wallet - allowed API requests:', () => {
     }, defaultCosmosAddress);
 
     await expect(lastConsoleWarnMessage).not.toBe(
-      'Wallet locked or not yet created. Please create/unlock wallet before making requests.',
+      'Wallet not ready for requests. Please create/unlock wallet and whitelist current URL before making requests.',
     );
   });
 });
@@ -97,7 +97,7 @@ test.describe('Locked Wallet - blocked API requests:', () => {
     }, defaultCosmosAddress);
 
     await expect(lastConsoleWarnMessage).toBe(
-      'Wallet locked or not yet created. Please create/unlock wallet before making requests.',
+      'Wallet not ready for requests. Please create/unlock wallet and whitelist current URL before making requests.',
     );
   });
 
@@ -115,7 +115,7 @@ test.describe('Locked Wallet - blocked API requests:', () => {
     });
 
     await expect(lastConsoleWarnMessage).toBe(
-      'Wallet locked or not yet created. Please create/unlock wallet before making requests.',
+      'Wallet not ready for requests. Please create/unlock wallet and whitelist current URL before making requests.',
     );
   });
 });
