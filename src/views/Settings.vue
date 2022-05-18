@@ -115,7 +115,7 @@
       <div class="bg-fg rounded-xl">
         <div
           class="cursor-pointer p-4"
-          @click="$router.push({ path: '/support', query: { url: 'https://emeris.com', caption: 'Support' } })"
+          @click="$router.push({ path: '/support', query: { url: 'https://emeris.com', caption: 'Emeris web app' } })"
         >
           Emeris Web App
           <Icon name="DaggArrowRightIcon" :icon-size="1" class="inline-flex float-right mt-1 -rotate-45" />
@@ -123,7 +123,12 @@
         <hr class="mx-4 border-bg opacity-80" />
         <div
           class="cursor-pointer p-4"
-          @click="$router.push({ path: '/support', query: { url: 'https://emeris.com/support', caption: 'Support' } })"
+          @click="
+            $router.push({
+              path: '/support',
+              query: { url: 'https://emeris.com/support', caption: 'Emeris Support' },
+            })
+          "
         >
           Emeris Support
           <Icon name="DaggArrowRightIcon" :icon-size="1" class="inline-flex float-right mt-1 -rotate-45" />
@@ -131,7 +136,9 @@
         <hr class="mx-4 border-bg opacity-80" />
         <div
           class="cursor-pointer p-4"
-          @click="$router.push({ path: '/support', query: { url: 'https://t.me/EmerisHQ', caption: 'Telegram' } })"
+          @click="
+            $router.push({ path: '/support', query: { url: 'https://t.me/EmerisHQ', caption: 'Telegram community' } })
+          "
         >
           Telegram Emeris community
           <Icon name="DaggArrowRightIcon" :icon-size="1" class="inline-flex float-right mt-1 -rotate-45" />
