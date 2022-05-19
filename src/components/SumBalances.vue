@@ -13,7 +13,7 @@ import { GlobalGetterTypes } from '@/store';
 
 interface Props {
   balances: Coin[];
-  smallDecimals: boolean;
+  smallDecimals?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), { smallDecimals: false });
 

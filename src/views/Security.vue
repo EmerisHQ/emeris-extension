@@ -1,9 +1,9 @@
 <template>
   <div class="page">
     <Header title="Security" back-to="/settings" />
-    <div class="menu-item" @click="$router.push('/passwordChange/old')">
+    <!-- <div class="menu-item" @click="$router.push('/passwordChange/old')">
       Change Password <Icon name="ChevronRightIcon" />
-    </div>
+    </div> -->
     <!-- <div class="menu-item">Extension auto-lock <Icon name="ChevronRightIcon" /></div> -->
     <!-- <div class="menu-item">Require for extension access</div> -->
   </div>
@@ -13,7 +13,7 @@
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
-import Icon from '@/components/ui/Icon.vue';
+// import Icon from "@/components/ui/Icon.vue";
 import Header from '@@/components/Header.vue';
 
 export default defineComponent({
@@ -23,7 +23,7 @@ export default defineComponent({
   },
   components: {
     Header,
-    Icon,
+    // Icon,
   },
 });
 </script>

@@ -1,27 +1,12 @@
 <template>
   <ConfirmationScreen title="Create or import another wallet in your extension">
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-      class="buttons"
-    >
+    <div class="buttons mt-auto">
       <AccountCreateSection />
     </div>
   </ConfirmationScreen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import AccountCreateSection from '@@/views/AccountCreateSection.vue';
 import ConfirmationScreen from '@@/views/ConfirmationScreen.vue';
-
-export default defineComponent({
-  name: 'Account Add Additional',
-  components: {
-    ConfirmationScreen,
-    AccountCreateSection,
-  },
-});
 </script>

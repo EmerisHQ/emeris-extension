@@ -126,14 +126,6 @@ export class Emeris implements IEmeris {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
     }
   }
-  async changePassword(password: string): Promise<void> {
-    try {
-      await this.storage.changePassword(this.password, password);
-      await this.unlockWallet(password);
-    } catch (e) {
-      throw new UnlockWalletError('Could not unlock wallet: ' + e);
-    }
-  }
   async launchPopup(): Promise<number> {
     return (
       await browser.windows.create({
@@ -235,7 +227,8 @@ export class Emeris implements IEmeris {
         return this.getAddress(message.data);
       case 'getMnemonic':
         try {
-          const wallet = await this.unlockWallet(message.data.data.password);
+          const password = message.data.data.sessionActive ? this.password : message.data.data.password;
+          const wallet = await this.unlockWallet(password);
           if (wallet) {
             return wallet.find((x) => x.accountName == message.data.data.accountName);
           }
@@ -248,13 +241,6 @@ export class Emeris implements IEmeris {
         try {
           await this.unlockWallet(message.data.data.password);
           return await this.getDisplayAccounts();
-        } catch (e) {
-          console.log(e);
-        }
-        return;
-      case 'changePassword':
-        try {
-          this.changePassword(message.data.data.password);
         } catch (e) {
           console.log(e);
         }
