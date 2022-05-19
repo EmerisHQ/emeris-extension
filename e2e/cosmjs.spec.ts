@@ -6,7 +6,6 @@ import { defaultCosmosAddress, makeWalletReadyForRequests } from './helpers';
 
 test.describe('CosmJs', () => {
   test('OfflineSigner', async ({ context, page }) => {
-    test.setTimeout(120000);
     await makeWalletReadyForRequests(context, page);
 
     // when the transaction popup shows, click accept
