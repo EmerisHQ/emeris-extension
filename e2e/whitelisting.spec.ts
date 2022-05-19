@@ -10,7 +10,7 @@ test.describe('Whitelisting', () => {
 
     expect(
       await page.evaluate(() => {
-        return window.emeris.enable().then((r) => !!r);
+        return window.emeris.enable();
       }),
     ).toBe(true);
 
@@ -30,9 +30,9 @@ test.describe('Whitelisting', () => {
     await emerisLoaded(page);
     expect(
       await page.evaluate(() => {
-        return window.emeris.supportedChains();
+        return !!window.emeris.supportedChains();
       }),
-    ).toBe(false); // TODO the response should be a thrown error imo
+    ).toBe(true); // can always query this method with or without auth
   });
 
   test('Request page whitelisting with keplr compatible enable command', async ({ page, context }) => {
