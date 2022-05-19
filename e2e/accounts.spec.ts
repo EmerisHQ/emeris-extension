@@ -221,8 +221,10 @@ test.describe('Account Create', () => {
     const secondPage = await context.newPage();
     await secondPage.goto('https://www.google.com');
     // on changing the account see if the window receives the event
-    await waitForEvent(secondPage, 'emeris_account_changed', 3);
-    await page.click('text=Test Import Account 2');
+    await Promise.all([
+      waitForEvent(secondPage, 'emeris_account_changed', 3),
+      page.click('text=Test Import Account 2'),
+    ]);
   });
 
   test('Get active account', async ({ page, context }) => {
