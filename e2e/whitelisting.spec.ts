@@ -5,7 +5,7 @@ import { test } from './extension-setup';
 import { emerisLoaded, makeWalletReadyForRequests } from './helpers';
 
 test.describe('Whitelisting', () => {
-  test.only('Request page whitelisting', async ({ page, context }) => {
+  test('Request page whitelisting', async ({ page, context }) => {
     await makeWalletReadyForRequests(context, page);
 
     expect(

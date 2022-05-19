@@ -32,15 +32,7 @@ test.describe('Account Create', () => {
     await accountCreate(page);
 
     // test backing up
-    await page.click('text=Back up now');
-
-    await page.fill('[placeholder="Password"]', '123456A$');
-    await page.click('text=Show mnemonic');
-
-    // TODO there is a delay in the background until the wallet is available
-    while (await page.isVisible('text=Incorrect word. Try again.')) {
-      await page.click('text=Show mnemonic');
-    }
+    await page.click('text=Show secret recovery phrase');
 
     await expect(page.locator('.words >> visible=true')).toBeVisible();
     const mnemonic = (await page.locator('.words').textContent()).split(' ');
