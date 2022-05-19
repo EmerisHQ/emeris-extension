@@ -69,12 +69,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
       ),
     );
   },
-  async [ActionTypes.CHANGE_PASSWORD]({}, { password }: { password: string }) {
-    await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: { action: 'changePassword', data: { password } },
-    });
-  },
   async [ActionTypes.GET_MNEMONIC]({ commit }, { accountName, password }: { accountName: string; password: string }) {
     try {
       const account = await browser.runtime.sendMessage({
