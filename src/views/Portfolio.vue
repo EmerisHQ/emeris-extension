@@ -65,7 +65,7 @@
       <p class="checkbox__label ml-4 -text-1 leading-copy">Your funds are not secured, please backup your wallet.</p>
     </div>
     <div class="buttons">
-      <Button name="Continue" @click="() => $router.push('/backup/password')" />
+      <Button name="Continue" @click="() => $router.push('/backup?previous=/accountCreate')" />
       <Button name="Back up later" variant="link" @click="skipBackup" />
     </div>
   </Slideout>

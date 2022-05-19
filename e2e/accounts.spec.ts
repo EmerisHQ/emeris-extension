@@ -23,9 +23,6 @@ test.describe('Account Create', () => {
 
     await page.click('text=Show secret recovery phrase');
 
-    await page.fill('[placeholder="Password"]', '123456A$');
-    await page.click('text=Show mnemonic');
-
     await page.click('text=Back up later');
     await page.click('text=I understand that if I don’t back up my account, I risk losing access to it.');
     await page.locator('.button-primary:has-text("Back up later")').click();
@@ -48,17 +45,8 @@ test.describe('Account Create', () => {
     // test backing up
     await page.click('text=Show secret recovery phrase');
 
-    await page.fill('[placeholder="Password"]', '123456A$');
-    await page.click('text=Show mnemonic');
-
-    // TODO there is a delay in the background until the wallet is available
-    while (await page.isVisible('text=Incorrect word, try again.')) {
-      await page.waitForTimeout(500);
-      await page.click('text=Show mnemonic');
-    }
-
-    await expect(page.locator('.word:first-child >> visible=true')).toBeVisible();
-    const mnemonic = await page.locator('.word').allTextContents();
+    await expect(page.locator('.words >> visible=true')).toBeVisible();
+    const mnemonic = (await page.locator('.words').textContent()).split(' ');
     await page.click(
       'text=I understand that if I lose my secret recovery phrase, I may lose access to my account and its assets. >> visible=true',
     );
@@ -81,10 +69,10 @@ test.describe('Account Create', () => {
     await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
-    await page.click('text=Show mnemonic');
+    await page.click('text=Continue');
 
     await expect(page.locator('.words')).not.toHaveText('');
-    const mnemonic2 = await page.locator('.word').allTextContents();
+    const mnemonic2 = (await page.locator('.words').textContent()).split(' ');
 
     expect(mnemonic.join(' ')).toEqual(mnemonic2.join(' '));
 
@@ -109,10 +97,10 @@ test.describe('Account Create', () => {
     await page.click('text=Show secret recovery phrase');
 
     await page.fill('[placeholder="Password"]', '123456A$');
-    await page.click('text=Show mnemonic');
+    await page.click('text=Continue');
 
     await expect(page.locator('.words')).not.toHaveText('');
-    const mnemonic2 = await page.locator('.word').allTextContents();
+    const mnemonic2 = (await page.locator('.words').textContent()).split(' ');
 
     expect(defaultMnemonic).toEqual(mnemonic2.join(' '));
 

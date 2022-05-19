@@ -5,17 +5,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import Header from '@@/components/Header.vue';
 import PasswordCreateForm from '@@/views/PasswordCreateForm.vue';
-
-export default defineComponent({
-  name: 'Password Create',
-  components: {
-    Header,
-    PasswordCreateForm,
-  },
-});
 </script>
