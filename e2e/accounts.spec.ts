@@ -36,6 +36,8 @@ test.describe('Account Create', () => {
     // test backing up
     await page.click('text=Show secret recovery phrase');
 
+    await page.waitForNavigation();
+
     await expect(page.locator('.words >> visible=true')).toBeVisible();
     const mnemonic = (await page.locator('.words').textContent()).split(' ');
     await page.click(
