@@ -1,8 +1,11 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 import Account from '../views/Account.vue';
+import AccountBackup from '../views/account-backup/AccountBackup.vue';
+import MnemonicConfirm from '../views/account-backup/MnemonicConfirm.vue';
+import MnemonicShow from '../views/account-backup/MnemonicShow.vue';
+import MnemonicShowPassword from '../views/account-backup/MnemonicShowPassword.vue';
 import AccountAddAdditional from '../views/AccountAddAdditional.vue';
-import AccountBackup from '../views/AccountBackup.vue';
 import AccountCreate from '../views/AccountCreate.vue';
 import AccountCreationResume from '../views/AccountCreationResume.vue';
 import AccountImport from '../views/AccountImport.vue';
