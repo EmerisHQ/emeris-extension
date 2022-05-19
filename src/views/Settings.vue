@@ -157,58 +157,55 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Icon from '@/components/ui/Icon.vue';
 import Header from '@@/components/Header.vue';
 import SumBalances from '@@/components/SumBalances.vue';
-import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 
-export default defineComponent({
-  name: 'Settings',
-  components: {
-    Icon,
-    Header,
-    SumBalances,
-  },
-  computed: {
-    ...mapState({
-      wallet: (state: RootState) => state.extension.wallet,
-      whitelistedWebsites: (state: RootState) => state.extension.whitelistedWebsites,
-    }),
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
-    },
-  },
-  methods: {
-    backedUp(account) {
-      return account.setupState === AccountCreateStates.COMPLETE;
-    },
-    balances(account) {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAllBalances](account) || [];
-    },
-    nameFirstLetter(name) {
-      return name && name.length > 0 ? name.slice(0, 1) : 'S';
-    },
-    goToAccount(account) {
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
-        accountName: account.accountName,
-      });
-      this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
-      this.$store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
-      this.$router.push('/portfolio');
-    },
-    toLedger() {
-      window.open('popup.html#/ledger?next=/ledger/connect');
-    },
-  },
+const store = useStore();
+const router = useRouter();
+
+const wallet = computed(() => {
+  return store.state.extension.wallet;
 });
+
+const whitelistedWebsites = computed(() => {
+  return store.state.extension.whitelistedWebsites;
+});
+
+const backedUp = (account) => {
+  return account.setupState === AccountCreateStates.COMPLETE;
+};
+
+const balances = (account) => {
+  return store.getters[GlobalEmerisGetterTypes.getAllBalances](account) || [];
+};
+
+const nameFirstLetter = (name) => {
+  return name && name.length > 0 ? name.slice(0, 1) : 'S';
+};
+
+const goToAccount = (account) => {
+  store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
+    accountName: account.accountName,
+  });
+  store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
+  store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
+  router.push('/portfolio');
+};
+
+const toLedger = () => {
+  window.open('popup.html#/ledger?next=/ledger/connect');
+};
 </script>
+
 <style lang="scss" scoped>
 .shadow-brand {
   box-shadow: 0.1rem 0.2rem 0.5rem 0.02rem var(--primary);
