@@ -89,7 +89,6 @@ test.describe('Account Create', () => {
 
   test('Import Account', async ({ page }) => {
     await importAccount(page);
-    // await page.click('text=Continue');
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
 
     // test if address shows correctly
