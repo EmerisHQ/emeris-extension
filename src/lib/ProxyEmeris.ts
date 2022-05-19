@@ -128,7 +128,6 @@ export class ProxyEmeris implements IEmeris {
     return response.data as boolean;
   }
   async supportedChains(): Promise<string[]> {
-    if (!(await this.showPopupIfNotEnabled())) return;
     const request = {
       action: 'supportedChains',
       data: {},
