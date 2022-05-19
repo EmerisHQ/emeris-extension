@@ -15,30 +15,30 @@ export default class EmerisStorage {
   constructor(storageMode: EmerisStorageMode) {
     this.storageMode = storageMode;
   }
-  async getWhitelistedWebsites(password: string): Promise<{ origin: string }[]> {
-    if (!password) return [];
+  async getWhitelistedWebsites(importedKey: CryptoKey): Promise<{ origin: string }[]> {
+    if (!importedKey) return [];
 
     const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
 
     if (!result.whitelistedWebsites) return [];
 
-    const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
+    const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, importedKey));
     return whitelistedWebsites;
   }
-  async isWhitelistedWebsite(password: string, origin: string): Promise<boolean> {
-    if (!password) return false;
+  async isWhitelistedWebsite(importedKey: CryptoKey, origin: string): Promise<boolean> {
+    if (!importedKey) return false;
 
     const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
     if (!result.whitelistedWebsites) {
       return false;
     } else {
-      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
+      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, importedKey));
       const hasPermission = whitelistedWebsites.find((permission) => permission.origin === origin);
       return !!hasPermission;
     }
   }
-  async addWhitelistedWebsite(password: string, origin: string): Promise<boolean> {
-    if (!password) return false;
+  async addWhitelistedWebsite(importedKey: CryptoKey, origin: string): Promise<boolean> {
+    if (!importedKey) return false;
 
     try {
       const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
@@ -46,24 +46,24 @@ export default class EmerisStorage {
       if (!result.whitelistedWebsites) {
         whitelistedWebsites = [];
       } else {
-        whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
+        whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, importedKey));
       }
       whitelistedWebsites.push({ origin });
-      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(whitelistedWebsites), password);
+      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(whitelistedWebsites), importedKey);
       await browser.storage[this.storageMode].set({ whitelistedWebsites: encryptedWhitelistedWebsites });
       return true;
     } catch (e) {
       return false;
     }
   }
-  async deleteWhitelistedWebsite(password: string, origin: string): Promise<boolean> {
-    if (!password) return false;
+  async deleteWhitelistedWebsite(importedKey: CryptoKey, origin: string): Promise<boolean> {
+    if (!importedKey) return false;
 
     try {
       const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
-      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, password));
+      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, importedKey));
       const newWhitelistedWebsites = whitelistedWebsites.filter((permission) => permission.origin != origin);
-      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(newWhitelistedWebsites), password);
+      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(newWhitelistedWebsites), importedKey);
       await browser.storage[this.storageMode].set({ whitelistedWebsites: encryptedWhitelistedWebsites });
       return true;
     } catch (e) {
@@ -88,38 +88,42 @@ export default class EmerisStorage {
   async setLastAccount(accountName: string): Promise<void> {
     await browser.storage[this.storageMode].set({ lastAccount: accountName });
   }
-  async updateAccount(account: Partial<EmerisAccount>, targetAccountName: string, password: string): Promise<boolean> {
+  async updateAccount(
+    account: Partial<EmerisAccount>,
+    targetAccountName: string,
+    importedKey: CryptoKey,
+  ): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(password); // always try to unlock first to make sure the password is correct
+      const wallet = await this.unlockWallet(importedKey); // always try to unlock first to make sure the password is correct
       const oldAccount = wallet.find((x) => x.accountName === targetAccountName);
       const accounts = wallet.filter((x) => x.accountName != targetAccountName);
       accounts.push({ ...oldAccount, ...account });
-      await this.saveWallet(accounts, password);
+      await this.saveWallet(accounts, importedKey);
       return true;
     } catch (e) {
       console.log(e);
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  async removeAccount(accountName: string, password: string): Promise<boolean> {
+  async removeAccount(accountName: string, importedKey: CryptoKey): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(password); // always try to unlock first to make sure the password is correct
+      const wallet = await this.unlockWallet(importedKey); // always try to unlock first to make sure the password is correct
       const accounts = wallet.filter((x) => x.accountName != accountName);
-      await this.saveWallet(accounts, password);
+      await this.saveWallet(accounts, importedKey);
       return true;
     } catch (e) {
       console.log(e);
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  async saveAccount(account: EmerisAccount, password: string): Promise<boolean> {
+  async saveAccount(account: EmerisAccount, importedKey: CryptoKey): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(password); // always try to unlock first to make sure the password is correct
+      const wallet = await this.unlockWallet(importedKey); // always try to unlock first to make sure the password is correct
       if (account.isLedger) {
         delete account.accountMnemonic; // just to avoid confusion
       }
       wallet.push(account);
-      await this.saveWallet(wallet, password);
+      await this.saveWallet(wallet, importedKey);
       await this.setLastAccount(account.accountName);
       return true;
     } catch (e) {
@@ -127,9 +131,9 @@ export default class EmerisStorage {
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  private async saveWallet(wallet: EmerisWallet, password: string): Promise<boolean> {
+  private async saveWallet(wallet: EmerisWallet, importedKey: CryptoKey): Promise<boolean> {
     try {
-      const encryptedWallet = await encrypt(JSON.stringify(wallet), password);
+      const encryptedWallet = await encrypt(JSON.stringify(wallet), importedKey);
       await browser.storage[this.storageMode].set({ wallet: { walletData: encryptedWallet } });
       return true;
     } catch (e) {
@@ -137,15 +141,15 @@ export default class EmerisStorage {
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  async unlockWallet(password: string): Promise<EmerisWallet> {
+  async unlockWallet(importedKey: CryptoKey): Promise<EmerisWallet> {
     try {
       const encWallet = await this.getWallet();
       if (!encWallet) {
         // ATTENTION if getWallet doesn't return a wallet for ever reason this would overwrite the saved wallet
-        await this.saveWallet([], password); // create wallet object if not there
+        await this.saveWallet([], importedKey); // create wallet object if not there
         return [];
       }
-      const wallet = JSON.parse(await decrypt(encWallet.walletData, password));
+      const wallet = JSON.parse(await decrypt(encWallet.walletData, importedKey));
       return wallet;
     } catch (e) {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
@@ -153,7 +157,7 @@ export default class EmerisStorage {
   }
   async extensionReset() {
     await browser.storage[this.storageMode].set({
-      password: null,
+      importedKey: null,
       wallet: null,
       lastAccount: null,
       whitelistedWebsites: null,

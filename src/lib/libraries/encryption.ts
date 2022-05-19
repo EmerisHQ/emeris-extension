@@ -15,31 +15,33 @@ const getSecureKey = (passwordInput) => {
   return key;
 };
 
-export const encrypt = async (value, password) => {
-  const key = getSecureKey(password);
+export const importKey = async (passwordInput: string) => {
+  const secureKey = await getSecureKey(passwordInput);
+  const importedKey = await crypto.subtle.importKey('raw', secureKey.buffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
+  return importedKey;
+};
+
+export const encrypt = async (value, importedKey: CryptoKey) => {
   const iv = Buffer.from(process.env.VITE_IV);
-  const key_encoded = await crypto.subtle.importKey('raw', key.buffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
   const encrypted = await crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
       iv: iv,
     },
-    key_encoded,
+    importedKey,
     Buffer.from(value),
   );
   return Buffer.from(encrypted).toString('hex');
 };
 
-export const decrypt = async (value, password) => {
-  const key = getSecureKey(password);
+export const decrypt = async (value, importedKey: CryptoKey) => {
   const iv = Buffer.from(process.env.VITE_IV);
-  const key_encoded = await crypto.subtle.importKey('raw', key.buffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
   const decrypted = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
       iv: iv,
     },
-    key_encoded,
+    importedKey,
     Buffer.from(value, 'hex'),
   );
   const decoder = new TextDecoder();

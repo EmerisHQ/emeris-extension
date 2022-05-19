@@ -35,6 +35,8 @@ import chainConfig from '../chain-config';
 // TODO
 import EmerisStorage from './EmerisStorage';
 import libs from './libraries';
+import { importKey } from './libraries/encryption';
+import { indexedDbExecute } from './libraries/indexeddb';
 
 // HACK extension and mapper expect different formats, we need to decide and adjust the formats to one
 const convertObjectKeys = (obj, doX) => {
@@ -62,7 +64,7 @@ export class Emeris implements IEmeris {
   private wallet: EmerisWallet;
   private selectedAccount: string;
   private popup: number;
-  private password: string;
+  private importedKey: CryptoKey;
   private queuedRequests: Map<
     string,
     Record<'resolver', (value: ExtensionRequest | PromiseLike<ExtensionRequest>) => void>
@@ -85,7 +87,7 @@ export class Emeris implements IEmeris {
   async init() {
     const lastAccessed = (await browser.storage['local'].get('lastAccessed')).lastAccessed;
     if (!lastAccessed || Date.now() - lastAccessed > 300000) {
-      this.password = null;
+      this.importedKey = null;
       this.wallet = null;
       this.pending = [];
       this.selectedAccount = null;
@@ -93,7 +95,15 @@ export class Emeris implements IEmeris {
       this.popup = null;
       this.queuedRequests = new Map();
     } else {
-      this.password = (await browser.storage['session'].get('password')).password ?? null;
+      // store the encrypted password in a db as it can't be stored in the session
+      // the object doesn't allow to extract the password
+      indexedDbExecute((store) => {
+        const getData = store.get(1);
+        getData.onsuccess = async function () {
+          // @ts-ignore
+          this.importedKey = getData.result?.key;
+        };
+      });
       this.wallet = (await browser.storage['session'].get('wallet')).wallet ?? null;
       this.pending = [];
       this.selectedAccount = (await browser.storage['session'].get('selectedAccount')).selectedAccount ?? null;
@@ -107,15 +117,18 @@ export class Emeris implements IEmeris {
   async storeSession(): Promise<void> {
     await browser.storage['local'].set({ lastAccessed: Date.now() });
     await browser.storage['session'].set({ wallet: this.wallet });
-    await browser.storage['session'].set({ password: this.password });
+    await browser.storage['session'].set({ importedKey: this.importedKey });
+    indexedDbExecute((store) => {
+      store.put({ id: 1, key: this.importedKey });
+    });
     await browser.storage['session'].set({ selectedAccount: this.selectedAccount });
 
     await browser.storage['session'].set({ popup: this.popup });
   }
-  async unlockWallet(password: string): Promise<EmerisWallet> {
+  async unlockWallet(importedKey: CryptoKey): Promise<EmerisWallet> {
     try {
-      this.wallet = await this.storage.unlockWallet(password);
-      this.password = password;
+      this.wallet = await this.storage.unlockWallet(importedKey);
+      this.importedKey = importedKey;
       this.selectedAccount = await this.storage.getLastAccount();
       if (this.wallet.length > 0 && !this.selectedAccount) {
         this.setLastAccount(this.wallet[0].accountName);
@@ -186,9 +199,9 @@ export class Emeris implements IEmeris {
         if (!message.data.data.account.isLedger && !message.data.data.account.accountMnemonic) {
           throw new Error('Account has no mnemonic');
         }
-        await this.storage.saveAccount(message.data.data.account, this.password);
+        await this.storage.saveAccount(message.data.data.account, this.importedKey);
         try {
-          this.wallet = await this.unlockWallet(this.password);
+          this.wallet = await this.unlockWallet(this.importedKey);
           await this.setLastAccount(message.data.data.account.accountName);
           await this.storeSession();
         } catch (e) {
@@ -200,9 +213,9 @@ export class Emeris implements IEmeris {
           await this.storage.updateAccount(
             message.data.data.account,
             message.data.data.targetAccountName,
-            this.password,
+            this.importedKey,
           );
-          this.wallet = await this.unlockWallet(this.password);
+          this.wallet = await this.unlockWallet(this.importedKey);
           await this.setLastAccount(message.data.data.account.accountName);
           this.storeSession();
         } catch (e) {
@@ -211,12 +224,12 @@ export class Emeris implements IEmeris {
         return;
       case 'removeAccount':
         try {
-          await this.storage.removeAccount(message.data.data.accountName, this.password);
+          await this.storage.removeAccount(message.data.data.accountName, this.importedKey);
           if (this.selectedAccount === message.data.data.accountName) {
             this.selectedAccount === undefined;
           }
           this.storeSession();
-          return await this.unlockWallet(this.password);
+          return await this.unlockWallet(this.importedKey);
         } catch (e) {
           console.log(e);
         }
@@ -227,7 +240,9 @@ export class Emeris implements IEmeris {
         return this.getAddress(message.data);
       case 'getMnemonic':
         try {
-          const wallet = await this.unlockWallet(message.data.data.password);
+          // ATTENTION here is is important, that the password comes from the outside to prove the user entered the password again
+          const importedKey = await importKey(message.data.data.password);
+          const wallet = await this.unlockWallet(importedKey);
           if (wallet) {
             return wallet.find((x) => x.accountName == message.data.data.accountName);
           }
@@ -238,7 +253,8 @@ export class Emeris implements IEmeris {
       case 'createWallet':
       case 'unlockWallet':
         try {
-          await this.unlockWallet(message.data.data.password);
+          const importedKey = await importKey(message.data.data.password);
+          await this.unlockWallet(importedKey);
           return await this.getDisplayAccounts();
         } catch (e) {
           console.log(e);
@@ -258,20 +274,20 @@ export class Emeris implements IEmeris {
         this.storage.extensionReset();
         return;
       case 'removeWhitelistedWebsite':
-        this.storage.deleteWhitelistedWebsite(this.password, message.data.data.website);
+        this.storage.deleteWhitelistedWebsite(this.importedKey, message.data.data.website);
         return;
       case 'getWhitelistedWebsite':
-        return this.storage.getWhitelistedWebsites(this.password);
+        return this.storage.getWhitelistedWebsites(this.importedKey);
       case 'addWhitelistedWebsite':
         // prevent dupes
-        const whitelistedWebsites = await this.storage.getWhitelistedWebsites(this.password);
+        const whitelistedWebsites = await this.storage.getWhitelistedWebsites(this.importedKey);
         if (whitelistedWebsites.find((whitelistedWebsite) => whitelistedWebsite.origin === message.data.data.website))
           return true;
-        return this.storage.addWhitelistedWebsite(this.password, message.data.data.website);
+        return this.storage.addWhitelistedWebsite(this.importedKey, message.data.data.website);
       case 'setPartialAccountCreationStep':
-        return this.storage.setPartialAccountCreationStep(message.data.data, this.password);
+        return this.storage.setPartialAccountCreationStep(message.data.data, this.importedKey);
       case 'getPartialAccountCreationStep':
-        return this.storage.getPartialAccountCreationStep(this.password);
+        return this.storage.getPartialAccountCreationStep(this.importedKey);
     }
   }
   async ensurePopup(): Promise<void> {
@@ -391,7 +407,7 @@ export class Emeris implements IEmeris {
     return await libs[chain.library].getPublicKey(account, chain);
   }
   async isPermitted(origin: string): Promise<boolean> {
-    return await this.storage.isWhitelistedWebsite(this.password, origin);
+    return await this.storage.isWhitelistedWebsite(this.importedKey, origin);
   }
   async isHWWallet(_req: IsHWWalletRequest): Promise<boolean> {
     return false;
@@ -554,14 +570,14 @@ export class Emeris implements IEmeris {
     return response;
   }
   async enable(request: ApproveOriginRequest): Promise<boolean> {
-    if (await this.storage.isWhitelistedWebsite(this.password, request.origin)) {
+    if (await this.storage.isWhitelistedWebsite(this.importedKey, request.origin)) {
       return true;
     }
 
     request.id = uuidv4();
     const enabled = (await this.forwardToPopup(request)).accept as boolean;
     if (enabled) {
-      await this.storage.addWhitelistedWebsite(this.password, request.origin);
+      await this.storage.addWhitelistedWebsite(this.importedKey, request.origin);
     }
     return enabled;
   }
@@ -583,7 +599,7 @@ export class Emeris implements IEmeris {
   }
   async keplrEnable(request: ApproveOriginRequest): Promise<boolean> {
     //  TODO : need to check whether this is allowed.(to not check per-chain)
-    if (await this.storage.isWhitelistedWebsite(this.password, request.origin)) {
+    if (await this.storage.isWhitelistedWebsite(this.importedKey, request.origin)) {
       return true;
     }
     request.id = uuidv4();
@@ -608,7 +624,7 @@ export class Emeris implements IEmeris {
     }
     const enabled = (await this.forwardToPopup(request)).accept as boolean;
     if (enabled) {
-      await this.storage.addWhitelistedWebsite(this.password, request.origin);
+      await this.storage.addWhitelistedWebsite(this.importedKey, request.origin);
     }
     return enabled;
   }
