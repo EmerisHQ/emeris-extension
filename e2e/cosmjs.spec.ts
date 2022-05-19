@@ -9,32 +9,29 @@ test.describe('CosmJs', () => {
     test.setTimeout(120000);
     await makeWalletReadyForRequests(context, page);
 
-    // when the transaction popup shows, click reject
+    // when the transaction popup shows, click accept
     context.waitForEvent('page').then(async (popup) => {
       await popup.click('text=Accept');
     });
 
     const result = await page.evaluate((defaultCosmosAddress) => {
-      return window.emeris
-        .getOfflineSigner('cosmoshub-4')
-        .signAmino(defaultCosmosAddress, {
-          chain_id: 'cosmoshub-4',
-          account_number: '0',
-          sequence: '0',
-          fee: { gas: 200000, amount: [{ amount: 1000, denom: 'uatom' }] },
-          msgs: [
-            {
-              type: 'cosmos-sdk/MsgSend',
-              value: {
-                from_address: defaultCosmosAddress,
-                to_address: defaultCosmosAddress,
-                amount: [{ amount: '1', denom: 'uatom' }],
-              },
+      return window.emeris.getOfflineSigner('cosmoshub-4').signAmino(defaultCosmosAddress, {
+        chain_id: 'cosmoshub-4',
+        account_number: '0',
+        sequence: '0',
+        fee: { gas: 200000, amount: [{ amount: 1000, denom: 'uatom' }] },
+        msgs: [
+          {
+            type: 'cosmos-sdk/MsgSend',
+            value: {
+              from_address: defaultCosmosAddress,
+              to_address: defaultCosmosAddress,
+              amount: [{ amount: '1', denom: 'uatom' }],
             },
-          ],
-          memo: 'Sent with Emeris',
-        })
-        .then((r) => r);
+          },
+        ],
+        memo: 'Sent with Emeris',
+      });
     }, defaultCosmosAddress);
 
     await expect(result).toStrictEqual({
@@ -70,8 +67,8 @@ test.describe('CosmJs', () => {
   test('Get accounts', async ({ context, page }) => {
     await makeWalletReadyForRequests(context, page);
 
-    const result = await page.evaluate(async () => {
-      return await window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
+    const result = await page.evaluate(() => {
+      return window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
     });
 
     await expect(result).toStrictEqual([

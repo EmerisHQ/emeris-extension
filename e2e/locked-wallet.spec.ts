@@ -13,7 +13,7 @@ test.describe('Unlocked Wallet - allowed API requests:', () => {
       lastConsoleWarnMessage = msg.text();
     });
 
-    // when the transaction popup shows, click reject
+    // when the transaction popup shows, click accept
     context.waitForEvent('page').then(async (popup) => {
       await popup.click('text=Accept');
     });
@@ -106,8 +106,8 @@ test.describe('Locked Wallet - blocked API requests:', () => {
       lastConsoleWarnMessage = msg.text();
     });
 
-    await page.evaluate(async () => {
-      return window.emeris.getAddress({ chainId: 'cosmos-hub' }).then((r) => r);
+    await page.evaluate(() => {
+      return window.emeris.getAddress({ chainId: 'cosmos-hub' });
     });
 
     await expect(lastConsoleWarnMessage).toBe(
