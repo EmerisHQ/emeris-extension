@@ -5,7 +5,7 @@ import { test } from './extension-setup';
 import { defaultCosmosAddress, makeWalletReadyForRequests } from './helpers';
 
 test.describe('CosmJs', () => {
-  test('OfflineSigner', async ({ context, page }) => {
+  test.only('OfflineSigner', async ({ context, page }) => {
     await makeWalletReadyForRequests(context, page);
 
     // when the transaction popup shows, click accept
