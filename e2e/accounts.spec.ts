@@ -39,7 +39,6 @@ test.describe('Account Create', () => {
 
     // TODO there is a delay in the background until the wallet is available
     while (await page.isVisible('text=Incorrect word. Try again.')) {
-      await expect(page.locator('text=Show mnemonic')).toBeVisible();
       await page.click('text=Show mnemonic');
     }
 
