@@ -90,7 +90,7 @@ test.describe('Account Create', () => {
 
   test('Import Account', async ({ page }) => {
     await importAccount(page);
-    await page.click('text=Continue');
+    // await page.click('text=Continue');
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
 
     // test if address shows correctly
@@ -118,7 +118,6 @@ test.describe('Account Create', () => {
 
   test.describe('Import Account HD Path', () => {
     test.beforeEach(async ({ page }) => {
-      await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
       await page.click('text=Import Account >> visible=true');
 
       if (await page.$('[placeholder="Enter password"]')) {
@@ -164,7 +163,6 @@ test.describe('Account Create', () => {
     let mnemonic = '';
 
     test.beforeEach(async ({ page }) => {
-      await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
       await page.click('text=Import Account >> visible=true');
 
       if (await page.$('[placeholder="Enter password"]')) {
@@ -218,19 +216,15 @@ test.describe('Account Create', () => {
         page.waitForTimeout(seconds * 1000),
       ]);
     }
-
     await importAccount(page);
-
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accountAddAdditional`);
     await importAccount(page, 'Test Import Account 2');
-
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
-
     const secondPage = await context.newPage();
     await secondPage.goto('https://www.google.com');
-
     // on changing the account see if the window receives the event
-    await Promise.all([waitForEvent(secondPage, 'emeris_account_changed', 3), page.click('text=Test Import Account')]);
+    await waitForEvent(secondPage, 'emeris_account_changed', 3);
+    await page.click('text=Test Import Account 2');
   });
 
   test('Get active account', async ({ page, context }) => {

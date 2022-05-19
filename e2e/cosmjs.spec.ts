@@ -11,7 +11,6 @@ test.describe('CosmJs', () => {
 
     // when the transaction popup shows, click reject
     context.waitForEvent('page').then(async (popup) => {
-      await expect(popup.locator('text=Accept')).toBeVisible();
       await popup.click('text=Accept');
     });
 
