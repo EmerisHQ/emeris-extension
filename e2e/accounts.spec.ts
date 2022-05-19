@@ -21,6 +21,8 @@ test.describe('Account Create', () => {
 
     await page.click('text=Show secret recovery phrase');
 
+    await page.waitForNavigation();
+
     await page.click('text=Back up later');
     await page.click('text=I understand that if I don’t back up my account, I risk losing access to it.');
     await page.locator('.button-primary:has-text("Back up later")').click();
