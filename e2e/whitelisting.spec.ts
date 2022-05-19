@@ -30,7 +30,7 @@ test.describe('Whitelisting', () => {
     await emerisLoaded(page);
     expect(
       await page.evaluate(() => {
-        return window.emeris.supportedChains().then((r) => !!r);
+        return window.emeris.supportedChains();
       }),
     ).toBe(false); // TODO the response should be a thrown error imo
   });
