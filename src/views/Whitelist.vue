@@ -1,18 +1,18 @@
 <template>
   <Loader v-if="loading" />
-  <div v-else class="page" style="text-align: center">
+  <div v-else class="page text-center">
     <Brandmark class="wordmark" />
     <p class="secondary-text">{{ url }} wants to connect to your wallet</p>
-    <div class="box" style="margin-top: 96px">
-      <span style="margin-bottom: 16px">Allow {{ url }} to:</span>
-      <p class="secondary-text" style="font-size: 13px">
+    <div class="box mt-24">
+      <span class="mb-4">Allow {{ url }} to:</span>
+      <p class="secondary-text text-[13px]">
         View your account balances and activity<br />
         Request approval for transactions
       </p>
     </div>
-    <div style="display: flex; margin-top: auto">
-      <Button name="Reject" variant="secondary" style="margin-right: 16px; flex: 1" @click="close" />
-      <Button name="Accept" style="flex: 1" @click="accept" />
+    <div class="flex mt-auto">
+      <Button name="Reject" variant="secondary" class="mr-4 flex-1" @click="close" />
+      <Button name="Accept" class="flex-1" @click="accept" />
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@ import Brandmark from '@/components/common/Brandmark.vue';
 import Button from '@/components/ui/Button.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
+
 export default {
   components: {
     Brandmark,
@@ -68,30 +69,10 @@ export default {
 
 <style>
 .wordmark {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
+  @apply block mx-auto;
 }
+
 .box {
-  /* Auto Layout */
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px;
-
-  /* dark/surface */
-
-  background: #171717;
-  border: 1px solid #000000;
-  box-sizing: border-box;
-  border-radius: 10px;
-
-  /* Inside Auto Layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
+  @apply flex flex-col items-center p-4 bg-surface-2 flex-none order-none self-stretch grow-0 box-border rounded-[10px];
 }
 </style>
