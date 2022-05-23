@@ -17,53 +17,55 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
 import Brandmark from '@/components/common/Brandmark.vue';
 import Button from '@/components/ui/Button.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
-export default {
-  components: {
-    Brandmark,
-    Button,
-  },
-  computed: {
-    pending() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getPending][0];
-    },
-    url() {
-      const pending = this.$store.getters[GlobalEmerisGetterTypes.getPending];
-      return pending && pending.length > 0 ? pending[0].origin : undefined;
-    },
-  },
-  async mounted() {
-    const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
-    if (!hasWallet) {
-      // if no password is set, first set a password
-      this.$router.push('/passwordCreate?returnTo=/');
-      return;
-    }
+const store = useStore();
+const router = useRouter();
 
-    this.$store.dispatch(GlobalEmerisActionTypes.GET_PENDING);
-  },
-  methods: {
-    async close() {
-      await this.$store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, {
-        id: this.pending.id,
-        accept: false,
-      });
-      window.close();
-    },
-    async accept() {
-      this.loading = true;
-      await this.$store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, {
-        id: this.pending.id,
-        accept: true,
-      });
-      this.$router.push('/');
-    },
-  },
+const loading = ref(false);
+
+const pending = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getPending][0];
+});
+
+const url = computed(() => {
+  return pending.value?.origin;
+});
+
+onMounted(async () => {
+  const hasWallet = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
+  if (!hasWallet) {
+    // if no password is set, first set a password
+    router.push('/passwordCreate?returnTo=/');
+    return;
+  }
+
+  store.dispatch(GlobalEmerisActionTypes.GET_PENDING);
+});
+
+const close = async () => {
+  await store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, {
+    id: pending.value.id,
+    accept: false,
+  });
+  window.close();
+};
+
+const accept = async () => {
+  loading.value = true;
+  await store.dispatch(GlobalEmerisActionTypes.WHITELIST_WEBSITE, {
+    id: pending.value.id,
+    accept: true,
+  });
+  router.push('/');
 };
 </script>
 
