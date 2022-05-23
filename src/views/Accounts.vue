@@ -4,7 +4,12 @@
       <a v-if="!edit" @click="edit = true">Edit</a>
       <a v-else @click="edit = false">Done</a>
     </Header>
-    <div v-for="account in wallet" :key="account.accountName" class="wallet" @click="!edit && goToAccount(account)">
+    <div
+      v-for="(account, index) in wallet"
+      :key="account.accountName"
+      class="wallet"
+      @click="!edit && goToAccount(account)"
+    >
       <img :src="'/images/Avatar.svg'" class="h-10 w-10" />
       <div class="cursor-pointer">
         <h2 class="font-semibold">{{ account.accountName }}</h2>
@@ -23,7 +28,7 @@
         :class="{ 'ml-auto': !account.isLedger, 'ml-3': account.isLedger }"
         name="ThreeDotsIcon"
         :icon-size="1.5"
-        @click="() => (editWallet = account)"
+        @click="$router.push(`/account-settings/${index}`)"
       />
       <div
         v-else-if="account.accountName === lastAccount"
@@ -36,15 +41,6 @@
     <div class="mt-auto">
       <Button name="Add account" @click="addAdditionalAccount = true" />
     </div>
-    <Slideout :open="!!editWallet" @update:open="() => (editWallet = null)">
-      <Button name="Edit wallet name" variant="link" class="mb-1" @click="renameAccount" />
-      <hr class="mb-1 opacity-[0.14]" />
-      <Button name="Remove account" variant="link" link-color="red" class="mb-1" @click="removeAccount" />
-      <hr class="mb-1 opacity-[0.14]" />
-      <div class="font-semibold">
-        <Button name="Cancel" variant="link" @click="() => (editWallet = null)" />
-      </div>
-    </Slideout>
 
     <!-- Add Additional Account -->
     <Slideout :open="addAdditionalAccount" @update:open="() => (addAdditionalAccount = null)">
@@ -113,12 +109,6 @@ export default defineComponent({
   methods: {
     addAccount() {
       this.$router.push('/accountAddAdditional');
-    },
-    removeAccount() {
-      this.$router.push('/accountRemove/' + this.editWalletIndex);
-    },
-    renameAccount() {
-      this.$router.push('/accountRename/' + this.editWalletIndex);
     },
     goToAccount(account) {
       this.$store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
