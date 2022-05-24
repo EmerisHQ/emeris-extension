@@ -5,11 +5,11 @@
     <!-- Account -->
     <div class="text-center my-8">
       <div
-        class="bg-brand w-16 h-16 rounded-full text-center font-medium text-2 text-inverse pt-3.5 mx-auto shadow-brand"
+        class="bg-brand w-16 h-16 rounded-full text-center font-medium text-3 text-inverse pt-[0.5rem] mx-auto shadow-brand"
       >
         {{ nameFirstLetter(currentWallet.accountName) }}
       </div>
-      <p class="text-2 mt-4 mb-2">{{ currentWallet.accountName }}</p>
+      <p class="text-1 mt-4 mb-2">{{ currentWallet.accountName }}</p>
       <span v-if="currentWallet.isLedger" class="py-1 px-3 text-[13px] text-text bg-surface-2 rounded-2xl">Ledger</span>
     </div>
 
@@ -23,7 +23,7 @@
         <tippy class="block relative">
           <div
             class="cursor-pointer p-4 flex justify-between"
-            :class="{ 'pointer-events-none secondary-text': currentWallet.isLedger || backedUp(currentWallet) }"
+            :class="{ 'pointer-events-none secondary-text': currentWallet.isLedger }"
             @click="$router.push('/backup')"
           >
             <div>
@@ -36,7 +36,7 @@
             </span>
           </div>
 
-          <template v-if="currentWallet.isLedger || backedUp(currentWallet)" #content>
+          <template v-if="currentWallet.isLedger" #content>
             <p class="text-center font-medium">Secret recovery phrase not available</p>
             <p class="text-center secondary-text">Your secret recovery phrase is stored on your Ledger device.</p>
           </template>
