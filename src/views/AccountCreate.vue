@@ -31,129 +31,130 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import * as bip39 from 'bip39';
-import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import Loader from '@@/components/Loader.vue';
-import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates } from '@@/types';
 import wordlist from '@@/wordlists/english.json';
 
-export default defineComponent({
-  name: 'Create Account',
-  components: { Button, Header, Loader },
-  computed: {
-    ...mapState({
-      wallet: (state: RootState) => state.extension.wallet,
-      lastAccount: (state: RootState) => state.extension.lastAccount,
-      newAccount: (state: RootState) => state.extension.newAccount,
-    }),
-    nameHasSpecialCharacters() {
-      return /[^a-zA-Z0-9\s]/.test(this.name);
-    },
-    isReturningFromBackup() {
-      return this.$route.query.previous === '/backup';
-    },
-    error() {
-      return (
-        this.wallet && this.wallet.find(({ accountName }) => accountName === this.name) && !this.isReturningFromBackup
-      );
-    },
-    nameFirstLetter() {
-      return this.name && this.name.length > 0 ? this.name.slice(0, 1) : 'S';
-    },
-    buttonDisabled() {
-      return !this.name || this.error || this.nameHasSpecialCharacters;
-    },
-    errorText() {
-      if (this.error) return 'You already used this name for another account. Choose another name.';
-      if (this.nameHasSpecialCharacters) return 'Name cannot contain special characters, only numbers and letters.';
-      return '';
-    },
-  },
-  data: () => ({
-    name: undefined,
-    loading: false,
-  }),
-  watch: {
-    name(name) {
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
-        ...this.newAccount,
-        accountName: name,
-      });
-    },
-  },
-  async mounted() {
-    const hasPassword = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
-    if (!hasPassword) {
-      this.$router.push({
-        path: '/passwordCreate',
-        query: { returnTo: this.$route.fullPath },
-      });
-    }
+const router = useRouter();
+const route = useRoute();
+const store = useStore();
 
-    const accounts = (await this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET)) || [];
+const name = ref(undefined);
+const loading = ref(false);
 
-    // find an unused account name
-    if (this.isReturningFromBackup) {
-      this.name = this.lastAccount;
-    } else {
-      let name;
-      let i = 1;
-      do {
-        name = 'Surfer ' + i++;
-      } while (accounts.find(({ accountName }) => accountName === name));
-
-      this.name = name;
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
-        ...this.newAccount,
-        route: '/accountCreate',
-      });
-    }
-  },
-  methods: {
-    async submit() {
-      this.loading = true;
-      try {
-        if (!this.isReturningFromBackup) {
-          const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
-
-          await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, {
-            account: {
-              accountName: this.name,
-              accountMnemonic: aMnemonic, // will be overwritten by existing new account
-              isLedger: false, // will be overwritten by existing new account
-              setupState: this.newAccount.setupState || AccountCreateStates.CREATED, // if this is an import we don't need to check if the user backed up the mnemonic
-              ...this.newAccount,
-            },
-          });
-        }
-
-        // if the account is imported we don't need to show the backup seed screen
-        let nextRoute;
-        if (this.newAccount.setupState === AccountCreateStates.COMPLETE) {
-          nextRoute = '/accountImportReady';
-        } else {
-          nextRoute = '/backup?previous=/accountCreate';
-        }
-
-        await this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow
-        this.$router.push(nextRoute);
-      } catch (err) {
-        console.error(err);
-      }
-      this.loading = false;
-    },
-    open(url) {
-      window.open(url);
-    },
-  },
+const wallet = computed(() => {
+  return store.state.extension.wallet;
 });
+const lastAccount = computed(() => {
+  return store.state.extension.lastAccount;
+});
+const newAccount = computed(() => {
+  return store.state.extension.newAccount;
+});
+
+const isReturningFromBackup = computed(() => {
+  return route.query.previous === '/backup';
+});
+
+const nameFirstLetter = computed(() => {
+  return name.value && name.value.length > 0 ? name.value.slice(0, 1) : 'S';
+});
+
+const nameHasSpecialCharacters = computed(() => {
+  return /[^a-zA-Z0-9\s]/.test(name.value);
+});
+const buttonDisabled = computed(() => {
+  return !name.value || error.value || nameHasSpecialCharacters.value;
+});
+
+const error = computed(() => {
+  return (
+    wallet.value && wallet.value.find(({ accountName }) => accountName === name.value) && !isReturningFromBackup.value
+  );
+});
+const errorText = computed(() => {
+  if (error.value) return 'You already used this name for another account. Choose another name.';
+  if (nameHasSpecialCharacters.value) return 'Name cannot contain special characters, only numbers and letters.';
+  return '';
+});
+
+watch(name.value, (newValue) => {
+  store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
+    ...newAccount.value,
+    accountName: newValue,
+  });
+});
+
+onMounted(async () => {
+  const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
+  if (!hasPassword) {
+    router.push({
+      path: '/passwordCreate',
+      query: { returnTo: route.fullPath },
+    });
+  }
+
+  const accounts = (await store.dispatch(GlobalEmerisActionTypes.GET_WALLET)) || [];
+
+  // find an unused account name
+  if (isReturningFromBackup.value) {
+    name.value = lastAccount.value;
+  } else {
+    let generatedName;
+    let i = 1;
+    do {
+      generatedName = 'Surfer ' + i++;
+    } while (accounts.find(({ accountName }) => accountName === generatedName));
+
+    name.value = generatedName;
+    store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
+      ...newAccount.value,
+      route: '/accountCreate',
+    });
+  }
+});
+
+const submit = async () => {
+  loading.value = true;
+  try {
+    if (!isReturningFromBackup.value) {
+      const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
+
+      await store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, {
+        account: {
+          accountName: name.value,
+          accountMnemonic: aMnemonic, // will be overwritten by existing new account
+          isLedger: false, // will be overwritten by existing new account
+          setupState: newAccount.value?.setupState || AccountCreateStates.CREATED, // if this is an import we don't need to check if the user backed up the mnemonic
+          ...newAccount.value,
+        },
+      });
+    }
+
+    // if the account is imported we don't need to show the backup seed screen
+    let nextRoute;
+    if (newAccount.value?.setupState === AccountCreateStates.COMPLETE) {
+      nextRoute = '/accountImportReady';
+    } else {
+      nextRoute = '/backup?previous=/accountCreate';
+    }
+
+    await store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow
+    router.push(nextRoute);
+  } catch (err) {
+    console.error(err);
+  }
+  loading.value = false;
+};
 </script>
 
 <style scoped>
