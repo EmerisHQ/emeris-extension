@@ -13,7 +13,10 @@
           v-model="name"
           type="text"
           class="w-full border-none !bg-transparent text-center font-medium text-2 focus:outline-none focus:border-none"
-          :class="{ 'text-negative-text': error || nameHasSpecialCharacters }"
+          :class="{
+            'text-negative-text': error || nameHasSpecialCharacters,
+            'pointer-events-none': isReturningFromBackup,
+          }"
           placeholder="Surfer"
           style="caret-color: rgba(255, 255, 255, 0.5)"
         />
@@ -47,13 +50,19 @@ export default defineComponent({
   computed: {
     ...mapState({
       wallet: (state: RootState) => state.extension.wallet,
+      lastAccount: (state: RootState) => state.extension.lastAccount,
       newAccount: (state: RootState) => state.extension.newAccount,
     }),
     nameHasSpecialCharacters() {
       return /[^a-zA-Z0-9\s]/.test(this.name);
     },
+    isReturningFromBackup() {
+      return this.$route.query.previous === '/backup';
+    },
     error() {
-      return this.wallet && this.wallet.find(({ accountName }) => accountName === this.name);
+      return (
+        this.wallet && this.wallet.find(({ accountName }) => accountName === this.name) && !this.isReturningFromBackup
+      );
     },
     nameFirstLetter() {
       return this.name && this.name.length > 0 ? this.name.slice(0, 1) : 'S';
@@ -91,33 +100,39 @@ export default defineComponent({
     const accounts = (await this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET)) || [];
 
     // find an unused account name
-    let name;
-    let i = 1;
-    do {
-      name = 'Surfer ' + i++;
-    } while (accounts.find(({ accountName }) => accountName === name));
+    if (this.isReturningFromBackup) {
+      this.name = this.lastAccount;
+    } else {
+      let name;
+      let i = 1;
+      do {
+        name = 'Surfer ' + i++;
+      } while (accounts.find(({ accountName }) => accountName === name));
 
-    this.name = name;
-    this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
-      ...this.newAccount,
-      route: '/accountCreate',
-    });
+      this.name = name;
+      this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
+        ...this.newAccount,
+        route: '/accountCreate',
+      });
+    }
   },
   methods: {
     async submit() {
       this.loading = true;
       try {
-        const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
+        if (!this.isReturningFromBackup) {
+          const aMnemonic = bip39.generateMnemonic(256, null, wordlist);
 
-        await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, {
-          account: {
-            accountName: this.name,
-            accountMnemonic: aMnemonic, // will be overwritten by existing new account
-            isLedger: false, // will be overwritten by existing new account
-            setupState: this.newAccount.setupState || AccountCreateStates.CREATED, // if this is an import we don't need to check if the user backed up the mnemonic
-            ...this.newAccount,
-          },
-        });
+          await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_ACCOUNT, {
+            account: {
+              accountName: this.name,
+              accountMnemonic: aMnemonic, // will be overwritten by existing new account
+              isLedger: false, // will be overwritten by existing new account
+              setupState: this.newAccount.setupState || AccountCreateStates.CREATED, // if this is an import we don't need to check if the user backed up the mnemonic
+              ...this.newAccount,
+            },
+          });
+        }
 
         // if the account is imported we don't need to show the backup seed screen
         let nextRoute;
