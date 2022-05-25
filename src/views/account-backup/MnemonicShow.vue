@@ -34,7 +34,7 @@
         <Button
           name="Back up later"
           :disabled="!backUpLaterChecked"
-          @click="() => $router.push('/accountReadyNoBackup')"
+          @click="() => $router.push(currentFlow === 'CREATE_ACCOUNT' ? '/accountReadyNoBackup' : '/account')"
         />
         <Button name="Cancel" variant="link" @click="() => (backUpLater = false)" />
       </div>
@@ -63,6 +63,10 @@ const backUpLaterChecked = ref(false);
 
 const account = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getAccount];
+});
+
+const currentFlow = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
 });
 
 const submit = () => {
