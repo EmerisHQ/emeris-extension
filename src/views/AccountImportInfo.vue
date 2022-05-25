@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account" :back-to="'/'" />
+    <Header title="Import account" :back-to="$route.query.backto" />
 
     <span class="secondary-text mb-4">Find the recovery phrase for the account you’d like to import.</span>
     <a class="text-sm mb-4" @click="infoOpen = true">What’s a secret recovery phrase?</a>

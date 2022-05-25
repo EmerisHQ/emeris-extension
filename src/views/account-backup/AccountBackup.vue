@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Back up account" />
+    <Header title="Back up account" :back-to="backToPath" />
     <span class="secondary-text mb-4">
       Back up your secret recovery phrase to recover your account if your device is lost.
     </span>
@@ -24,17 +24,46 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
+import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
+import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const router = useRouter();
+const route = useRoute();
+const store = useStore();
 
-const goToShowMnemonic = () => {
-  router.push({ path: '/backup/password' });
+const backToPath = ref(undefined);
+
+const account = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getAccount];
+});
+
+const goToShowMnemonic = async () => {
+  if (route.query.previous !== '/accountCreate') {
+    router.push('/backup/password');
+  } else {
+    if (account.value) {
+      await store.dispatch(GlobalEmerisActionTypes.GET_MNEMONIC, {
+        accountName: account.value.accountName,
+        password: undefined,
+        sessionActive: true,
+      });
+    }
+    router.push('/backup/show');
+  }
 };
+
+onMounted(() => {
+  if (route.query.previous === '/accountCreate') {
+    backToPath.value = `${route.query.previous}?previous=/backup`;
+  }
+});
 </script>
 
 <style lang="scss" scoped>

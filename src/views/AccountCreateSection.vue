@@ -10,27 +10,16 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import Button from '@/components/ui/Button.vue';
 
-export default defineComponent({
-  name: 'Account Create Section',
-  components: {
-    Button,
-  },
-  methods: {
-    toLedger() {
-      window.open('popup.html#/ledger?next=/ledger/connect');
-    },
-  },
-});
+const toLedger = () => {
+  window.open('popup.html#/ledger?next=/ledger/connect');
+};
 </script>
 
 <style lang="scss" scoped>
 .buttons > *:not(:last-child) {
-  margin-bottom: 16px;
-  display: block;
+  @apply mb-4 block;
 }
 </style>
