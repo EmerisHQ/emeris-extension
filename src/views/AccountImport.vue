@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account" :back-to="'/accountImportInfo'">
+    <Header title="Import account" back-to="/accountImportInfo">
       <a
         :style="{
           opacity: !mnemonic || hasInvalidChar || unknownWords.length > 0 ? 0.6 : 1,

@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="!account.accountMnemonic" />
   <div v-else class="page">
-    <Header title="Secret recovery phrase" />
+    <Header title="Secret recovery phrase" back-to="/backup?previous=/accountCreate" />
     <span class="secondary-text mb-6">
       Write down the {{ account.accountMnemonic.trim().split(' ').length }} words below and store them in a safe place.
     </span>
