@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
 import { emerisLoaded, enableWebsite } from './helpers';
-import { defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers';
+import { accountCreate, defaultCosmosAddress, defaultMnemonic, importAccount } from './helpers';
 
 /* eslint-disable max-lines-per-function */
 test.describe('Account Create', () => {
@@ -12,14 +12,7 @@ test.describe('Account Create', () => {
   });
 
   test('Create Account', async ({ page }) => {
-    await expect(page.locator('text=Create Account >> visible=true')).toBeVisible();
-    await page.click('text=Create Account >> visible=true');
-    await page.fill('[placeholder="Enter password"]', '123456A$');
-    await page.fill('[placeholder="Confirm password"]', '123456A$');
-    await page.click('text=Continue');
-
-    await page.fill('[placeholder="Surfer"]', 'Test Account Created');
-    await page.click('text=Continue');
+    await accountCreate(page);
 
     await page.click('text=Show secret recovery phrase');
 
@@ -31,16 +24,7 @@ test.describe('Account Create', () => {
   });
 
   test('Create Account with backup', async ({ page }) => {
-    // Test creation
-    await expect(page.locator('text=Create Account >> visible=true')).toBeVisible();
-    await page.click('text=Create Account >> visible=true');
-
-    await page.fill('[placeholder="Enter password"]', '123456A$');
-    await page.fill('[placeholder="Confirm password"]', '123456A$');
-    await page.click('text=Continue');
-
-    await page.fill('[placeholder="Surfer"]', 'Test Account Created');
-    await page.click('text=Continue');
+    await accountCreate(page);
 
     // test backing up
     await page.click('text=Show secret recovery phrase');
@@ -79,6 +63,17 @@ test.describe('Account Create', () => {
     // test if account shows in list
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
     await expect(page.locator('text=Test Account Created >> visible=true')).toBeVisible();
+  });
+
+  test('Create Account name should be the same when coming back from backup', async ({ page }) => {
+    await accountCreate(page);
+
+    await page.pause();
+
+    await page.locator('.back-button').click();
+
+    await expect(page.locator('[placeholder="Surfer"]')).toHaveClass(/pointer-events-none/);
+    await expect(page.locator('[placeholder="Surfer"]')).toHaveValue('Test Account Created');
   });
 
   test('Import Account', async ({ page }) => {

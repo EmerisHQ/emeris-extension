@@ -4,6 +4,19 @@ export const defaultMnemonic =
   'frog radio wisdom pottery position depart machine turn seek audit tank cloth brave engine card amused napkin blossom exile gravity mesh siege fruit quick';
 export const defaultCosmosAddress = 'cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9';
 
+export const accountCreate = async (page) => {
+  // Test creation
+  await expect(page.locator('text=Create Account >> visible=true')).toBeVisible();
+  await page.click('text=Create Account >> visible=true');
+
+  await page.fill('[placeholder="Enter password"]', '123456A$');
+  await page.fill('[placeholder="Confirm password"]', '123456A$');
+  await page.click('text=Continue');
+
+  await page.fill('[placeholder="Surfer"]', 'Test Account Created');
+  await page.click('text=Continue');
+};
+
 export const importAccount = async (page, name = 'Test Account Imported') => {
   // Test import
   await expect(page.locator('text=Import account >> visible=true')).toBeVisible();
