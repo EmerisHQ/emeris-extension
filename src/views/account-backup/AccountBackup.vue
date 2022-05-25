@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Back up account" />
+    <Header title="Back up account" :back-to="backToPath" />
     <span class="secondary-text mb-4">
       Back up your secret recovery phrase to recover your account if your device is lost.
     </span>
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -37,6 +37,8 @@ import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+
+const backToPath = ref(undefined);
 
 const account = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getAccount];
@@ -56,6 +58,12 @@ const goToShowMnemonic = async () => {
     router.push('/backup/show');
   }
 };
+
+onMounted(() => {
+  if (route.query.previous === '/accountCreate') {
+    backToPath.value = `${route.query.previous}?previous=/backup`;
+  }
+});
 </script>
 
 <style lang="scss" scoped>
