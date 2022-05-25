@@ -17,6 +17,7 @@ import AccountReady from '../views/AccountReady.vue';
 import AccountRemove from '../views/AccountRemove.vue';
 import AccountRename from '../views/AccountRename.vue';
 import Accounts from '../views/Accounts.vue';
+import AccountSettings from '../views/AccountSettings.vue';
 import ExtensionReset from '../views/ExtensionReset.vue';
 import ExtensionResetConfirm from '../views/ExtensionResetConfirm.vue';
 import ExtensionResetConfirmed from '../views/ExtensionResetConfirmed.vue';
@@ -191,6 +192,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/accounts',
     name: 'Accounts',
     component: Accounts,
+  },
+  {
+    path: '/account-settings/:index',
+    name: 'Account Settings',
+    component: AccountSettings,
   },
   {
     path: '/settings',
