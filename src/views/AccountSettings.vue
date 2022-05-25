@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Account settings" :back-to="$route.query.backto" />
+    <Header title="Account settings" back-to="/accounts" />
 
     <!-- Account -->
     <div class="text-center my-8">
