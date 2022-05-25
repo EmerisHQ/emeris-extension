@@ -81,9 +81,6 @@ export default defineComponent({
       wallet: (state: RootState) => state.extension.wallet,
       lastAccount: (state: RootState) => state.extension.lastAccount,
     }),
-    editWalletIndex() {
-      return this.wallet.findIndex((wallet) => wallet.accountName === this.editWallet?.accountName);
-    },
   },
   components: {
     Button,
@@ -93,7 +90,6 @@ export default defineComponent({
     SumBalances,
   },
   data: () => ({
-    editWallet: null,
     addAdditionalAccount: false,
     edit: false,
   }),
