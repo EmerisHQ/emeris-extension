@@ -68,8 +68,6 @@ test.describe('Account Create', () => {
   test('Create Account name should be the same when coming back from backup', async ({ page }) => {
     await accountCreate(page);
 
-    await page.pause();
-
     await page.locator('.back-button').click();
 
     await expect(page.locator('[placeholder="Surfer"]')).toHaveClass(/pointer-events-none/);
