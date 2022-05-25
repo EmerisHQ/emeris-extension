@@ -11,6 +11,7 @@ export type Mutations<S = State> = {
   [MutationTypes.SET_WALLET](state: S, wallet: EmerisWallet): void;
   [MutationTypes.SET_LAST_ACCOUNT](state: S, accountName: string): void;
   [MutationTypes.SET_MNEMONIC](state: S, payload: { account: EmerisAccount }): void;
+  [MutationTypes.SET_CURRENT_FLOW](state: S, payload: { currentFlow: string }): void;
 };
 
 export const mutations: MutationTree<State> & Mutations = {
@@ -36,6 +37,9 @@ export const mutations: MutationTree<State> & Mutations = {
       }
       return account;
     });
+  },
+  [MutationTypes.SET_CURRENT_FLOW](state: State, payload: { currentFlow: string }) {
+    state.currentFlow = payload.currentFlow;
   },
   [MutationTypes.SET_WHITELISTED_WEBSITES](state: State, whitelistedWebsites: { origin: string }[]) {
     state.whitelistedWebsites = whitelistedWebsites;

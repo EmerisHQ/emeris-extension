@@ -31,7 +31,11 @@
         label="I understand that if I don’t back up my account, I risk losing access to it."
       />
       <div class="buttons">
-        <Button name="Back up later" :disabled="!backUpLaterChecked" @click="() => $router.push('/account')" />
+        <Button
+          name="Back up later"
+          :disabled="!backUpLaterChecked"
+          @click="() => $router.push(currentFlow === 'CREATE_ACCOUNT' ? '/accountReadyNoBackup' : '/account')"
+        />
         <Button name="Cancel" variant="link" @click="() => (backUpLater = false)" />
       </div>
     </Slideout>
@@ -59,6 +63,10 @@ const backUpLaterChecked = ref(false);
 
 const account = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getAccount];
+});
+
+const currentFlow = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
 });
 
 const submit = () => {
