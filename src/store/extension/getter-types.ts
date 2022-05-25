@@ -4,6 +4,7 @@ export enum GetterTypes {
   getLastAccount = 'getLastAccount',
   getAccount = 'getAccount',
   getAllBalances = 'getAllBalances',
+  getCurrentFlow = 'getCurrentFlow',
 }
 export enum GlobalEmerisGetterTypes {
   getPending = 'extension/getPending',
@@ -11,4 +12,5 @@ export enum GlobalEmerisGetterTypes {
   getLastAccount = 'extension/getLastAccount',
   getAccount = 'extension/getAccount',
   getAllBalances = 'extension/getAllBalances',
+  getCurrentFlow = 'extension/getCurrentFlow',
 }
