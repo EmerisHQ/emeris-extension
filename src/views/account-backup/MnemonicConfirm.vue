@@ -1,22 +1,24 @@
 <template>
   <div class="page">
-    <Header title="Confirm recovery phrase" />
-    <img :src="'/images/Stepper-' + step + '.svg'" style="margin-bottom: 34px" />
-    <span class="secondary-text" style="margin-bottom: 48px"
-      >Select the <b>{{ positionWord }}</b> word in your recovery phrase</span
-    >
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; height: 192px">
+    <Header title="Confirm secret recovery phrase" />
+    <img :src="'/images/Stepper-' + step + '.svg'" class="h-5 mb-8" />
+    <p class="select-word text-center mb-12">
+      <span class="secondary-text">Select the </span>
+      <span class="font-semibold text-text">{{ positionWord }}</span>
+      <span class="secondary-text"> word in your secret recovery phrase.</span>
+    </p>
+    <div class="flex flex-wrap">
       <Button
         v-for="word in possibleWords"
         :key="word"
         :class="{ error: error === word }"
-        style="width: 127.5px"
         :name="word"
+        class="w-1/2"
         variant="link"
         @click="() => check(word)"
       />
     </div>
-    <div v-if="error" style="color: #ff6072; margin-top: 80px; text-align: center">Incorrect word. Try again.</div>
+    <p v-if="error" class="text-center mt-20 text-negative-text">Incorrect word, try again.</p>
   </div>
 </template>
 
@@ -107,54 +109,6 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-.checkbox-card {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 16px;
-
-  background: #171717;
-  border-radius: 10px;
-}
-
-.words {
-  .word {
-    display: inline-flex;
-    margin-right: 16px;
-    margin-bottom: 16px;
-
-    .number {
-      margin-right: 8px;
-      background: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-weight: 600;
-      font-size: 13px;
-      line-height: 16px;
-      color: #000000;
-      padding-top: 4px;
-      text-align: center;
-    }
-
-    span {
-      line-height: 24px;
-    }
-  }
-}
-
-:deep(.checkbox) {
-  background-color: #171717;
-
-  .checkbox__label {
-    font-size: 13px;
-  }
-
-  .checkbox__control:checked {
-    background: linear-gradient(154.46deg, #64dafb 9.7%, #30ffdf 33.94%, #fffd38 69.44%);
-  }
-}
-
 :deep(.error button) {
   background: #ff3d56 !important;
 }

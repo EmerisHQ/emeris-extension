@@ -21,6 +21,7 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@clockwork-projects/crescent-network-crescent-js": "^1.0.0",
     "@cosmjs/amino": "0.28.0",
     "@cosmjs/cosmwasm-stargate": "0.28.0",
     "@cosmjs/crypto": "0.28.0",
@@ -62,6 +63,7 @@
     "lodash.isequal": "^4.5.0",
     "lodash.maxby": "^4.6.0",
     "lodash.minby": "^4.6.0",
+    "lodash.noop": "^3.0.1",
     "lodash.orderby": "^4.6.0",
     "long": "^5.2.0",
     "mitt": "^3.0.0",
@@ -145,6 +147,9 @@
     "vite-plugin-static-copy": "^0.4.2",
     "vitest": "^0.7.10",
     "vue-tsc": "^0.33.7"
+  },
+  "resolutions": {
+    "**/@emeris/signer/@starport/vuex/@confio/relayer/axios": "0.21.2"
   },
   "engines": {
     "node": "16.x"

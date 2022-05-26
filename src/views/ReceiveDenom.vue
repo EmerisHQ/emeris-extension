@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { computed } from '@vue/runtime-core';
+import { computed, ref, watch } from '@vue/runtime-core';
 import orderBy from 'lodash.orderby';
 import { useStore } from 'vuex';
 
@@ -40,41 +40,40 @@ export default {
   setup() {
     const { nativeBalances } = useAccount();
     const store = useStore();
+    let displayNameAddedList = ref([]);
+    let keyword = ref('');
 
     const assetsList = computed(() => {
       if (!store.getters[GlobalGetterTypes.API.getVerifiedDenoms]) return [];
       return orderBy(nativeBalances.value, (item) => (item.base_denom.startsWith('pool') ? 1 : -1));
     });
 
-    return { assetsList };
-  },
-  data: () => ({
-    keyword: '',
-    displayNameAddedList: [],
-  }),
-  computed: {
-    keywordFilteredAssets() {
-      const filteredAssets = (this.displayNameAddedList.length > 0 ? this.displayNameAddedList : []).filter((asset) => {
-        return asset.display_name?.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1;
-      });
+    const keywordFilteredAssets = computed(() => {
+      const filteredAssets = (displayNameAddedList.value.length > 0 ? displayNameAddedList.value : []).filter(
+        (asset) => {
+          return asset.display_name?.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1;
+        },
+      );
 
       return filteredAssets;
-    },
-  },
-  watch: {
-    async assetsList(assetsList) {
-      this.displayNameAddedList = await Promise.all(
-        assetsList.map(async (asset) => {
-          return {
-            ...asset,
-            display_name: await getDisplayName(
-              asset.base_denom,
-              this.$store.getters[GlobalGetterTypes.API.getDexChain],
-            ),
-          };
-        }),
-      );
-    },
+    });
+
+    watch(
+      () => assetsList.value,
+      async (value) => {
+        displayNameAddedList.value = await Promise.all(
+          value.map(async (asset) => {
+            return {
+              ...asset,
+              display_name: await getDisplayName(asset.base_denom, store.getters[GlobalGetterTypes.API.getDexChain]),
+            };
+          }),
+        );
+      },
+      { immediate: true },
+    );
+
+    return { assetsList, keywordFilteredAssets, keyword };
   },
 };
 </script>

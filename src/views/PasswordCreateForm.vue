@@ -1,24 +1,32 @@
 <template>
   <Loader v-if="loading" />
-  <div class="form" @keyup.enter="submit" v-else>
-    <span class="secondary-text" style="margin-top: 16px; margin-bottom: 24px"
-      >You will need this password to unlock your wallet.</span
-    >
+  <div v-else class="form" @keyup.enter="submit">
+    <span class="secondary-text mb-6">You will need this password to unlock your wallet.</span>
     <div
-      style="margin-bottom: 16px"
+      class="mb-4"
       :class="{
-        error: password && (!length || !upperCaseChar || !symbolChar || !digitChar),
-        success: password && length && upperCaseChar && symbolChar && digitChar,
+        error: password && isPasswordInvalid,
+        success: password && !isPasswordInvalid,
       }"
     >
       <Input
         v-model="password"
-        :placeholder="passwordChange ? 'Enter a new password' : 'Enter a password'"
-        type="password"
-      />
+        end-slot-clickable
+        :placeholder="passwordChange ? 'Enter new password' : 'Enter password'"
+        :type="passwordVisible ? 'text' : 'password'"
+      >
+        <template #end>
+          <a v-if="password" class="cursor-pointer" @click="() => (passwordVisible = !passwordVisible)">
+            <img
+              :class="passwordVisible ? 'w-4 h-4' : 'w-4 h-3 mt-0.5'"
+              :src="passwordVisible ? '/images/EyeSlash.png' : '/images/Eye.png'"
+            />
+          </a>
+        </template>
+      </Input>
     </div>
     <div
-      style="margin-bottom: 24px"
+      class="mb-6"
       :class="{
         error: passwordRepeated && !match,
         success: passwordRepeated && match,
@@ -27,30 +35,45 @@
       <Input
         v-model="passwordRepeated"
         :placeholder="passwordChange ? 'Confirm new password' : 'Confirm password'"
-        type="password"
+        :type="passwordVisible ? 'text' : 'password'"
       />
     </div>
     <span class="form-info" :class="{ error: password && !length, success: password && length }"
-      >Minimum 8 characters</span
+      ><Icon v-if="password && length" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !length" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />Minimum 8
+      characters</span
     >
     <span class="form-info" :class="{ error: password && !upperCaseChar, success: password && upperCaseChar }"
-      >At least one upper case</span
+      ><Icon v-if="password && upperCaseChar" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !upperCaseChar" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />At
+      least one upper case</span
     >
     <span class="form-info" :class="{ error: password && !symbolChar, success: password && symbolChar }"
-      >At least one symbol</span
+      ><Icon v-if="password && symbolChar" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !symbolChar" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />At least
+      one symbol</span
     >
     <span class="form-info" :class="{ error: password && !digitChar, success: password && digitChar }"
-      >At least one digit</span
+      ><Icon v-if="password && digitChar" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon v-if="password && !digitChar" name="CloseIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />At least
+      one digit</span
     >
-    <span v-if="passwordRepeated && !match" class="form-info error">Passwords don’t match</span>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
+    <span
+      v-if="passwordRepeated"
+      class="form-info"
+      :class="{ error: passwordRepeated && !match, success: passwordRepeated && match }"
+      ><Icon v-if="passwordRepeated && match" name="CheckIcon" :icon-size="0.7" class="mr-2 inline-flex mt-0.5" />
+      <Icon
+        v-if="passwordRepeated && !match"
+        name="CloseIcon"
+        :icon-size="0.7"
+        class="mr-2 inline-flex mt-0.5"
+      />Passwords {{ passwordRepeated && match ? '' : 'do not ' }}match</span
     >
-      <div style="margin-bottom: 32px; font-size: 13px">
+    <div class="mt-auto">
+      <div class="mb-2 -text-1">
         <span class="secondary-text">By continuing you agree to </span
-        ><a href="/" style="opacity: 1" @click.prevent="open('https://emeris.com/terms')">Terms of Use</a
+        ><a href="/" class="opacity-100" @click.prevent="open('https://emeris.com/terms')">Terms of Use</a
         ><span class="secondary-text"> & </span
         ><a href="" @click.prevent="open('https://emeris.com/privacy')">Privacy Policy</a
         ><span class="secondary-text"> of Emeris wallet</span>
@@ -58,7 +81,7 @@
       <Button
         :name="passwordChange ? 'Change password' : 'Continue'"
         type="submit"
-        :disabled="!length || !upperCaseChar || !symbolChar || !digitChar || !match"
+        :disabled="isButtonDisabled"
         @click="
           () => {
             submit();
@@ -74,6 +97,7 @@ import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
+import Icon from '@/components/ui/Icon.vue';
 import Input from '@/components/ui/Input.vue';
 import Loader from '@@/components/Loader.vue';
 import { RootState } from '@@/store';
@@ -83,12 +107,18 @@ export default defineComponent({
   name: 'Password Create Form',
   components: {
     Button,
+    Icon,
     Input,
     Loader,
+  },
+  props: {
+    onContinue: { type: Function, required: true },
+    passwordChange: { type: Boolean, required: false, default: false },
   },
   data: () => ({
     password: '',
     passwordRepeated: '',
+    passwordVisible: false,
 
     length: false,
     upperCaseChar: false,
@@ -101,10 +131,12 @@ export default defineComponent({
     ...mapState({
       wallet: (state: RootState) => state.extension.wallet,
     }),
-  },
-  props: {
-    onContinue: { type: Function, required: true },
-    passwordChange: { type: Boolean, required: false, default: false },
+    isPasswordInvalid() {
+      return !this.length || !this.upperCaseChar || !this.symbolChar || !this.digitChar;
+    },
+    isButtonDisabled() {
+      return this.isPasswordInvalid || !this.match;
+    },
   },
   watch: {
     password(password) {
@@ -120,17 +152,10 @@ export default defineComponent({
   methods: {
     async submit() {
       this.loading = true;
-      const hasWallet = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
       if (this.length && this.upperCaseChar && this.symbolChar && this.digitChar && this.match) {
-        if (hasWallet) {
-          await this.$store.dispatch(GlobalEmerisActionTypes.CHANGE_PASSWORD, {
-            password: this.password,
-          });
-        } else {
-          await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, {
-            password: this.password,
-          });
-        }
+        await this.$store.dispatch(GlobalEmerisActionTypes.CREATE_WALLET, {
+          password: this.password,
+        });
         this.onContinue();
       }
     },

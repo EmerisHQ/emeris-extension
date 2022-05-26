@@ -90,7 +90,7 @@ export default class EmerisStorage {
   }
   async updateAccount(account: Partial<EmerisAccount>, targetAccountName: string, password: string): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(password);
+      const wallet = await this.unlockWallet(password); // always try to unlock first to make sure the password is correct
       const oldAccount = wallet.find((x) => x.accountName === targetAccountName);
       const accounts = wallet.filter((x) => x.accountName != targetAccountName);
       accounts.push({ ...oldAccount, ...account });
@@ -103,7 +103,7 @@ export default class EmerisStorage {
   }
   async removeAccount(accountName: string, password: string): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(password);
+      const wallet = await this.unlockWallet(password); // always try to unlock first to make sure the password is correct
       const accounts = wallet.filter((x) => x.accountName != accountName);
       await this.saveWallet(accounts, password);
       return true;
@@ -114,7 +114,7 @@ export default class EmerisStorage {
   }
   async saveAccount(account: EmerisAccount, password: string): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(password);
+      const wallet = await this.unlockWallet(password); // always try to unlock first to make sure the password is correct
       if (account.isLedger) {
         delete account.accountMnemonic; // just to avoid confusion
       }
@@ -141,22 +141,12 @@ export default class EmerisStorage {
     try {
       const encWallet = await this.getWallet();
       if (!encWallet) {
+        // ATTENTION if getWallet doesn't return a wallet for ever reason this would overwrite the saved wallet
         await this.saveWallet([], password); // create wallet object if not there
         return [];
       }
       const wallet = JSON.parse(await decrypt(encWallet.walletData, password));
       return wallet;
-    } catch (e) {
-      throw new UnlockWalletError('Could not unlock wallet: ' + e);
-    }
-  }
-  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-    if (!oldPassword || !newPassword) {
-      throw new UnlockWalletError('Passwords need to be provided');
-    }
-    try {
-      const wallet = await this.unlockWallet(oldPassword);
-      await this.saveWallet(wallet, newPassword);
     } catch (e) {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
     }
@@ -186,7 +176,7 @@ export default class EmerisStorage {
         this.storageMode
       ].get('partialAccountCreationStep');
       if (!encryptedPartialAccountCreationStep) return undefined;
-      return await decrypt(encryptedPartialAccountCreationStep, password);
+      return JSON.parse(await decrypt(encryptedPartialAccountCreationStep, password));
     } catch (e) {
       await browser.storage[this.storageMode].set({ partialAccountCreationStep: null }); // prevent a broken state and the information is not critical
       throw new UnlockWalletError('Could not unlock partialAccountCreationStep: ' + e);
