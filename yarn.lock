@@ -26,13 +26,8 @@
 
 "@clockwork-projects/crescent-network-crescent-js@^1.0.0":
   version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@clockwork-projects/crescent-network-crescent-js/-/crescent-network-crescent-js-1.0.0.tgz#e506ca9dcb65fd4173ee463994960f9c3d104507"
+  resolved "https://registry.npmjs.org/@clockwork-projects/crescent-network-crescent-js/-/crescent-network-crescent-js-1.0.0.tgz"
   integrity sha512-7d8rBcmB2N8SdSuRboBO9QoL7aDkdgpHMqyA6W/iI8nDniH/fBkou4oETLz2WlNIzyM3lYs/IHRbzaw3XfYcpw==
-
-"@clockwork-projects/crescent-network-crescent-js@^1.0.0":
-  "integrity" "sha512-7d8rBcmB2N8SdSuRboBO9QoL7aDkdgpHMqyA6W/iI8nDniH/fBkou4oETLz2WlNIzyM3lYs/IHRbzaw3XfYcpw=="
-  "resolved" "https://registry.npmjs.org/@clockwork-projects/crescent-network-crescent-js/-/crescent-network-crescent-js-1.0.0.tgz"
-  "version" "1.0.0"
 
 "@clockwork-projects/osmosis-labs-osmosis-js@^6.1.0":
   version "6.1.0"
@@ -1135,14 +1130,6 @@
     is-builtin-module "^3.1.0"
     is-module "^1.0.0"
     resolve "^1.19.0"
-
-"@rollup/plugin-replace@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-replace/-/plugin-replace-4.0.0.tgz#e34c457d6a285f0213359740b43f39d969b38a67"
-  integrity sha512-+rumQFiaNac9y64OHtkHGmdjm7us9bo1PlbgQfdihQtuNxzjpaB064HbRnewUOggLQxVCCyINfStkgmBeQpv1g==
-  dependencies:
-    "@rollup/pluginutils" "^3.1.0"
-    magic-string "^0.25.7"
 
 "@rollup/plugin-typescript@^8.3.1":
   version "8.3.2"
@@ -4543,6 +4530,11 @@ rollup-plugin-inject@^3.0.0:
     estree-walker "^0.6.1"
     magic-string "^0.25.3"
     rollup-pluginutils "^2.8.1"
+
+rollup-plugin-manifest-json@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-manifest-json/-/rollup-plugin-manifest-json-1.5.1.tgz#0c02a0ba707c0d22a1c59d5000a0d50c5f790bec"
+  integrity sha512-GkCgnLRBsdgPTAT8ioFg6iKN6Q6SabIoRIL4IVeBMRRnN047xNvHXPiaLxYbUU2hnDnVpPDZ4deN38Ioio89zQ==
 
 rollup-plugin-node-polyfills@^0.2.1:
   version "0.2.1"
