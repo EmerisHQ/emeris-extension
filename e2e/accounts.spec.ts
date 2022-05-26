@@ -20,7 +20,7 @@ test.describe('Account Create', () => {
     await page.click('text=I understand that if I don’t back up my account, I risk losing access to it.');
     await page.locator('.button-primary:has-text("Back up later")').click();
 
-    await expect(page.locator('text=Test Account Created >> visible=true')).toBeVisible();
+    await expect(page.locator('text=You’re ready to start >> visible=true')).toBeVisible();
   });
 
   test('Create Account with backup', async ({ page }) => {

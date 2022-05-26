@@ -1,8 +1,6 @@
 <template>
   <div class="buttons">
-    <router-link :to="{ name: 'Create Wallet' }">
-      <Button name="Create Account" />
-    </router-link>
+    <Button name="Create account" @click="createWalletRoute" />
     <router-link :to="{ name: 'Account Import Info' }">
       <Button name="Import Account" variant="secondary" />
     </router-link>
@@ -11,10 +9,24 @@
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from 'vue-router';
+
 import Button from '@/components/ui/Button.vue';
+import { useStore } from '@/utils/useStore';
+import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
+
+const store = useStore();
+const router = useRouter();
 
 const toLedger = () => {
   window.open('popup.html#/ledger?next=/ledger/connect');
+};
+
+const createWalletRoute = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'CREATE_ACCOUNT',
+  });
+  router.push('/create');
 };
 </script>
 

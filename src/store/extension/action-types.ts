@@ -25,6 +25,7 @@ export enum ActionTypes {
   GET_NEW_ACCOUNT = 'GET_NEW_ACCOUNT',
   GET_LEDGER_SIGN_DATA = 'GET_LEDGER_SIGN_DATA',
   SET_LEDGER_SIGN_DATA = 'SET_LEDGER_SIGN_DATA',
+  SET_CURRENT_FLOW = 'SET_CURRENT_FLOW',
 }
 export enum GlobalEmerisActionTypes {
   GET_PENDING = 'extension/GET_PENDING',
@@ -53,4 +54,5 @@ export enum GlobalEmerisActionTypes {
   GET_NEW_ACCOUNT = 'extension/GET_NEW_ACCOUNT',
   GET_LEDGER_SIGN_DATA = 'extension/GET_LEDGER_SIGN_DATA',
   SET_LEDGER_SIGN_DATA = 'extension/SET_LEDGER_SIGN_DATA',
+  SET_CURRENT_FLOW = 'extension/SET_CURRENT_FLOW',
 }
