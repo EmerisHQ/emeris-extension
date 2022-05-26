@@ -59,6 +59,12 @@ const removeWallet = async () => {
 };
 
 const backUpWallet = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'REMOVE_ACCOUNT',
+  });
+  store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
+    accountName: account.value.accountName,
+  });
   router.push('/backup');
 };
 </script>

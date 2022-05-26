@@ -50,6 +50,9 @@ export default defineComponent({
     account() {
       return this.$store.getters[GlobalEmerisGetterTypes.getAccount];
     },
+    currentFlow() {
+      return this.$store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
+    },
     positionWord() {
       switch (this.positions[this.step] + 1) {
         case 1:
@@ -97,7 +100,13 @@ export default defineComponent({
         this.error = null;
         if (this.step === 2) {
           this.$store.dispatch(GlobalEmerisActionTypes.ACCOUNT_BACKED_UP, { accountName: this.account.accountName });
-          this.$router.push('/accountReady');
+
+          console.log('checking here', this.currentFlow, this.account.accountName);
+          if (this.currentFlow === 'REMOVE_ACCOUNT') {
+            this.$router.push('/accountBackedUpForRemove');
+          } else {
+            this.$router.push('/accountReady');
+          }
         }
         this.step++;
         this.showWords();

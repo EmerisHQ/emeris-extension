@@ -102,6 +102,11 @@ export default defineComponent({
       immediate: true,
     },
   },
+  mounted() {
+    this.$store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+      currentFlow: '',
+    });
+  },
   methods: {
     addAccount() {
       this.$router.push('/accountAddAdditional');
