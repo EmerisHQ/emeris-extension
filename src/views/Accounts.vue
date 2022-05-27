@@ -48,7 +48,7 @@
         <Button name="Create account" variant="link" />
       </router-link>
       <hr class="mb-1 opacity-[0.14]" />
-      <router-link :to="{ name: 'Account Import Info' }" class="mb-1 text-text">
+      <router-link to="/accountImportInfo" class="mb-1 text-text" @click="newAccountImport()">
         <Button name="Import account" variant="link" />
       </router-link>
       <hr class="mb-1 opacity-[0.14]" />
@@ -59,9 +59,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
@@ -69,69 +70,61 @@ import { GlobalActionTypes } from '@/store';
 import Header from '@@/components/Header.vue';
 import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
-import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 
-export default defineComponent({
-  name: 'Accounts',
-  computed: {
-    ...mapState({
-      wallet: (state: RootState) => state.extension.wallet,
-      lastAccount: (state: RootState) => state.extension.lastAccount,
-    }),
-  },
-  components: {
-    Button,
-    Icon,
-    Header,
-    Slideout,
-    SumBalances,
-  },
-  data: () => ({
-    addAdditionalAccount: false,
-    edit: false,
-  }),
-  watch: {
-    wallet: {
-      handler(wallet) {
-        if (wallet && wallet.length > 0) this.loadBalances();
-        if (wallet && wallet.length === 0) this.$router.push('/welcome');
-      },
-      immediate: true,
-    },
-  },
-  methods: {
-    addAccount() {
-      this.$router.push('/accountAddAdditional');
-    },
-    goToAccount(account) {
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
-        accountName: account.accountName,
-      });
-      this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
-      this.$store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
-      this.$router.push('/portfolio');
-    },
-    backedUp(account) {
-      return account.setupState === AccountCreateStates.COMPLETE;
-    },
-    loadBalances() {
-      this.wallet.forEach((account) => {
-        if (!this.$store.getters[GlobalEmerisGetterTypes.getAllBalances](account)) {
-          this.$store.dispatch(GlobalActionTypes.API.GET_BALANCES, {
-            subscribe: true,
-            params: { address: account.keyHash },
-          });
-        }
-      });
-    },
-    balances(account) {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAllBalances](account) || [];
-    },
-  },
+const store = useStore();
+const router = useRouter();
+
+const addAdditionalAccount = ref(false);
+const edit = ref(false);
+
+const wallet = computed(() => {
+  return store.state.extension.wallet;
 });
+const lastAccount = computed(() => {
+  return store.state.extension.lastAccount;
+});
+
+watch(wallet.value, (newWallet) => {
+  if (newWallet && newWallet.length > 0) loadBalances();
+  if (newWallet && newWallet.length === 0) router.push('/welcome');
+});
+
+const newAccountImport = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'NEW_ACCOUNT_IMPORT',
+  });
+};
+
+const goToAccount = (account) => {
+  store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
+    accountName: account.accountName,
+  });
+  store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
+  store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
+  router.push('/portfolio');
+};
+
+const backedUp = (account) => {
+  return account.setupState === AccountCreateStates.COMPLETE;
+};
+
+const loadBalances = () => {
+  wallet.value.forEach((account) => {
+    if (!store.getters[GlobalEmerisGetterTypes.getAllBalances](account)) {
+      store.dispatch(GlobalActionTypes.API.GET_BALANCES, {
+        subscribe: true,
+        params: { address: account.keyHash },
+      });
+    }
+  });
+};
+
+const balances = (account) => {
+  return store.getters[GlobalEmerisGetterTypes.getAllBalances](account) || [];
+};
 </script>
 
 <style lang="scss" scoped>
