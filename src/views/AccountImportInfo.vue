@@ -55,7 +55,7 @@ const currentFlow = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
 });
 const backTo = computed(() => {
-  if (currentFlow.value === 'FIRST_ACCOUNT') return '/welcome';
+  if (currentFlow.value === 'IMPORT_ACCOUNT') return '/welcome';
   if (currentFlow.value === 'NEW_ACCOUNT_IMPORT') return '/accounts';
   return '/settings';
 });

@@ -44,13 +44,9 @@
 
     <!-- Add Additional Account -->
     <Slideout :open="addAdditionalAccount" @update:open="() => (addAdditionalAccount = null)">
-      <router-link :to="{ name: 'Create Wallet' }" class="mb-1 text-text">
-        <Button name="Create account" variant="link" />
-      </router-link>
+      <Button class="mb-1 text-text" name="Create account" variant="link" @click="goToCreateAccount()" />
       <hr class="mb-1 opacity-[0.14]" />
-      <router-link to="/accountImportInfo" class="mb-1 text-text" @click="newAccountImport()">
-        <Button name="Import account" variant="link" />
-      </router-link>
+      <Button class="mb-1 text-text" name="Import account" variant="link" @click="goToImportAccount()" />
       <hr class="mb-1 opacity-[0.14]" />
       <div class="font-semibold">
         <Button name="Cancel" variant="link" @click="() => (addAdditionalAccount = null)" />
@@ -92,10 +88,18 @@ watch(wallet.value, (newWallet) => {
   if (newWallet && newWallet.length === 0) router.push('/welcome');
 });
 
-const newAccountImport = () => {
+const goToCreateAccount = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'CREATE_ACCOUNT',
+  });
+  router.push('/create');
+};
+
+const goToImportAccount = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
     currentFlow: 'NEW_ACCOUNT_IMPORT',
   });
+  router.push('/accountImportInfo');
 };
 
 const goToAccount = (account) => {

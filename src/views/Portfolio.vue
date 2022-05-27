@@ -65,7 +65,7 @@
       <p class="checkbox__label ml-4 -text-1 leading-copy">Your funds are not secured, please backup your wallet.</p>
     </div>
     <div class="buttons">
-      <Button name="Continue" @click="() => $router.push('/backup?previous=/accountCreate')" />
+      <Button name="Continue" @click="goToBackup()" />
       <Button name="Back up later" variant="link" @click="skipBackup" />
     </div>
   </Slideout>
@@ -73,6 +73,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
@@ -82,11 +83,13 @@ import { GlobalGetterTypes } from '@/store';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
+import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates, BalanceDenom } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
 
 const store = useStore();
+const router = useRouter();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
@@ -132,6 +135,13 @@ const skipBackup = () => {
   const nowInSeconds = Math.floor(Date.now() / 1000);
   window.localStorage.setItem(localStorageKey, `${nowInSeconds + CHECK_INTERVAL_SECONDS}`);
   showMnemonicBackup.value = false;
+};
+
+const goToBackup = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'BACKUP_PORTFOLIO',
+  });
+  router.push('/backup?previous=/accountCreate');
 };
 </script>
 <style lang="scss" scoped>

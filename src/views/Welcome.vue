@@ -14,16 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useStore } from 'vuex';
-
-import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import AccountCreateSection from '@@/views/AccountCreateSection.vue';
-
-const store = useStore();
-
-store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-  currentFlow: 'FIRST_ACCOUNT',
-});
 
 const open = (url) => {
   window.open(url);

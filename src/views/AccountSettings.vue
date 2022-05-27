@@ -24,7 +24,7 @@
           <div
             class="cursor-pointer p-4 flex justify-between"
             :class="{ 'pointer-events-none secondary-text': currentWallet.isLedger }"
-            @click="$router.push('/backup')"
+            @click="goToBackup()"
           >
             <div>
               <p>Secret recovery phrase</p>
@@ -67,14 +67,16 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Icon from '@/components/ui/Icon.vue';
 import Header from '@@/components/Header.vue';
+import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates } from '@@/types';
 
 const store = useStore();
+const router = useRouter();
 const route = useRoute();
 
 const wallet = computed(() => {
@@ -91,6 +93,13 @@ const backedUp = (account) => {
 
 const nameFirstLetter = (name) => {
   return name && name.length > 0 ? name.slice(0, 1) : 'S';
+};
+
+const goToBackup = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: `BACKUP_ACCOUNT_${route.params.index}`,
+  });
+  router.push('/backup');
 };
 </script>
 
