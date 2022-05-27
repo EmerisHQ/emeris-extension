@@ -47,7 +47,12 @@ const currentFlow = computed(() => {
 });
 
 const backTo = computed(() => {
-  if (currentFlow.value === 'CREATE_ACCOUNT') return '/accountCreate?previous=/backup';
+  if (
+    currentFlow.value === 'CREATE_ACCOUNT' ||
+    currentFlow.value === 'NEW_CREATE_ACCOUNT' ||
+    currentFlow.value === 'SETTINGS'
+  )
+    return '/accountCreate?previous=/backup';
   if (currentFlow.value === 'BACKUP_PORTFOLIO') return '/portfolio';
   if (currentFlow.value === 'BACK_UP') return '/account';
   if (currentFlow.value?.includes('BACKUP_ACCOUNT_')) return `/account-settings/${currentFlow.value.split('_')[2]}`;

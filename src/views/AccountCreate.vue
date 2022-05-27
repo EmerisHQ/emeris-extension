@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="loading" />
   <div v-else class="page">
-    <Header title="Account Name" />
+    <Header title="Account Name" :back-to="backTo" />
     <div class="w-3/4 mx-auto mt-10">
       <div
         class="bg-brand w-16 h-16 rounded-full text-center font-medium text-2 text-inverse pt-3.5 mx-auto shadow-brand"
@@ -41,6 +41,7 @@ import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import Loader from '@@/components/Loader.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
+import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 import wordlist from '@@/wordlists/english.json';
 
@@ -75,7 +76,6 @@ const nameHasSpecialCharacters = computed(() => {
 const buttonDisabled = computed(() => {
   return !name.value || error.value || nameHasSpecialCharacters.value;
 });
-
 const error = computed(() => {
   return (
     wallet.value && wallet.value.find(({ accountName }) => accountName === name.value) && !isReturningFromBackup.value
@@ -85,6 +85,15 @@ const errorText = computed(() => {
   if (error.value) return 'You already used this name for another account. Choose another name.';
   if (nameHasSpecialCharacters.value) return 'Name cannot contain special characters, only numbers and letters.';
   return '';
+});
+
+const currentFlow = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
+});
+const backTo = computed(() => {
+  if (currentFlow.value === 'CREATE_ACCOUNT') return '/welcome';
+  if (currentFlow.value === 'NEW_CREATE_ACCOUNT') return '/accounts';
+  return '/settings';
 });
 
 watch(name.value, (newValue) => {

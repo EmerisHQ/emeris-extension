@@ -90,7 +90,7 @@ watch(wallet.value, (newWallet) => {
 
 const goToCreateAccount = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'CREATE_ACCOUNT',
+    currentFlow: 'NEW_CREATE_ACCOUNT',
   });
   router.push('/create');
 };
