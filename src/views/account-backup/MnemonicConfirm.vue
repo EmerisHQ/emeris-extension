@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Confirm secret recovery phrase" back-to="/backup/show" />
+    <Header title="Confirm secret recovery phrase" />
     <img :src="'/images/Stepper-' + step + '.svg'" class="h-5 mb-8" />
     <p class="select-word text-center mb-12">
       <span class="secondary-text">Select the </span>
