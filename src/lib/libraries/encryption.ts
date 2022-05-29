@@ -1,7 +1,7 @@
 import scrypt from 'scrypt-js';
 import buffer from 'scrypt-js/thirdparty/buffer';
 
-export const getSecureKey = (passwordInput) => {
+const getSecureKey = (passwordInput: string) => {
   const password = new buffer.SlowBuffer(passwordInput.normalize('NFKC'));
   const salt = new buffer.SlowBuffer(process.env.VITE_ENCRYPTION_SALT.normalize('NFKC'));
 
@@ -15,14 +15,13 @@ export const getSecureKey = (passwordInput) => {
   return key;
 };
 
-const importKey = async (secureKey: Uint8Array) => {
-  const importedKey = await crypto.subtle.importKey('raw', secureKey.buffer, 'AES-GCM', false, ['encrypt', 'decrypt']);
+export const importKey = async (passwordInput: string) => {
+  const secureKey = getSecureKey(passwordInput);
+  const importedKey = await crypto.subtle.importKey('raw', secureKey.buffer, 'AES-GCM', true, ['encrypt', 'decrypt']);
   return importedKey;
 };
 
-export const encrypt = async (plaintext, secureKey: Uint8Array) => {
-  const importedKey = await importKey(secureKey);
-
+export const encrypt = async (plaintext, importedKey: CryptoKey) => {
   const iv = crypto.getRandomValues(new Uint8Array(12)); // get 96-bit random iv
   const ivStr = Array.from(iv)
     .map((b) => String.fromCharCode(b))
@@ -36,18 +35,16 @@ export const encrypt = async (plaintext, secureKey: Uint8Array) => {
   const ctArray = Array.from(new Uint8Array(ctBuffer)); // ciphertext as byte array
   const ctStr = ctArray.map((byte) => String.fromCharCode(byte)).join(''); // ciphertext as string
 
-  return btoa(ivStr + ctStr);
+  return Buffer.from(ivStr + ctStr).toString('base64');
 };
 
-export const decrypt = async (ciphertext, secureKey: Uint8Array) => {
-  const importedKey = await importKey(secureKey);
-
-  const ivStr = atob(ciphertext).slice(0, 12); // decode base64 iv
+export const decrypt = async (ciphertext, importedKey: CryptoKey) => {
+  const ivStr = Buffer.from(ciphertext, 'base64').toString('binary').slice(0, 12); // decode base64 iv
   const iv = new Uint8Array(Array.from(ivStr).map((ch) => ch.charCodeAt(0))); // iv as Uint8Array
 
   const alg = { name: 'AES-GCM', iv: iv }; // specify algorithm to use
 
-  const ctStr = atob(ciphertext).slice(12); // decode base64 ciphertext
+  const ctStr = Buffer.from(ciphertext, 'base64').toString('binary').slice(12); // decode base64 ciphertext
   const ctUint8 = new Uint8Array(Array.from(ctStr).map((ch) => ch.charCodeAt(0))); // ciphertext as Uint8Array
 
   try {

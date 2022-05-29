@@ -15,30 +15,30 @@ export default class EmerisStorage {
   constructor(storageMode: EmerisStorageMode) {
     this.storageMode = storageMode;
   }
-  async getWhitelistedWebsites(secureKey: Uint8Array): Promise<{ origin: string }[]> {
-    if (!secureKey) return [];
+  async getWhitelistedWebsites(cryptoKey: CryptoKey): Promise<{ origin: string }[]> {
+    if (!cryptoKey) return [];
 
     const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
 
     if (!result.whitelistedWebsites) return [];
 
-    const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, secureKey));
+    const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, cryptoKey));
     return whitelistedWebsites;
   }
-  async isWhitelistedWebsite(secureKey: Uint8Array, origin: string): Promise<boolean> {
-    if (!secureKey) return false;
+  async isWhitelistedWebsite(cryptoKey: CryptoKey, origin: string): Promise<boolean> {
+    if (!cryptoKey) return false;
 
     const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
     if (!result.whitelistedWebsites) {
       return false;
     } else {
-      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, secureKey));
+      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, cryptoKey));
       const hasPermission = whitelistedWebsites.find((permission) => permission.origin === origin);
       return !!hasPermission;
     }
   }
-  async addWhitelistedWebsite(secureKey: Uint8Array, origin: string): Promise<boolean> {
-    if (!secureKey) return false;
+  async addWhitelistedWebsite(cryptoKey: CryptoKey, origin: string): Promise<boolean> {
+    if (!cryptoKey) return false;
 
     try {
       const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
@@ -46,24 +46,24 @@ export default class EmerisStorage {
       if (!result.whitelistedWebsites) {
         whitelistedWebsites = [];
       } else {
-        whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, secureKey));
+        whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, cryptoKey));
       }
       whitelistedWebsites.push({ origin });
-      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(whitelistedWebsites), secureKey);
+      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(whitelistedWebsites), cryptoKey);
       await browser.storage[this.storageMode].set({ whitelistedWebsites: encryptedWhitelistedWebsites });
       return true;
     } catch (e) {
       return false;
     }
   }
-  async deleteWhitelistedWebsite(secureKey: Uint8Array, origin: string): Promise<boolean> {
-    if (!secureKey) return false;
+  async deleteWhitelistedWebsite(cryptoKey: CryptoKey, origin: string): Promise<boolean> {
+    if (!cryptoKey) return false;
 
     try {
       const result = await browser.storage[this.storageMode].get('whitelistedWebsites');
-      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, secureKey));
+      const whitelistedWebsites = JSON.parse(await decrypt(result.whitelistedWebsites, cryptoKey));
       const newWhitelistedWebsites = whitelistedWebsites.filter((permission) => permission.origin != origin);
-      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(newWhitelistedWebsites), secureKey);
+      const encryptedWhitelistedWebsites = await encrypt(JSON.stringify(newWhitelistedWebsites), cryptoKey);
       await browser.storage[this.storageMode].set({ whitelistedWebsites: encryptedWhitelistedWebsites });
       return true;
     } catch (e) {
@@ -91,39 +91,39 @@ export default class EmerisStorage {
   async updateAccount(
     account: Partial<EmerisAccount>,
     targetAccountName: string,
-    secureKey: Uint8Array,
+    cryptoKey: CryptoKey,
   ): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(secureKey); // always try to unlock first to make sure the password is correct
+      const wallet = await this.unlockWallet(cryptoKey); // always try to unlock first to make sure the password is correct
       const oldAccount = wallet.find((x) => x.accountName === targetAccountName);
       const accounts = wallet.filter((x) => x.accountName != targetAccountName);
       accounts.push({ ...oldAccount, ...account });
-      await this.saveWallet(accounts, secureKey);
+      await this.saveWallet(accounts, cryptoKey);
       return true;
     } catch (e) {
       console.log(e);
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  async removeAccount(accountName: string, secureKey: Uint8Array): Promise<boolean> {
+  async removeAccount(accountName: string, cryptoKey: CryptoKey): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(secureKey); // always try to unlock first to make sure the password is correct
+      const wallet = await this.unlockWallet(cryptoKey); // always try to unlock first to make sure the password is correct
       const accounts = wallet.filter((x) => x.accountName != accountName);
-      await this.saveWallet(accounts, secureKey);
+      await this.saveWallet(accounts, cryptoKey);
       return true;
     } catch (e) {
       console.log(e);
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  async saveAccount(account: EmerisAccount, secureKey: Uint8Array): Promise<boolean> {
+  async saveAccount(account: EmerisAccount, cryptoKey: CryptoKey): Promise<boolean> {
     try {
-      const wallet = await this.unlockWallet(secureKey); // always try to unlock first to make sure the password is correct
+      const wallet = await this.unlockWallet(cryptoKey); // always try to unlock first to make sure the password is correct
       if (account.isLedger) {
         delete account.accountMnemonic; // just to avoid confusion
       }
       wallet.push(account);
-      await this.saveWallet(wallet, secureKey);
+      await this.saveWallet(wallet, cryptoKey);
       await this.setLastAccount(account.accountName);
       return true;
     } catch (e) {
@@ -131,9 +131,9 @@ export default class EmerisStorage {
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  private async saveWallet(wallet: EmerisWallet, secureKey: Uint8Array): Promise<boolean> {
+  private async saveWallet(wallet: EmerisWallet, cryptoKey: CryptoKey): Promise<boolean> {
     try {
-      const encryptedWallet = await encrypt(JSON.stringify(wallet), secureKey);
+      const encryptedWallet = await encrypt(JSON.stringify(wallet), cryptoKey);
       await browser.storage[this.storageMode].set({ wallet: { walletData: encryptedWallet } });
       return true;
     } catch (e) {
@@ -141,15 +141,15 @@ export default class EmerisStorage {
       throw new SaveWalletError('Could not save wallet: ' + e);
     }
   }
-  async unlockWallet(secureKey: Uint8Array): Promise<EmerisWallet> {
+  async unlockWallet(cryptoKey: CryptoKey): Promise<EmerisWallet> {
     try {
       const encWallet = await this.getWallet();
       if (!encWallet) {
         // ATTENTION if getWallet doesn't return a wallet for ever reason this would overwrite the saved wallet
-        await this.saveWallet([], secureKey); // create wallet object if not there
+        await this.saveWallet([], cryptoKey); // create wallet object if not there
         return [];
       }
-      const wallet = JSON.parse(await decrypt(encWallet.walletData, secureKey));
+      const wallet = JSON.parse(await decrypt(encWallet.walletData, cryptoKey));
       return wallet;
     } catch (e) {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
