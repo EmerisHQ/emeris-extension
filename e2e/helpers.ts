@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 export const defaultMnemonic =
   'frog radio wisdom pottery position depart machine turn seek audit tank cloth brave engine card amused napkin blossom exile gravity mesh siege fruit quick';
 export const defaultCosmosAddress = 'cosmos1c7g2due09p065fnwmq8prh8wwauhy6ae8j6vu9';
