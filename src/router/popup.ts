@@ -6,6 +6,7 @@ import MnemonicConfirm from '../views/account-backup/MnemonicConfirm.vue';
 import MnemonicShow from '../views/account-backup/MnemonicShow.vue';
 import MnemonicShowPassword from '../views/account-backup/MnemonicShowPassword.vue';
 import AccountAddAdditional from '../views/AccountAddAdditional.vue';
+import AccountBackedUpForRemove from '../views/AccountBackedUpForRemove.vue';
 import AccountCreate from '../views/AccountCreate.vue';
 import AccountCreationResume from '../views/AccountCreationResume.vue';
 import AccountImport from '../views/AccountImport.vue';
@@ -168,6 +169,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/accountReadyNoBackup',
     name: 'Account Ready No Backup',
     component: AccountReadyNoBackup,
+  },
+  {
+    path: '/accountBackedUpForRemove',
+    name: 'Account Backed Up For Remove',
+    component: AccountBackedUpForRemove,
   },
   {
     path: '/ledger',
