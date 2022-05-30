@@ -180,7 +180,7 @@ export default class EmerisStorage {
         this.storageMode
       ].get('partialAccountCreationStep');
       if (!encryptedPartialAccountCreationStep) return undefined;
-      return await decrypt(encryptedPartialAccountCreationStep, password);
+      return JSON.parse(await decrypt(encryptedPartialAccountCreationStep, password));
     } catch (e) {
       await browser.storage[this.storageMode].set({ partialAccountCreationStep: null }); // prevent a broken state and the information is not critical
       throw new UnlockWalletError('Could not unlock partialAccountCreationStep: ' + e);

@@ -1,8 +1,11 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 import Account from '../views/Account.vue';
+import AccountBackup from '../views/account-backup/AccountBackup.vue';
+import MnemonicConfirm from '../views/account-backup/MnemonicConfirm.vue';
+import MnemonicShow from '../views/account-backup/MnemonicShow.vue';
+import MnemonicShowPassword from '../views/account-backup/MnemonicShowPassword.vue';
 import AccountAddAdditional from '../views/AccountAddAdditional.vue';
-import AccountBackup from '../views/AccountBackup.vue';
 import AccountCreate from '../views/AccountCreate.vue';
 import AccountCreationResume from '../views/AccountCreationResume.vue';
 import AccountImport from '../views/AccountImport.vue';
@@ -11,18 +14,17 @@ import AccountImportLedger from '../views/AccountImportLedger.vue';
 import AccountImportLedgerConnect from '../views/AccountImportLedgerConnect.vue';
 import AccountImportReady from '../views/AccountImportReady.vue';
 import AccountReady from '../views/AccountReady.vue';
+import AccountReadyNoBackup from '../views/AccountReadyNoBackup.vue';
 import AccountRemove from '../views/AccountRemove.vue';
 import AccountRename from '../views/AccountRename.vue';
 import Accounts from '../views/Accounts.vue';
+import AccountSettings from '../views/AccountSettings.vue';
 import ExtensionReset from '../views/ExtensionReset.vue';
 import ExtensionResetConfirm from '../views/ExtensionResetConfirm.vue';
 import ExtensionResetConfirmed from '../views/ExtensionResetConfirmed.vue';
 import HdPath from '../views/HDPath.vue';
 import Home from '../views/Home.vue';
 import LedgerError from '../views/LedgerError.vue';
-import MnemonicConfirm from '../views/MnemonicConfirm.vue';
-import MnemonicShow from '../views/MnemonicShow.vue';
-import MnemonicShowPassword from '../views/MnemonicShowPassword.vue';
 import PasswordCreate from '../views/PasswordCreate.vue';
 import Portfolio from '../views/Portfolio.vue';
 import ReceiveDenom from '../views/ReceiveDenom.vue';
@@ -163,6 +165,11 @@ const routes: Array<RouteRecordRaw> = [
     component: AccountReady,
   },
   {
+    path: '/accountReadyNoBackup',
+    name: 'Account Ready No Backup',
+    component: AccountReadyNoBackup,
+  },
+  {
     path: '/ledger',
     name: 'Import Ledger',
     component: AccountImportLedger,
@@ -191,6 +198,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/accounts',
     name: 'Accounts',
     component: Accounts,
+  },
+  {
+    path: '/account-settings/:index',
+    name: 'Account Settings',
+    component: AccountSettings,
   },
   {
     path: '/settings',

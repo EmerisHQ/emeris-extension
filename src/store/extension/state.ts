@@ -8,6 +8,7 @@ export type State = {
     route: string; // route user dropped off
   };
   whitelistedWebsites: { origin: string }[];
+  currentFlow: string;
 };
 export function getDefaultState(): State {
   return {
@@ -17,5 +18,6 @@ export function getDefaultState(): State {
     newAccount: null,
     whitelistedWebsites: [],
     ledgerSignData: null,
+    currentFlow: null,
   };
 }

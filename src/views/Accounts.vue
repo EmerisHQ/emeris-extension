@@ -4,81 +4,55 @@
       <a v-if="!edit" @click="edit = true">Edit</a>
       <a v-else @click="edit = false">Done</a>
     </Header>
-    <div v-for="account in wallet" :key="account.accountName" class="wallet" @click="!edit && goToAccount(account)">
-      <img :src="'/images/Avatar.svg'" style="width: 40px; height: 40px" />
-      <div style="cursor: pointer">
-        <h2 style="font-weight: 600">{{ account.accountName }}</h2>
+    <div
+      v-for="(account, index) in wallet"
+      :key="account.accountName"
+      class="wallet"
+      @click="!edit && goToAccount(account)"
+    >
+      <img :src="'/images/Avatar.svg'" class="h-10 w-10" />
+      <div class="cursor-pointer">
+        <h2 class="font-semibold">{{ account.accountName }}</h2>
         <span v-if="backedUp(account)" class="secondary-text"><SumBalances :balances="balances(account)" /></span>
-        <span v-else
-          ><SumBalances
-            :balances="balances(account)"
-            small-decimals
-            style="display: inline-block"
-            class="secondary-text"
-          /><span style="color: #ff6072; font-size: 13px"> · Not backed up</span></span
-        >
-      </div>
-      <div
-        v-if="account.isLedger"
-        style="display: flex; flex-direction: column; margin-left: auto; justify-content: center"
-      >
-        <span
-          style="
-            padding: 4px 12px 4px 12px;
-
-            background: #262626;
-            color: white;
-            border-radius: 16px;
-            font-size: 13px;
-          "
-        >
-          Ledger
+        <span v-else>
+          <SumBalances :balances="balances(account)" small-decimals class="secondary-text inline-block" />
+          <span style="color: #ff6072; font-size: 13px"> · Not backed up</span>
         </span>
+      </div>
+      <div v-if="account.isLedger" class="flex flex-col ml-auto justify-center">
+        <span class="py-1 px-3 text-[13px] text-text bg-surface-2 rounded-2xl">Ledger</span>
       </div>
       <Icon
         v-if="edit"
-        style="margin-left: auto; cursor: pointer"
-        :style="{
-          marginLeft: account.isLedger ? '12px' : 'auto',
-        }"
+        class="cursor-pointer"
+        :class="{ 'ml-auto': !account.isLedger, 'ml-3': account.isLedger }"
         name="ThreeDotsIcon"
         :icon-size="1.5"
-        @click="() => (editWallet = account)"
+        @click="$router.push(`/account-settings/${index}`)"
       />
       <div
         v-else-if="account.accountName === lastAccount"
-        style="display: flex; flex-direction: column; justify-content: center"
-        :style="{
-          marginLeft: account.isLedger ? '12px' : 'auto',
-        }"
+        class="flex flex-col justify-center"
+        :class="{ 'ml-auto': !account.isLedger, 'ml-3': account.isLedger }"
       >
-        <img :src="'/images/CheckmarkCircle.svg'" alt="Checkmark" style="height: 24px" />
+        <img class="h-6" :src="'/images/CheckmarkCircle.svg'" alt="Checkmark" />
       </div>
     </div>
-    <div style="margin-top: auto">
+    <div class="mt-auto">
       <Button name="Add account" @click="addAdditionalAccount = true" />
     </div>
-    <Slideout :open="!!editWallet" @update:open="() => (editWallet = null)">
-      <Button name="Edit wallet name" variant="link" style="margin-bottom: 4px" @click="renameAccount" />
-      <hr style="opacity: 0.14; margin-bottom: 4px" />
-      <Button name="Remove account" variant="link" link-color="red" style="margin-bottom: 4px" @click="removeAccount" />
-      <hr style="opacity: 0.14; margin-bottom: 4px" />
-      <div style="font-weight: 600">
-        <Button name="Cancel" variant="link" @click="() => (editWallet = null)" />
-      </div>
-    </Slideout>
 
     <!-- Add Additional Account -->
     <Slideout :open="addAdditionalAccount" @update:open="() => (addAdditionalAccount = null)">
-      <router-link :to="{ name: 'Create Wallet' }" style="margin-bottom: 4px; color: white">
+      <router-link :to="{ name: 'Create Wallet' }" class="mb-1 text-text">
         <Button name="Create account" variant="link" />
       </router-link>
-      <hr style="opacity: 0.14; margin-bottom: 4px" />
-      <router-link :to="{ name: 'Account Import Info' }" style="margin-bottom: 4px; color: white">
+      <hr class="mb-1 opacity-[0.14]" />
+      <router-link :to="{ name: 'Account Import Info' }" class="mb-1 text-text">
         <Button name="Import account" variant="link" />
       </router-link>
-      <hr style="opacity: 0.14; margin-bottom: 4px" />
-      <div style="font-weight: 600">
+      <hr class="mb-1 opacity-[0.14]" />
+      <div class="font-semibold">
         <Button name="Cancel" variant="link" @click="() => (addAdditionalAccount = null)" />
       </div>
     </Slideout>
@@ -107,9 +81,6 @@ export default defineComponent({
       wallet: (state: RootState) => state.extension.wallet,
       lastAccount: (state: RootState) => state.extension.lastAccount,
     }),
-    editWalletIndex() {
-      return this.wallet.findIndex((wallet) => wallet.accountName === this.editWallet?.accountName);
-    },
   },
   components: {
     Button,
@@ -119,7 +90,6 @@ export default defineComponent({
     SumBalances,
   },
   data: () => ({
-    editWallet: null,
     addAdditionalAccount: false,
     edit: false,
   }),
@@ -135,12 +105,6 @@ export default defineComponent({
   methods: {
     addAccount() {
       this.$router.push('/accountAddAdditional');
-    },
-    removeAccount() {
-      this.$router.push('/accountRemove/' + this.editWalletIndex);
-    },
-    renameAccount() {
-      this.$router.push('/accountRename/' + this.editWalletIndex);
     },
     goToAccount(account) {
       this.$store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
@@ -169,16 +133,13 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
 .wallet {
-  display: flex;
-  margin-bottom: 24px;
+  @apply flex mb-6;
 
   > img {
-    height: 48px;
-    width: 48px;
-    margin-right: 16px;
-    margin-top: 6px;
+    @apply h-12 w-12 mr-4 mt-2;
   }
 }
 

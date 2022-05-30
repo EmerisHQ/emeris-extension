@@ -23,7 +23,7 @@
       :style="{
         opacity: account.isLedger ? 0.6 : 1,
       }"
-      @click="!account.isLedger && $router.push('/backup')"
+      @click="goToBackupPage"
     >
       <h2>Back up your wallet</h2>
       <span v-if="!backedUp" class="secondary-text">Your wallet is currently not secured</span>
@@ -48,6 +48,7 @@ import { defineComponent } from 'vue';
 
 import Icon from '@/components/ui/Icon.vue';
 import Header from '@@/components/Header.vue';
+import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 
@@ -63,6 +64,16 @@ export default defineComponent({
     },
     backedUp() {
       return this.account.setupState === AccountCreateStates.COMPLETE;
+    },
+  },
+  methods: {
+    goToBackupPage() {
+      this.$store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+        currentFlow: 'BACK_UP',
+      });
+      if (!this.account.isLedger) {
+        this.$router.push('/backup');
+      }
     },
   },
 });

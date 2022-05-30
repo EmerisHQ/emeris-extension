@@ -1,17 +1,20 @@
 <template>
   <div class="page">
     <Header :title="$route.query.caption" back-to="/settings" />
-    <div style="margin-top: 100px; text-align: center">
-      <Icon name="WarningTriangleIcon" icon-size="2" style="color: #fc8c0b; margin-bottom: 24px" />
-      <h1 style="margin-bottom: 24px">Emeris support team will never ask you your recovery phrase</h1>
-      <span class="secondary-text">Please make sure to keep it secret and store it in a secure place</span>
+    <div class="mt-16 text-center">
+      <Icon name="WarningTriangleIcon" :icon-size="2" class="mb-6 text-warning" />
+      <h1 class="mb-6">The Emeris support team will never ask you your secret recovery phrase.</h1>
+      <span class="secondary-text"
+        >Scammers will sometimes pose as company representatives in an attempt to gain access to your account and steal
+        your assets. Be careful out there!</span
+      >
     </div>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
-      <Button :name="'Continue to ' + $route.query.caption" @click="submit" />
+    <div class="mt-auto">
+      <Button :name="'Continue to ' + $route.query.caption" @click="submit">
+        <template #right>
+          <Icon name="DaggArrowRightIcon" :icon-size="1" class="inline-flex -rotate-45" />
+        </template>
+      </Button>
     </div>
   </div>
 </template>
