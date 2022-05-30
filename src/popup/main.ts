@@ -6,11 +6,20 @@ import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import VueTippy from 'vue-tippy';
 
-import messages from '@/locales/en.json';
+import demerisMessages from '@/locales/en.json';
+import extensionMessages from '@@/locales/en.json';
 import router from '@@/router/popup';
 
 import { rootstore } from '../store/index';
 import App from './App.vue';
+
+const messages = {
+  en: {
+    ...demerisMessages.en,
+    ...extensionMessages.en,
+  },
+};
+
 const i18n = createI18n({
   globalInjection: true,
   legacy: false,
