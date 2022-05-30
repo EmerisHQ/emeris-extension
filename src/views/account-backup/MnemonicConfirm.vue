@@ -101,7 +101,6 @@ export default defineComponent({
         if (this.step === 2) {
           this.$store.dispatch(GlobalEmerisActionTypes.ACCOUNT_BACKED_UP, { accountName: this.account.accountName });
 
-          console.log('checking here', this.currentFlow, this.account.accountName);
           if (this.currentFlow === 'REMOVE_ACCOUNT') {
             this.$router.push('/accountBackedUpForRemove');
           } else {
