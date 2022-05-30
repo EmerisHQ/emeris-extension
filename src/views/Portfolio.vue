@@ -3,8 +3,8 @@
 
   <div v-else-if="balances.length === 0" class="page">
     <img :src="'/images/EmptyPortfolioBG.png'" class="background" />
-    <div class="flex relative mb-9">
-      <img class="h-6 w-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
+    <div class="flex relative mb-8">
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
     </div>
     <div class="mt-auto">
       <h1>{{ $t('ext.portfolio.emptyPage.title') }}</h1>
@@ -15,25 +15,23 @@
 
   <div v-else class="page">
     <img :src="'/images/PortfolioBG.png'" class="background" />
-    <div class="flex relative mb-9">
-      <img class="h-6 w-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
+    <div class="flex relative mb-8">
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
       <img class="wordmark" :src="'/images/EmerisWordmark.svg'" />
     </div>
 
     <span class="secondary-text account-selector mb-2 cursor-pointer" @click="$router.push('/accounts')"
       >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
     /></span>
-    <h1 class="text-4xl text-left mb-6">
+    <h1 class="text-2 text-left mb-6">
       <SumBalances :balances="balances" />
     </h1>
     <div class="flex">
-      <Button name="Receive" class="mr-3 flex" @click="$router.push('/receive')" />
-      <Button name="Send" class="flex-1" variant="secondary" disabled />
+      <Button name="Receive" class="mr-3 flex-1" @click="$router.push('/receive')" />
+      <Button name="Send" variant="secondary" class="flex-1" disabled />
     </div>
 
-    <h1 class="text-xl text-left mt-14 mb-6">
-      {{ $t('ext.portfolio.assetsHeader') }}
-    </h1>
+    <h1 class="text-left mt-14 mb-6 text-1">{{ $t('ext.portfolio.assetsHeader') }}</h1>
     <AssetsTable
       v-if="balances && balances.length > 0 && verifiedDenoms"
       class="mb-6"
@@ -45,8 +43,8 @@
     />
   </div>
   <Slideout :open="showMnemonicBackup" @update:open="() => {}">
-    <h1 class="mb-4">{{ $t('ext.portfolio.backupAccount') }}</h1>
-    <div class="checkbox inline-flex items-start p-4 rounded-xl border border-solid border-border cursor-pointer mb-6">
+    <p class="mb-4 text-2 font-semibold text-center">{{ $t('ext.portfolio.backupAccount') }}</p>
+    <div class="mb-6 checkbox inline-flex items-start p-4 rounded-xl border border-solid border-border cursor-pointer">
       <img class="mt-1 ml-0.5" :src="'/images/BackupIcon.svg'" />
       <p class="checkbox__label ml-4 -text-1 leading-copy">{{ $t('ext.portfolio.backupDetail') }}</p>
     </div>
@@ -134,39 +132,6 @@ const skipBackup = () => {
   .icon {
     display: inline-block;
     transform: rotate(90deg) translateX(2px);
-  }
-}
-
-.list-card-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  height: 90px;
-  cursor: pointer;
-
-  background: linear-gradient(0deg, #171717 0%, #040404 100%);
-
-  box-shadow: 3px 9px 32px -4px rgba(0, 0, 0, 0.07);
-  border-radius: 10px;
-
-  position: relative;
-  overflow: hidden;
-
-  img {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-
-  .icon {
-    position: absolute;
-    top: 50%;
-    right: 24px;
-  }
-
-  .secondary-text {
-    font-size: 13px;
   }
 }
 
