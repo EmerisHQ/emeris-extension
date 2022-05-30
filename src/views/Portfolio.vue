@@ -43,7 +43,7 @@
     />
   </div>
   <Slideout :open="showMnemonicBackup" @update:open="() => {}">
-    <h1 class="mb-4">Back up your account</h1>
+    <p class="mb-4 text-2 font-semibold text-center">Back up your account</p>
     <div class="mb-6 checkbox inline-flex items-start p-4 rounded-xl border border-solid border-border cursor-pointer">
       <img class="mt-1 ml-0.5" :src="'/images/BackupIcon.svg'" />
       <p class="checkbox__label ml-4 -text-1 leading-copy">Your assets are not secured. Please back up your wallet.</p>
