@@ -32,6 +32,7 @@ jobs:
           # Put in secrets
           VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
           VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
+          VITE_ENCRYPTION_SALT: 8mbL9mEnOTXdiwvgXvgv
 
       - uses: thedoctor0/zip-release@master
         with:
