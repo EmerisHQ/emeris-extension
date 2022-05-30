@@ -86,7 +86,6 @@ export type GetMnemonicRequest = Request & {
   data: {
     accountName: string;
     password: string;
-    sessionActive: boolean;
   };
 };
 export type GetLastAccountRequest = Request & {

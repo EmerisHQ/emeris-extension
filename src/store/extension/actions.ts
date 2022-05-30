@@ -21,7 +21,7 @@ export interface Actions extends AccountActionsInterface, WalletActionsInterface
   [ActionTypes.GET_PENDING]({ commit, getters }: ActionContext<State, RootState>): Promise<ExtensionRequest[]>;
   [ActionTypes.GET_MNEMONIC](
     { commit }: ActionContext<State, RootState>,
-    { accountName, password, sessionActive }: { accountName: string; password: string; sessionActive: boolean },
+    { accountName, password }: { accountName: string; password: string },
   ): Promise<void>;
   [ActionTypes.GET_ADDRESS]({}: ActionContext<State, RootState>, { chainId }: { chainId: string }): Promise<string>;
   [ActionTypes.REMOVE_WHITELISTED_WEBSITE](
@@ -73,14 +73,11 @@ export const actions: ActionTree<State, RootState> & Actions = {
       ),
     );
   },
-  async [ActionTypes.GET_MNEMONIC](
-    { commit },
-    { accountName, password, sessionActive = false }: { accountName: string; password: string; sessionActive: boolean },
-  ) {
+  async [ActionTypes.GET_MNEMONIC]({ commit }, { accountName, password }: { accountName: string; password: string }) {
     try {
       const account = await browser.runtime.sendMessage({
         type: 'fromPopup',
-        data: { action: 'getMnemonic', data: { accountName, password, sessionActive } },
+        data: { action: 'getMnemonic', data: { accountName, password } },
       });
       if (!account) throw new Error('Password incorrect');
       commit(MutationTypes.SET_MNEMONIC, { account });
