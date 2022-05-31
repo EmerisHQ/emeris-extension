@@ -157,7 +157,7 @@ export default class EmerisStorage {
   }
   async extensionReset() {
     await browser.storage[this.storageMode].set({
-      secureKey: null,
+      cryptoKey: null,
       wallet: null,
       lastAccount: null,
       whitelistedWebsites: null,
