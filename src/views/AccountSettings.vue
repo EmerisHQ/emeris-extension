@@ -96,6 +96,9 @@ const nameFirstLetter = (name) => {
 };
 
 const goToBackup = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
+    accountName: currentWallet.value.accountName,
+  });
   store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
     currentFlow: `BACKUP_ACCOUNT_${route.params.index}`,
   });

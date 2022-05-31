@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -86,6 +86,12 @@ const lastAccount = computed(() => {
 watch(wallet.value, (newWallet) => {
   if (newWallet && newWallet.length > 0) loadBalances();
   if (newWallet && newWallet.length === 0) router.push('/welcome');
+});
+
+onMounted(() => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: '',
+  });
 });
 
 const goToCreateAccount = () => {
