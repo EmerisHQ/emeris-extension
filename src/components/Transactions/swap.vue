@@ -4,14 +4,14 @@
 
     <span class="secondary-text" style="font-size: 13px; margin-bottom: 8px; display: block">Amount</span>
     <div style="display: flex; flex-direction: row; margin-bottom: 12px">
-      <AmountDisplay :amount="message.from" style="font-weight: 500; font-size: 21px" />
+      <AmountDisplay :amount="message[0].from" style="font-weight: 500; font-size: 21px" />
     </div>
 
     <div style="display: flex; flex-direction: row; margin-bottom: 16px">
       <div style="flex: 1">
         <span class="secondary-text" style="font-size: 13px; margin-bottom: 8px; display: block">From</span>
         <div style="display: flex; flex-direction: row; align-items: center">
-          <CircleSymbol :denom="message.from.denom" :glow="false" style="margin-right: 16px" />
+          <CircleSymbol :denom="message[0].from.denom" :glow="false" style="margin-right: 16px" />
           <div style="display: flex; flex-direction: column">
             <span>{{ fromDenom }}</span>
           </div>
@@ -20,7 +20,7 @@
       <div style="flex: 1">
         <span class="secondary-text" style="font-size: 13px; margin-bottom: 8px; display: block">To</span>
         <div style="display: flex; flex-direction: row; align-items: center">
-          <CircleSymbol :denom="message.to.denom" :glow="false" style="margin-right: 16px" />
+          <CircleSymbol :denom="message[message.length - 1].to.denom" :glow="false" style="margin-right: 16px" />
           <div style="display: flex; flex-direction: column">
             <span>{{ toDenom }}</span>
           </div>
@@ -40,7 +40,11 @@
       >
         <div style="display: flex; flex-direction: row; justify-content: space-between">
           <span class="secondary-text">Limit price</span>
-          <span>1 {{ fromDenom }} = {{ Math.round((1 / message.orderPrice) * 100000) / 100000 }} {{ toDenom }}</span>
+          <span
+            >1 {{ fromDenom }} =
+            {{ Math.round((1 / orderPrice) * 100000) / 100000 }}
+            {{ toDenom }}</span
+          >
         </div>
         <!-- TODO swap fee not in data model -->
         <!-- <div style="display: flex; flex-direction: row; justify-content: space-between">
@@ -98,10 +102,13 @@ export default {
   }),
   computed: {
     toDenom() {
-      return getDisplayDenom(this.$store, this.message.to.denom);
+      return getDisplayDenom(this.$store, this.message[this.message.length - 1].to.denom);
     },
     fromDenom() {
-      return getDisplayDenom(this.$store, this.message.from.denom);
+      return getDisplayDenom(this.$store, this.message[0].from.denom);
+    },
+    orderPrice() {
+      return this.message.reduce((agg, cur) => agg * cur.orderPrice, 1);
     },
   },
 };
