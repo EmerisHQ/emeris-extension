@@ -16,6 +16,9 @@ test.describe('Account Create', () => {
 
     await page.click('text=Show secret recovery phrase');
 
+    await page.fill('[placeholder="Password"]', '123456A$');
+    await page.click('text=Continue');
+
     await page.click('text=Back up later');
     await page.click('text=I understand that if I don’t back up my account, I risk losing access to it.');
     await page.locator('.button-primary:has-text("Back up later")').click();
@@ -28,6 +31,9 @@ test.describe('Account Create', () => {
 
     // test backing up
     await page.click('text=Show secret recovery phrase');
+
+    await page.fill('[placeholder="Password"]', '123456A$');
+    await page.click('text=Continue');
 
     await expect(page.locator('.words >> visible=true')).toBeVisible();
     const mnemonic = (await page.locator('.words').textContent()).split(' ');
