@@ -53,7 +53,7 @@ export default () => {
         compositionOnly: false,
 
         // you need to set i18n resource including paths !
-        include: path.resolve(__dirname, './demeris/src/locales/**'),
+        include: [path.resolve(__dirname, './demeris/src/locales/**'), path.resolve(__dirname, './src/locales/**')],
       }),
       nodeResolve(),
       dynamicImport(),

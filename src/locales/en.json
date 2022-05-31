@@ -1,0 +1,18 @@
+{
+  "en": {
+    "ext": {
+      // Used so it doesn't conflict with Demeris
+      "portfolio": {
+        "emptyPage": {
+          "title": "Get started by funding your wallet",
+          "subtitle": "Send your assets from an exchange or another wallet."
+        },
+        "assetsHeader": "Assets",
+        "backupAccount": "Back up your account",
+        "backupDetail": "Your assets are not secured. Please backup your wallet.",
+        "backupButton": "Back up now",
+        "backupButtonLater": "Back up later"
+      }
+    }
+  }
+}

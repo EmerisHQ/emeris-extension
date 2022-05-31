@@ -7,8 +7,8 @@
       <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
     </div>
     <div class="mt-auto">
-      <h1>Get started by funding your wallet</h1>
-      <p class="secondary-text mb-8 mt-4 text-center">Send your assets from an exchange or another wallet.</p>
+      <h1>{{ $t('ext.portfolio.emptyPage.title') }}</h1>
+      <p class="secondary-text mb-8 mt-4 text-center">{{ $t('ext.portfolio.emptyPage.subtitle') }}</p>
       <Button name="Receive assets" @click="() => $router.push('/receive')" />
     </div>
   </div>
@@ -31,7 +31,7 @@
       <Button name="Send" variant="secondary" class="flex-1" disabled />
     </div>
 
-    <h1 class="text-left mt-14 mb-6 text-1">Assets</h1>
+    <h1 class="text-left mt-14 mb-6 text-1">{{ $t('ext.portfolio.assetsHeader') }}</h1>
     <AssetsTable
       v-if="balances && balances.length > 0 && verifiedDenoms"
       class="mb-6"
@@ -43,20 +43,21 @@
     />
   </div>
   <Slideout :open="showMnemonicBackup" @update:open="() => {}">
-    <p class="mb-4 text-2 font-semibold text-center">Back up your account</p>
+    <p class="mb-4 text-2 font-semibold text-center">{{ $t('ext.portfolio.backupAccount') }}</p>
     <div class="mb-6 checkbox inline-flex items-start p-4 rounded-xl border border-solid border-border cursor-pointer">
       <img class="mt-1 ml-0.5" :src="'/images/BackupIcon.svg'" />
-      <p class="checkbox__label ml-4 -text-1 leading-copy">Your assets are not secured. Please back up your wallet.</p>
+      <p class="checkbox__label ml-4 -text-1 leading-copy">{{ $t('ext.portfolio.backupDetail') }}</p>
     </div>
     <div class="buttons">
-      <Button name="Back up now" @click="goToBackup()" />
-      <Button name="Back up later" variant="link" @click="skipBackup" />
+      <Button :name="$t('ext.portfolio.backupButton')" @click="goToBackup()" />
+      <Button :name="$t('ext.portfolio.backupButtonLater')" variant="link" @click="skipBackup" />
     </div>
   </Slideout>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -71,6 +72,8 @@ import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates, BalanceDenom } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
+
+useI18n({ useScope: 'global' });
 
 const store = useStore();
 const router = useRouter();
