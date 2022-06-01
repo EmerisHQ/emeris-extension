@@ -39,12 +39,12 @@ export const encrypt = async (plaintext, importedKey: CryptoKey) => {
 };
 
 export const decrypt = async (ciphertext, importedKey: CryptoKey) => {
-  const ivStr = Buffer.from(ciphertext, 'base64').toString('binary').slice(0, 12); // decode base64 iv
+  const ivStr = Buffer.from(ciphertext, 'base64').toString().slice(0, 12); // decode base64 iv
   const iv = new Uint8Array(Array.from(ivStr).map((ch) => ch.charCodeAt(0))); // iv as Uint8Array
 
   const alg = { name: 'AES-GCM', iv: iv }; // specify algorithm to use
 
-  const ctStr = Buffer.from(ciphertext, 'base64').toString('binary').slice(12); // decode base64 ciphertext
+  const ctStr = Buffer.from(ciphertext, 'base64').toString().slice(12); // decode base64 ciphertext
   const ctUint8 = new Uint8Array(Array.from(ctStr).map((ch) => ch.charCodeAt(0))); // ciphertext as Uint8Array
 
   try {
