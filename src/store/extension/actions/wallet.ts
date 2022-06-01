@@ -47,9 +47,10 @@ export const walletActions: ActionTree<State, RootState> & WalletActionsInterfac
       throw new Error('Extension:HasWallet failed');
     }
   },
-  async [ActionTypes.LOCK_WALLET]({}) {
+  async [ActionTypes.LOCK_WALLET]({ commit }) {
     try {
       await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'lockWallet' } });
+      commit(MutationTypes.SET_WALLET, null);
     } catch (e) {
       console.log(e);
       throw new Error('Extension:LockWallet failed');

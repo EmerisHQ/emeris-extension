@@ -2,7 +2,7 @@
   <div class="page">
     <img :src="'/images/UnlockBG.png'" class="background" />
 
-    <h1 class="mt-48 mb-1">{{ title }}</h1>
+    <p class="mt-64 mb-1 font-medium text-2 text-center">{{ title }}</p>
     <span
       v-if="subtitle"
       class="text-center"

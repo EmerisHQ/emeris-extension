@@ -1,5 +1,5 @@
 <template>
-  <ConfirmationScreen title="Welcome back" :subtitle="subtitleText" :error-subtitle="error">
+  <ConfirmationScreen :title="title" :subtitle="subtitleText" :error-subtitle="error">
     <div class="form" @keyup.enter="checkPassword">
       <div class="buttons mt-auto">
         <div :class="{ error: error }">
@@ -14,40 +14,44 @@
   </ConfirmationScreen>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
+import { useStore } from '@/utils/useStore';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
+import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import ConfirmationScreen from '@@/views/ConfirmationScreen.vue';
 
-export default defineComponent({
-  name: 'Welcome Back',
-  components: {
-    Button,
-    Input,
-    ConfirmationScreen,
-  },
-  data: () => ({
-    error: false,
-    password: '',
-  }),
-  computed: {
-    subtitleText() {
-      if (this.error) return 'Wrong Password. Try again.';
-      return 'Enter your password to unlock Emeris.';
-    },
-  },
-  methods: {
-    async checkPassword() {
-      const wallet = await this.$store.dispatch(GlobalEmerisActionTypes.UNLOCK_WALLET, { password: this.password });
-      if (wallet) {
-        this.$router.push('/');
-      } else {
-        this.error = true;
-      }
-    },
-  },
+const store = useStore();
+const router = useRouter();
+const error = ref(false);
+const password = ref('');
+
+const subtitleText = computed(() => {
+  if (error.value) return 'Wrong Password. Try again.';
+  return 'Enter your password to unlock Emeris.';
 });
+
+const currentFlow = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
+});
+
+const title = computed(() => {
+  return currentFlow.value === 'LOCK_WALLET' ? 'Sign in' : 'Welcome back';
+});
+
+const checkPassword = async () => {
+  const wallet = await store.dispatch(GlobalEmerisActionTypes.UNLOCK_WALLET, { password: password.value });
+  if (wallet) {
+    store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+      currentFlow: '',
+    });
+    router.push('/');
+  } else {
+    error.value = true;
+  }
+};
 </script>
