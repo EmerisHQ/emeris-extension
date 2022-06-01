@@ -25,22 +25,16 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
-import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const router = useRouter();
-const route = useRoute();
 const store = useStore();
-
-const account = computed(() => {
-  return store.getters[GlobalEmerisGetterTypes.getAccount];
-});
 
 const currentFlow = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
@@ -60,18 +54,7 @@ const backTo = computed(() => {
 });
 
 const goToShowMnemonic = async () => {
-  if (route.query.previous !== '/accountCreate') {
-    router.push('/backup/password');
-  } else {
-    if (account.value) {
-      await store.dispatch(GlobalEmerisActionTypes.GET_MNEMONIC, {
-        accountName: account.value.accountName,
-        password: undefined,
-        sessionActive: true,
-      });
-    }
-    router.push('/backup/show');
-  }
+  router.push('/backup/password');
 };
 </script>
 
