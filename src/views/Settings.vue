@@ -7,12 +7,15 @@
       <p class="secondary-text -text-1 mb-3">Wallet settings</p>
       <div class="bg-fg rounded-xl">
         <div class="cursor-pointer p-4" @click="$router.push('/security')">
-          Security <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
+          Security
+          <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
         <hr class="mx-4 border-bg opacity-80" />
         <div
           class="cursor-pointer p-4"
-          :class="{ 'pointer-events-none secondary-text': whitelistedWebsites.length === 0 }"
+          :class="{
+            'pointer-events-none secondary-text': whitelistedWebsites.length === 0,
+          }"
           @click="$router.push('/whitelisted')"
         >
           Authorized websites
@@ -115,7 +118,12 @@
       <div class="bg-fg rounded-xl">
         <div
           class="cursor-pointer p-4"
-          @click="$router.push({ path: '/support', query: { url: 'https://emeris.com', caption: 'Emeris web app' } })"
+          @click="
+            $router.push({
+              path: '/support',
+              query: { url: 'https://emeris.com', caption: 'Emeris web app' },
+            })
+          "
         >
           Emeris Web App
           <Icon name="DaggArrowRightIcon" :icon-size="1" class="inline-flex float-right mt-1 -rotate-45" />
@@ -137,7 +145,10 @@
         <div
           class="cursor-pointer p-4"
           @click="
-            $router.push({ path: '/support', query: { url: 'https://t.me/EmerisHQ', caption: 'Telegram community' } })
+            $router.push({
+              path: '/support',
+              query: { url: 'https://t.me/EmerisHQ', caption: 'Telegram community' },
+            })
           "
         >
           Telegram Emeris community
@@ -147,10 +158,14 @@
         <div
           class="cursor-pointer p-4"
           @click="
-            $router.push({ path: '/support', query: { url: 'https://twitter.com/emerishq', caption: 'Twitter' } })
+            $router.push({
+              path: '/support',
+              query: { url: 'https://twitter.com/emerishq', caption: 'Twitter' },
+            })
           "
         >
-          Twitter <Icon name="DaggArrowRightIcon" :icon-size="1" class="inline-flex float-right mt-1 -rotate-45" />
+          Twitter
+          <Icon name="DaggArrowRightIcon" :icon-size="1" class="inline-flex float-right mt-1 -rotate-45" />
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ test.describe('Transactions', () => {
     await enableWebsite(context, page);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
-    await page.goto(`https://www.google.com/`);
+    await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 
     // when the transaction popup shows, click accept
@@ -56,7 +56,7 @@ test.describe('Transactions', () => {
     await enableWebsite(context, page);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
-    await page.goto(`https://www.google.com/`);
+    await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 
     // when the transaction popup shows, click accept

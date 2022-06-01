@@ -8,7 +8,7 @@ test.describe('CosmJs', () => {
     await enableWebsite(context, page, true);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
-    await page.goto(`https://www.google.com/`);
+    await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 
     // when the transaction popup shows, click accept
@@ -85,7 +85,7 @@ test.describe('CosmJs', () => {
     await enableWebsite(context, page, true);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
-    await page.goto(`https://www.google.com/`);
+    await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 
     const result = await page.evaluate(() => {
