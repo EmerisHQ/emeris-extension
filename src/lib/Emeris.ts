@@ -126,6 +126,9 @@ export class Emeris implements IEmeris {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
     }
   }
+  async lockWallet(): Promise<void> {
+    await browser.storage['session'].clear();
+  }
   async launchPopup(): Promise<number> {
     return (
       await browser.windows.create({
@@ -244,6 +247,8 @@ export class Emeris implements IEmeris {
           console.log(e);
         }
         return;
+      case 'lockWallet':
+        return await this.lockWallet();
       case 'hasWallet':
         return await this.hasWallet();
       case 'getRawTransaction':

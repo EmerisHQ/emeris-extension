@@ -116,6 +116,9 @@ export type UnlockWalletRequest = Request & {
     password: string;
   };
 };
+export type LockWalletRequest = Request & {
+  action: 'lockWallet';
+};
 export type CreateWalletRequest = Request & {
   action: 'createWallet';
   data: {
@@ -215,6 +218,7 @@ export type PopupRequest =
   | GetMnemonicRequest
   | CreateWalletRequest
   | UnlockWalletRequest
+  | LockWalletRequest
   | ChangePasswordRequest
   | GetWalletRequest
   | GetLastAccountRequest

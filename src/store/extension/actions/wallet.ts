@@ -12,6 +12,7 @@ export interface WalletActionsInterface {
   //Wallet Action types
   [ActionTypes.GET_WALLET]({ commit, getters }: ActionContext<State, RootState>): Promise<EmerisWallet>;
   [ActionTypes.HAS_WALLET]({ commit, getters }: ActionContext<State, RootState>): Promise<boolean>;
+  [ActionTypes.LOCK_WALLET]({ commit }: ActionContext<State, RootState>);
   [ActionTypes.CREATE_WALLET](
     { commit }: ActionContext<State, RootState>,
     { password }: { password: string },
@@ -44,6 +45,14 @@ export const walletActions: ActionTree<State, RootState> & WalletActionsInterfac
       return hasWallet;
     } catch (e) {
       throw new Error('Extension:HasWallet failed');
+    }
+  },
+  async [ActionTypes.LOCK_WALLET]({}) {
+    try {
+      await browser.runtime.sendMessage({ type: 'fromPopup', data: { action: 'lockWallet' } });
+    } catch (e) {
+      console.log(e);
+      throw new Error('Extension:LockWallet failed');
     }
   },
   async [ActionTypes.CREATE_WALLET]({ commit, getters }, { password }: { password: string }) {
