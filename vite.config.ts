@@ -4,6 +4,7 @@ import inject from '@rollup/plugin-inject';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import vue from '@vitejs/plugin-vue';
 import * as path from 'path';
+import manifestJson from 'rollup-plugin-manifest-json';
 import { dynamicImport } from 'vite-plugin-dynamic-import';
 import envCompatible from 'vite-plugin-env-compatible';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -32,6 +33,16 @@ export default () => {
           inject({
             Buffer: ['buffer', 'Buffer'],
           }),
+          manifestJson({
+            input: 'public/manifest.json', // Required
+            minify: true,
+            manifest: {
+              ...((process.env.NODE_ENV != 'production' ||
+                process.env.EXTENSION_ID === 'cklkpejioojjeiigffappdlcmnonmjek') && {
+                key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvWWKi8PPH3u+bDCFJWTyvCwc9+kUt1l3WBt9vd3cQY7dpmEWGmFaeTNLLVWEE6+cwcUl4sOS9Jgj3J+svRtK8+CupAjL5RMRUh3v9amRZ4Gn0QT+x8K4Cg+KN+3fP6YnTw/QQI0laU2oEIpDbltuYz8x7zcZgmVtAeCo+55YNuR4q1hfc/ciSH5/wvkBplP8D0h4bhNAHNFUwmr39mTBhprr4KocMez09QcDIj7/5XGcaprLf0HpQx1rxD05ajxjUuM266Xz6uy5u6TvnqQoYZmPNo0zJoJIPiJ/qL+McQ6H8FzDs3Lhjv3OePbA+TOyx8uOCG0gNnyHlRAP5uPVzQIDAQAB',
+              }),
+            },
+          }),
         ],
       },
     },
@@ -42,7 +53,7 @@ export default () => {
         compositionOnly: false,
 
         // you need to set i18n resource including paths !
-        include: path.resolve(__dirname, './demeris/src/locales/**'),
+        include: [path.resolve(__dirname, './demeris/src/locales/**'), path.resolve(__dirname, './src/locales/**')],
       }),
       nodeResolve(),
       dynamicImport(),

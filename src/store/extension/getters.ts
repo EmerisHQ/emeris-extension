@@ -10,6 +10,7 @@ export interface Getters {
   [GetterTypes.getPending](state: State): ExtensionRequest[];
   [GetterTypes.getWallet](state: State): EmerisWallet;
   [GetterTypes.getLastAccount](state: State): string;
+  [GetterTypes.getCurrentFlow](state: State): string;
 }
 
 export interface GlobalGetters {
@@ -22,6 +23,9 @@ export interface GlobalGetters {
   [GlobalEmerisGetterTypes.getLastAccount](
     ...args: Parameters<Getters[GetterTypes.getLastAccount]>
   ): ReturnType<Getters[GetterTypes.getLastAccount]>;
+  [GlobalEmerisGetterTypes.getCurrentFlow](
+    ...args: Parameters<Getters[GetterTypes.getCurrentFlow]>
+  ): ReturnType<Getters[GetterTypes.getCurrentFlow]>;
 }
 
 export const getters: GetterTree<State, RootState> & Getters = {
@@ -46,5 +50,8 @@ export const getters: GetterTree<State, RootState> & Getters = {
         }),
       )
       .filter((x) => !!x);
+  },
+  [GetterTypes.getCurrentFlow]: (state) => {
+    return state.currentFlow;
   },
 };

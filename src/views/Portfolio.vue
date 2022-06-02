@@ -3,51 +3,38 @@
 
   <div v-else-if="balances.length === 0" class="page">
     <img :src="'/images/EmptyPortfolioBG.png'" class="background" />
-    <div style="display: flex; position: relative; margin-bottom: 36px">
-      <img
-        style="height: 24px; width: 24px; position: absolute"
-        :src="'/images/Avatar.svg'"
-        @click="$router.push('/account')"
-      />
+    <div class="flex relative mb-8">
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
     </div>
-    <div style="margin-top: auto">
-      <h1>Get started by funding your wallet</h1>
-      <p class="secondary-text" style="margin-bottom: 32px; margin-top: 16px; text-align: center">
-        Send your assets from an exchange or another wallet.
-      </p>
+    <div class="mt-auto">
+      <h1>{{ $t('ext.portfolio.emptyPage.title') }}</h1>
+      <p class="secondary-text mb-8 mt-4 text-center">{{ $t('ext.portfolio.emptyPage.subtitle') }}</p>
       <Button name="Receive assets" @click="() => $router.push('/receive')" />
     </div>
   </div>
 
   <div v-else class="page">
     <img :src="'/images/PortfolioBG.png'" class="background" />
-    <div style="display: flex; position: relative; margin-bottom: 36px">
-      <img
-        style="height: 24px; width: 24px; position: absolute"
-        :src="'/images/Avatar.svg'"
-        @click="$router.push('/account')"
-      />
+    <div class="flex relative mb-8">
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
       <img class="wordmark" :src="'/images/EmerisWordmark.svg'" />
     </div>
 
-    <span
-      class="secondary-text account-selector"
-      style="margin-bottom: 8px; cursor: pointer"
-      @click="$router.push('/accounts')"
+    <span class="secondary-text account-selector mb-2 cursor-pointer" @click="$router.push('/accounts')"
       >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
     /></span>
-    <h1 style="font-size: 38px; text-align: left; margin-bottom: 24px">
+    <h1 class="text-2 text-left mb-6">
       <SumBalances :balances="balances" />
     </h1>
-    <div style="display: flex">
-      <Button name="Receive" style="margin-right: 12px; flex: 1" @click="$router.push('/receive')" />
-      <Button name="Send" variant="secondary" style="flex: 1" disabled />
+    <div class="flex">
+      <Button name="Receive" class="mr-3 flex-1" @click="$router.push('/receive')" />
+      <Button name="Send" variant="secondary" class="flex-1" disabled />
     </div>
 
-    <h1 style="font-size: 21px; text-align: left; margin-top: 56px; margin-bottom: 24px">Assets</h1>
+    <h1 class="text-left mt-14 mb-6 text-1">{{ $t('ext.portfolio.assetsHeader') }}</h1>
     <AssetsTable
       v-if="balances && balances.length > 0 && verifiedDenoms"
-      style="margin-bottom: 24px"
+      class="mb-6"
       :balances="balances"
       :hide-zero-assets="true"
       variant="balance"
@@ -56,23 +43,21 @@
     />
   </div>
   <Slideout :open="showMnemonicBackup" @update:open="() => {}">
-    <h1 style="margin-bottom: 16px">Back up your account</h1>
-    <div
-      style="margin-bottom: 24px"
-      class="checkbox inline-flex items-start p-4 rounded-xl border border-solid border-border cursor-pointer"
-    >
+    <p class="mb-4 text-2 font-semibold text-center">{{ $t('ext.portfolio.backupAccount') }}</p>
+    <div class="mb-6 checkbox inline-flex items-start p-4 rounded-xl border border-solid border-border cursor-pointer">
       <img class="mt-1 ml-0.5" :src="'/images/BackupIcon.svg'" />
-      <p class="checkbox__label ml-4 -text-1 leading-copy">Your funds are not secured, please backup your wallet.</p>
+      <p class="checkbox__label ml-4 -text-1 leading-copy">{{ $t('ext.portfolio.backupDetail') }}</p>
     </div>
     <div class="buttons">
-      <Button name="Continue" @click="() => $router.push('/backup/password')" />
-      <Button name="Back up later" variant="link" @click="skipBackup" />
+      <Button :name="$t('ext.portfolio.backupButton')" @click="() => $router.push('/backup?previous=/accountCreate')" />
+      <Button :name="$t('ext.portfolio.backupButtonLater')" variant="link" @click="skipBackup" />
     </div>
   </Slideout>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
@@ -85,6 +70,8 @@ import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates, BalanceDenom } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
+
+useI18n({ useScope: 'global' });
 
 const store = useStore();
 
@@ -145,39 +132,6 @@ const skipBackup = () => {
   .icon {
     display: inline-block;
     transform: rotate(90deg) translateX(2px);
-  }
-}
-
-.list-card-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  height: 90px;
-  cursor: pointer;
-
-  background: linear-gradient(0deg, #171717 0%, #040404 100%);
-
-  box-shadow: 3px 9px 32px -4px rgba(0, 0, 0, 0.07);
-  border-radius: 10px;
-
-  position: relative;
-  overflow: hidden;
-
-  img {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-
-  .icon {
-    position: absolute;
-    top: 50%;
-    right: 24px;
-  }
-
-  .secondary-text {
-    font-size: 13px;
   }
 }
 

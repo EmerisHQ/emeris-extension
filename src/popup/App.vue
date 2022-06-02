@@ -10,6 +10,11 @@ import { useStore } from 'vuex';
 import { GlobalActionTypes } from '@/store/demeris-api/action-types';
 import { MutationTypes } from '@/store/demeris-api/mutation-types';
 import { setStore } from '@/utils/useStore';
+
+if (+window.outerHeight > +window.innerHeight) {
+  document.querySelector('html').classList.add('popup-height');
+}
+
 export default defineComponent({
   name: 'App',
   setup() {
@@ -120,9 +125,12 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style lang="scss">
 html {
-  width: 400px;
-  height: 400px;
+  @apply bg-darkBanner w-[375px] h-[600px];
+
+  &.popup-height {
+    @apply max-h-screen;
+  }
 }
 </style>

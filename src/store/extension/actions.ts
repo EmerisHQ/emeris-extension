@@ -28,6 +28,10 @@ export interface Actions extends AccountActionsInterface, WalletActionsInterface
     {}: ActionContext<State, RootState>,
     { website }: { website: string },
   ): Promise<void>;
+  [ActionTypes.SET_CURRENT_FLOW](
+    { commit }: ActionContext<State, RootState>,
+    { currentFlow }: { currentFlow: string },
+  ): Promise<void>;
 }
 export type GlobalActions = Namespaced<Actions, 'extension'>;
 
@@ -69,12 +73,6 @@ export const actions: ActionTree<State, RootState> & Actions = {
       ),
     );
   },
-  async [ActionTypes.CHANGE_PASSWORD]({}, { password }: { password: string }) {
-    await browser.runtime.sendMessage({
-      type: 'fromPopup',
-      data: { action: 'changePassword', data: { password } },
-    });
-  },
   async [ActionTypes.GET_MNEMONIC]({ commit }, { accountName, password }: { accountName: string; password: string }) {
     try {
       const account = await browser.runtime.sendMessage({
@@ -87,6 +85,9 @@ export const actions: ActionTree<State, RootState> & Actions = {
       console.log(e);
       throw new Error('Extension:getMnemonic failed');
     }
+  },
+  async [ActionTypes.SET_CURRENT_FLOW]({ commit }, { currentFlow }: { currentFlow: string }) {
+    commit(MutationTypes.SET_CURRENT_FLOW, { currentFlow });
   },
   async [ActionTypes.GET_ADDRESS]({}, { chainId }: { chainId: string }) {
     try {
