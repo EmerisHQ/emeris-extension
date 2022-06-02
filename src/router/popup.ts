@@ -70,6 +70,11 @@ const routes: Array<RouteRecordRaw> = [
     component: Welcome,
   },
   {
+    path: '/signIn',
+    name: 'Sign In',
+    component: WelcomeBack,
+  },
+  {
     path: '/welcomeBack',
     name: 'Welcome Back',
     component: WelcomeBack,

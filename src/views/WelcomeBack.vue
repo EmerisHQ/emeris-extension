@@ -16,16 +16,16 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import { useStore } from '@/utils/useStore';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
-import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import ConfirmationScreen from '@@/views/ConfirmationScreen.vue';
 
 const store = useStore();
+const route = useRoute();
 const router = useRouter();
 const error = ref(false);
 const password = ref('');
@@ -35,12 +35,8 @@ const subtitleText = computed(() => {
   return 'Enter your password to unlock Emeris.';
 });
 
-const currentFlow = computed(() => {
-  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
-});
-
 const title = computed(() => {
-  return currentFlow.value === 'LOCK_WALLET' ? 'Sign in' : 'Welcome back';
+  return route.fullPath.includes('/signIn') ? 'Sign in' : 'Welcome back';
 });
 
 const checkPassword = async () => {

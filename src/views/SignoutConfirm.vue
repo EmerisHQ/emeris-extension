@@ -30,10 +30,7 @@ const router = useRouter();
 
 const submit = () => {
   store.dispatch(GlobalEmerisActionTypes.LOCK_WALLET);
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'LOCK_WALLET',
-  });
-  router.push('/welcomeBack');
+  router.push('/signIn');
 };
 </script>
 <style lang="scss" scoped>
