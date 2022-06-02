@@ -79,8 +79,8 @@ export default defineComponent({
               offline: true,
               refresh: 10000,
             })
-            .then(() => {
-              store
+            .then(async () => {
+              await store
                 .dispatch('cosmos.bank.v1beta1/QueryTotalSupply', { options: { subscribe: true, all: true } })
                 .catch((e) => {
                   console.error('Could not load denom supply: ' + e);
@@ -103,8 +103,10 @@ export default defineComponent({
                       subscribe: true,
                     })
                     .then((prices) => {
+                      console.log(prices);
                       localStorage.setItem('prices', JSON.stringify(prices));
-                    });
+                    })
+                    .catch((e) => console.error(e));
                 });
             })
             .catch((e) => {
