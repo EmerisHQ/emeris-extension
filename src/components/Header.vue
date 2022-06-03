@@ -6,6 +6,11 @@
       </div>
     </slot>
     <span class="title">{{ title }}</span>
+    <slot name="closeButton">
+      <div v-if="showClose" class="close-button" @click="goBack">
+        <Icon name="CloseIcon" :icon-size="1.5" class="mr-2" />
+      </div>
+    </slot>
     <div class="absolute right-4 additional-button">
       <slot></slot>
     </div>
@@ -22,10 +27,12 @@ const router = useRouter();
 interface Props {
   title: string;
   showBack?: boolean;
+  showClose?: boolean;
   backTo?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   showBack: true,
+  showClose: false,
   backTo: undefined,
 });
 
@@ -43,5 +50,8 @@ const goBack = () => {
 }
 .back-button {
   @apply -ml-3 -mr-5 mt-1;
+}
+.close-button {
+  @apply -mr-3 -ml-5 mt-1;
 }
 </style>

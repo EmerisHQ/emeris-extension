@@ -1,5 +1,5 @@
 <template>
-  <Header title="Receive asset" />
+  <Header title="Receive asset" :show-back="false" :show-close="true" />
   <div class="search-bar relative flex-1 min-h-0 flex flex-col">
     <Search v-model:keyword="keyword" placeholder="Search assets" class="w-full mx-auto max-w-md pb-3" />
     <div class="scroll-container overflow-y-auto flex-grow min-h-0 pt-1">
@@ -18,7 +18,7 @@
 
     <!-- Empty search result -->
     <div v-if="keywordFilteredAssets.length === 0" class="w-fit mx-auto">
-      <img class="-mt-8 h-52 w-52" src="/images/no-search-result.png" />
+      <img class="-mt-20 h-[171px] w-[209px]" src="/images/no-search-result.png" />
       <p class="secondary-text mt-6 text-center">No "{{ keyword }}" asset found.</p>
     </div>
   </div>

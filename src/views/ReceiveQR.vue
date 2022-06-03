@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="!asset || !recipientAddress" />
   <template v-else>
-    <Header :title="`Receive ${asset.display_name}`" />
+    <Header :title="`Receive ${asset.display_name}`" :show-close="true" />
     <div class="text-center -mt-6">
       <span class="secondary-text">on {{ asset.on_chain }}</span>
     </div>
@@ -94,12 +94,10 @@ watch(
 watch(
   () => asset.value,
   async (assetValue) => {
-    console.log('checking here', assetValue);
     if (!assetValue) return;
     recipientAddress.value = await store.dispatch(GlobalEmerisActionTypes.GET_ADDRESS, {
       chainId: assetValue.on_chain,
     });
   },
-  { immediate: true },
 );
 </script>
