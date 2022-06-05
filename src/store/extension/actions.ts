@@ -3,8 +3,10 @@ import { ActionContext, ActionTree } from 'vuex';
 import browser from 'webextension-polyfill';
 
 import { GlobalActionTypes } from '@/store';
+import { keyHashfromAddress } from '@/utils/basic';
 import { ExtensionRequest } from '@@/types/index';
 
+import chainConfig from '../../chain-config';
 import { RootState } from '..';
 import { ActionTypes } from './action-types';
 import { accountActions, AccountActionsInterface } from './actions/account';
@@ -63,15 +65,42 @@ export const actions: ActionTree<State, RootState> & Actions = {
       return false;
     }
   },
-  async [ActionTypes.LOAD_SESSION_DATA]({ dispatch, getters }) {
+  async [ActionTypes.LOAD_SESSION_DATA]({ dispatch, commit }) {
     const lastAccountused = await dispatch(ActionTypes.GET_LAST_ACCOUNT_USED); // also loads the last account to the state
-    const account =
-      getters['getWallet'].find((account) => account.accountName === lastAccountused) || getters['getWallet'][0];
-    await Promise.all(
-      account.keyHashes.map((keyHash) =>
-        dispatch(GlobalActionTypes.API.GET_BALANCES, { subscribe: true, params: { address: keyHash } }, { root: true }),
-      ),
+    await dispatch(GlobalActionTypes.USER.SIGN_OUT, null, { root: true });
+    // HACK to conform with the current data handling in the demeris
+    commit(
+      'demerisUSER/SET_ACCOUNT',
+      {
+        name: lastAccountused,
+      },
+      {
+        root: true,
+      },
     );
+    const chainConfigs = await chainConfig;
+    await Promise.all(
+      Object.keys(chainConfigs).map(async (chainId) => {
+        const keyHash = keyHashfromAddress(await dispatch(ActionTypes.GET_ADDRESS, { chainId }));
+        commit(
+          'demerisUSER/ADD_CHAIN_KEY_DATA',
+          {
+            keyHash,
+            chainName: chainConfigs[chainId].chain_name,
+            pubKey: new Uint8Array(), // TODO
+            algo: 'secp256k1',
+          },
+          {
+            root: true,
+          },
+        );
+      }),
+    );
+    await Promise.all([
+      dispatch(GlobalActionTypes.API.GET_ALL_BALANCES, { subscribe: false }, { root: true }),
+      dispatch(GlobalActionTypes.API.GET_ALL_UNBONDING_DELEGATIONS, { subscribe: false }, { root: true }),
+      dispatch(GlobalActionTypes.API.GET_ALL_STAKING_BALANCES, { subscribe: false }, { root: true }),
+    ]);
   },
   async [ActionTypes.GET_MNEMONIC]({ commit }, { accountName, password }: { accountName: string; password: string }) {
     try {
