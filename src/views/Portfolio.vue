@@ -1,5 +1,5 @@
 <template>
-  <Loader v-if="!account || balances === null" />
+  <Loader v-if="!account || !allLoaded" />
 
   <div v-else-if="balances.length === 0" class="page">
     <img :src="'/images/EmptyPortfolioBG.png'" class="background" />
@@ -8,7 +8,9 @@
     </div>
     <div class="mt-auto">
       <h1>{{ $t('ext.portfolio.emptyPage.title') }}</h1>
-      <p class="secondary-text mb-8 mt-4 text-center">{{ $t('ext.portfolio.emptyPage.subtitle') }}</p>
+      <p class="secondary-text mb-8 mt-4 text-center">
+        {{ $t('ext.portfolio.emptyPagegetOwnAddress.subtitle') }}
+      </p>
       <Button name="Receive assets" @click="() => $router.push('/receive')" />
     </div>
   </div>
@@ -24,7 +26,7 @@
       >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
     /></span>
     <h1 class="text-2 text-left mb-6">
-      <SumBalances :balances="balances" />
+      <TotalPrice />
     </h1>
     <div class="flex">
       <Button name="Receive" class="mr-3 flex-1" @click="$router.push('/receive')" />
@@ -33,7 +35,6 @@
 
     <h1 class="text-left mt-14 mb-6 text-1">{{ $t('ext.portfolio.assetsHeader') }}</h1>
     <AssetsTable
-      v-if="balances && balances.length > 0 && verifiedDenoms"
       class="mb-6"
       :balances="balances"
       :hide-zero-assets="true"
@@ -43,10 +44,14 @@
     />
   </div>
   <Slideout :open="showMnemonicBackup" @update:open="() => {}">
-    <p class="mb-4 text-2 font-semibold text-center">{{ $t('ext.portfolio.backupAccount') }}</p>
+    <p class="mb-4 text-2 font-semibold text-center">
+      {{ $t('ext.portfolio.backupAccount') }}
+    </p>
     <div class="mb-6 checkbox inline-flex items-start p-4 rounded-xl border border-solid border-border cursor-pointer">
       <img class="mt-1 ml-0.5" :src="'/images/BackupIcon.svg'" />
-      <p class="checkbox__label ml-4 -text-1 leading-copy">{{ $t('ext.portfolio.backupDetail') }}</p>
+      <p class="checkbox__label ml-4 -text-1 leading-copy">
+        {{ $t('ext.portfolio.backupDetail') }}
+      </p>
     </div>
     <div class="buttons">
       <Button :name="$t('ext.portfolio.backupButton')" @click="() => $router.push('/backup?previous=/accountCreate')" />
@@ -61,15 +66,17 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
+import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
-import { GlobalGetterTypes } from '@/store';
+import { useAccount } from '@/composables/useAccount';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
-import SumBalances from '@@/components/SumBalances.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
-import { AccountCreateStates, BalanceDenom } from '@@/types/index';
+import { AccountCreateStates } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
+
+const { allLoaded, balances } = useAccount();
 
 useI18n({ useScope: 'global' });
 
@@ -81,17 +88,6 @@ const showMnemonicBackup = ref(false);
 
 const account = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getAccount];
-});
-
-const verifiedDenoms = computed(() => {
-  return store.getters[GlobalGetterTypes.API.getVerifiedDenoms];
-});
-
-const balances = computed(() => {
-  if (!account.value) {
-    return undefined;
-  }
-  return store.getters[GlobalEmerisGetterTypes.getAllBalances](account.value).filter((b: BalanceDenom) => b.verified);
 });
 
 watch(account.value, (newValue) => {

@@ -42,6 +42,7 @@ export const getters: GetterTree<State, RootState> & Getters = {
     return (state.wallet || []).find((account) => account.accountName === state.lastAccount);
   },
   // accessing rootState doesn't allow for isolating each module, but this way we don't need to change the demeris module
+  // TODO remove
   [GetterTypes.getAllBalances]: (state, getters, rootState, rootGetters) => (account) => {
     return []
       .concat(
