@@ -3,27 +3,29 @@
   <template v-else>
     <Header :title="`Receive ${asset.display_name}`" :show-close="true" />
     <div class="text-center -mt-6">
-      <span class="secondary-text">on {{ asset.on_chain }}</span>
+      <p class="secondary-text text-sm">
+        on <span class="capitalize">{{ asset.on_chain.replace('-', ' ') }}</span>
+      </p>
     </div>
     <template v-if="recipientAddress">
       <div class="text-left flex flex-col mt-6">
         <span class="secondary-text -text-1 mb-1">{{ asset.display_name }} Address</span>
-        <span class="mb-4 break-words">{{ recipientAddress }}</span>
+        <span class="mb-2 break-words">{{ recipientAddress }}</span>
         <div class="cursor-pointer flex -text-1 text-tertiary" @click="pasteClip">
           <Icon v-if="!copied" name="CopyIcon" :icon-size="0.8" class="mr-3" />
           <Icon v-else name="CheckIcon" :icon-size="0.8" class="mr-3" />
           {{ copied ? 'Copied' : 'Copy' }} to clipboard
         </div>
       </div>
-      <div class="bg-fg rounded-lg flex py-3 px-4 my-8 items-start">
+      <div class="bg-fg rounded-lg flex py-3 px-4 my-6 items-start">
         <Icon name="InformationIcon" class="text-warning mr-2" :icon-size="1" />
         <p class="secondary-text -text-1">
           This address will only support receiving ATOM. If you use it to receive unsupported assets, they may be
           permanently lost.
         </p>
       </div>
-      <QrCode class="relative z-10 mx-auto mb-8" :value="recipientAddress" width="120" color="FFFFFF" />
-      <p class="text-center secondary-text -text-1 mb-6">
+      <QrCode class="relative z-10 mx-auto mt-2 mb-4" :value="recipientAddress" width="120" color="FFFFFF" />
+      <p class="text-center secondary-text -text-1 mb-8">
         Scan this code in a crypto wallet mobile app to enter this account as the recipient address.
       </p>
     </template>

@@ -2,7 +2,7 @@
   <div class="header-container">
     <slot name="backButton">
       <div v-if="showBack" class="back-button" @click="goBack">
-        <Icon name="CaretLeftIcon" :icon-size="1" class="ml-2" />
+        <Icon name="CaretLeftIcon" :icon-size="1.5" class="ml-2" />
       </div>
     </slot>
     <span class="title">{{ title }}</span>
@@ -43,7 +43,7 @@ const goBack = () => {
 
 <style>
 .header-container {
-  @apply w-full pb-6 flex content-between;
+  @apply w-full pb-6 flex items-center content-between;
 }
 .title {
   @apply font-semibold mx-auto;
