@@ -16,6 +16,9 @@ test.describe('Account Create', () => {
 
     await page.click('text=Show secret recovery phrase');
 
+    await page.fill('[placeholder="Password"]', '123456A$');
+    await page.click('text=Continue');
+
     await page.click('text=Back up later');
     await page.click('text=I understand that if I don’t back up my account, I risk losing access to it.');
     await page.locator('.button-primary:has-text("Back up later")').click();
@@ -28,6 +31,9 @@ test.describe('Account Create', () => {
 
     // test backing up
     await page.click('text=Show secret recovery phrase');
+
+    await page.fill('[placeholder="Password"]', '123456A$');
+    await page.click('text=Continue');
 
     await expect(page.locator('.words >> visible=true')).toBeVisible();
     const mnemonic = (await page.locator('.words').textContent()).split(' ');
@@ -213,7 +219,7 @@ test.describe('Account Create', () => {
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
 
     const secondPage = await context.newPage();
-    await secondPage.goto('https://www.google.com');
+    await secondPage.goto('https://emeris.com/');
 
     // on changing the account see if the window receives the event
     await Promise.all([waitForEvent(secondPage, 'emeris_account_changed', 3), page.click('text=Test Import Account')]);
@@ -223,7 +229,7 @@ test.describe('Account Create', () => {
     await enableWebsite(context, page);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
-    await page.goto(`https://www.google.com/`);
+    await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 
     expect(
