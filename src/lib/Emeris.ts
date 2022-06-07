@@ -362,7 +362,6 @@ export class Emeris implements IEmeris {
       }),
     );
   }
-
   // needed in CosmJs offline signer
   async getCosmJsAccounts(req: GetCosmJsAccounts) {
     if (!this.wallet) {
@@ -389,7 +388,6 @@ export class Emeris implements IEmeris {
       )),
     );
   }
-
   async getPublicKey(req: GetPublicKeyRequest): Promise<Uint8Array> {
     if (!this.wallet) {
       throw new Error('No wallet configured');
@@ -421,7 +419,9 @@ export class Emeris implements IEmeris {
   async hasWallet(): Promise<boolean> {
     return await this.storage.hasWallet();
   }
-
+  isUnlocked(): boolean {
+    return !!this.wallet;
+  }
   async signTransactionForOfflineAminoSigner(request: SignTransactionRequest): Promise<AminoSignResponse> {
     request.id = uuidv4();
 
@@ -628,7 +628,6 @@ export class Emeris implements IEmeris {
     }
     return enabled;
   }
-
   async getActiveAccount(request: ActiveAccountRequest): Promise<{
     readonly name: string;
     readonly algo: string;
