@@ -85,11 +85,7 @@ export class Emeris implements IEmeris {
   async init() {
     const lastAccessed = (await browser.storage['local'].get('lastAccessed')).lastAccessed;
     if (!lastAccessed || Date.now() - lastAccessed > 300000) {
-      this.cryptoKey = null;
-      this.wallet = null;
-      this.pending = [];
-      this.selectedAccount = null;
-      this.loaded = true;
+      this.clear();
       this.popup = null;
       this.queuedRequests = new Map();
     } else {
@@ -117,6 +113,13 @@ export class Emeris implements IEmeris {
 
     await browser.storage['session'].set({ popup: this.popup });
   }
+  clear(): void {
+    this.cryptoKey = null;
+    this.wallet = null;
+    this.pending = [];
+    this.selectedAccount = null;
+    this.loaded = true;
+  }
   async unlockWallet(password: string): Promise<EmerisWallet> {
     try {
       const cryptoKey = await importKey(password);
@@ -131,6 +134,10 @@ export class Emeris implements IEmeris {
     } catch (e) {
       throw new UnlockWalletError('Could not unlock wallet: ' + e);
     }
+  }
+  async lockWallet(): Promise<void> {
+    this.clear();
+    this.storeSession();
   }
   async launchPopup(): Promise<number> {
     return (
@@ -251,6 +258,8 @@ export class Emeris implements IEmeris {
           console.log(e);
         }
         return;
+      case 'lockWallet':
+        return await this.lockWallet();
       case 'hasWallet':
         return await this.hasWallet();
       case 'getRawTransaction':
