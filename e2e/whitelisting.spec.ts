@@ -2,22 +2,13 @@
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { emerisLoaded, enableWebsite, importAccount } from './helpers';
+import { accountCreate, emerisLoaded, enableWebsite } from './helpers';
 
 test.describe('Whitelisting', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`https://emeris.com//`);
-    await emerisLoaded(page);
-
-    // negative test
-    expect(
-      await page.evaluate(() => {
-        return window.emeris.supportedChains();
-      }),
-    ).toBe(false); // TODO the response should be a thrown error imo
-  });
   test('Request page whitelisting', async ({ page, context }) => {
-    await importAccount(page);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
+    await accountCreate(page);
+
     await enableWebsite(context, page);
 
     // positive test
@@ -46,14 +37,22 @@ test.describe('Whitelisting', () => {
     await expect(page.locator('text=https://emeris.com')).not.toBeVisible();
     await page.goto(`https://emeris.com/`);
     await emerisLoaded(page);
-    expect(
+
+    let errorMessage = '';
+    try {
       await page.evaluate(() => {
         return window.emeris.supportedChains();
-      }),
-    ).toBe(false); // TODO the response should be a thrown error imo
+      });
+    } catch (e) {
+      errorMessage = e.message;
+    }
+    expect(errorMessage).toContain('Website has not been whitelisted');
   });
+
   test('Request page whitelisting with keplr compatible enable command', async ({ page, context }) => {
-    await importAccount(page);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
+    await accountCreate(page);
+
     await enableWebsite(context, page, true);
 
     // positive test

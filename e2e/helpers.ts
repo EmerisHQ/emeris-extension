@@ -64,12 +64,6 @@ export const enableWebsite = async (context, page, withNetwork = false) => {
       window.emeris.enable(withNetwork ? 'cosmoshub-4' : undefined);
     }, withNetwork),
   ]);
-
-  await expect(popup.locator('[placeholder="Enter password"] >> visible=true')).toBeVisible();
-  await popup.fill('[placeholder="Enter password"]', '123456A$');
-  await popup.fill('[placeholder="Confirm password"]', '123456A$');
-  await popup.click('text=Continue');
-
   await popup.click('text=Accept');
   await popup.waitForEvent('close');
 };
