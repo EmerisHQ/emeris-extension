@@ -36,7 +36,7 @@
     <h1 class="text-left mt-14 mb-6 text-1">{{ $t('ext.portfolio.assetsHeader') }}</h1>
     <AssetsTable
       class="mb-6"
-      :balances="balances"
+      :balances="[]"
       :hide-zero-assets="true"
       variant="balance"
       :show-headers="false"
@@ -69,18 +69,19 @@ import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
 import TotalPrice from '@/components/common/TotalPrice.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
-import { useAccount } from '@/composables/useAccount';
+import { GlobalGetterTypes } from '@/store';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
 
-const { allLoaded, balances } = useAccount();
-
 useI18n({ useScope: 'global' });
 
 const store = useStore();
+
+const allLoaded = computed(() => !store.getters[GlobalGetterTypes.USER.getFirstLoad]);
+const balances = computed(() => store.getters[GlobalGetterTypes.API.getAllBalances] || []);
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
