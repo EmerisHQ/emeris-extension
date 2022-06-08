@@ -13,7 +13,7 @@ import { devices } from '@playwright/test';
 const config: PlaywrightTestConfig = {
   testDir: './e2e',
   /* Maximum time one test can run for. */
-  timeout: 60 * 1000, // quiet high because of encryption taking a long time. maybe optimise
+  timeout: 60 * 1000 * 10, // * 10 as playwright not calculating time correctly
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
   /* Retry on CI only */
   retries: process.env.CI ? 3 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: 2,
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [['list'], ['html', { open: 'never' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
