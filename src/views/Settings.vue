@@ -192,7 +192,8 @@ const wallet = computed(() => {
 });
 
 const whitelistedWebsites = computed(() => {
-  return store.state.extension.whitelistedWebsites;
+  return [0, 1, 2, 3];
+  // return store.state.extension.whitelistedWebsites;
 });
 
 const backedUp = (account) => {

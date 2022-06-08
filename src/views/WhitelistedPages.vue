@@ -1,55 +1,53 @@
 <template>
   <div class="page">
-    <Header title="" back-to="/settings" />
-    <h1>Managed connected sites</h1>
-    <div v-for="site in whitelistedWebsites" :key="site.origin" class="website">
-      <Brandmark style="margin-top: auto; margin-bottom: auto; margin-right: 18px" />
-      <div style="display: flex; flex-direction: column">
-        <span>{{ site.origin }}</span>
-        <span style="opacity: 67%">{{ site.origin }}</span>
-        <a style="color: #ff6072" @click="$router.push({ path: '/whitelisted/remove/', query: { url: site.origin } })"
-          >disconnect</a
-        >
+    <Header title="Authorized websites" />
+    <Search v-model:keyword="keyword" placeholder="Search websites" class="w-full mx-auto max-w-md pb-3 mb-4" />
+    <div v-if="filteredWhitelistedWebsites.length > 0">
+      <div v-for="(site, index) in filteredWhitelistedWebsites" :key="site.origin" class="flex items-start mb-4">
+        <div class="w-1/6 mr-2">
+          <img class="h-12 w-12" :src="'/images/Avatar.svg'" />
+        </div>
+        <div class="flex items-center justify-between border-b border-border w-5/6 pb-4">
+          <div class="w-3/4">
+            <p class="text-ellipsis overflow-hidden whitespace-nowrap">Emeris</p>
+            <p class="secondary-text text-ellipsis overflow-hidden">app.emeris.com</p>
+          </div>
+          <p class="text-negative-text cursor-pointer" @click="$router.push(`/whitelisted/remove/${index}`)">Remove</p>
+        </div>
       </div>
+    </div>
+
+    <!-- Empty search result -->
+    <div v-if="filteredWhitelistedWebsites.length === 0" class="w-fit mx-auto">
+      <p class="secondary-text text-center">No "{{ keyword }}" website found.</p>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue';
 
-import Brandmark from '@/components/common/Brandmark.vue';
+import Search from '@/components/common/Search.vue';
+import { useStore } from '@/utils/useStore';
 import Header from '@@/components/Header.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
-export default defineComponent({
-  name: 'Whitelisted Pages',
-  components: {
-    Brandmark,
-    Header,
-  },
-  computed: {
-    whitelistedWebsites() {
-      return this.$store.state.extension.whitelistedWebsites;
-    },
-  },
-  mounted() {
-    this.$store.dispatch(GlobalEmerisActionTypes.GET_WHITELISTED_WEBSITES);
-  },
+const keyword = ref('');
+const store = useStore();
+
+const whitelistedWebsites = computed(() => {
+  return store.state.extension.whitelistedWebsites;
+});
+
+const filteredWhitelistedWebsites = computed(() => {
+  const filteredWebsites = (whitelistedWebsites.value.length > 0 ? whitelistedWebsites.value : []).filter((item) => {
+    return item.title?.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1;
+  });
+
+  return filteredWebsites;
+});
+
+onMounted(() => {
+  store.dispatch(GlobalEmerisActionTypes.GET_WHITELISTED_WEBSITES);
 });
 </script>
-<style lang="scss" scoped>
-.website {
-  padding: 24px;
-
-  background: linear-gradient(0deg, #171717 0%, #040404 100%);
-  mix-blend-mode: normal;
-
-  box-shadow: 3px 9px 32px -4px rgba(0, 0, 0, 0.07);
-  border-radius: 10px;
-
-  margin-bottom: 24px;
-
-  display: flex;
-}
-</style>

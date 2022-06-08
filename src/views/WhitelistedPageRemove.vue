@@ -1,52 +1,47 @@
 <template>
-  <Loader v-if="loading" />
-  <ConfirmationScreen v-else :title="`Are you sure you want to disconnect from ${site.origin}?`">
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-      class="buttons"
-    >
-      <Button name="Remove" @click="remove" />
+  <div class="page">
+    <Header title="Authorized websites" :show-back="false" />
+    <Loader v-if="!currentWhitelistedWebsite" />
+    <div v-else>
+      <div class="mx-auto w-fit mb-4 mt-12">
+        <img class="h-20 w-20" :src="'/images/Avatar.svg'" />
+      </div>
+      <div class="text-center">
+        <p class="text-2 font-bold mb-2">Are you sure you want to remove {{ currentWhitelistedWebsite.title }}?</p>
+        <p class="secondary-text">
+          {{ currentWhitelistedWebsite.url }} will no longer be able to view your accounts and approve transactions.
+        </p>
+      </div>
+    </div>
+    <div class="mt-auto">
+      <Button name="Yes, remove" @click="removeWebsite" />
       <Button name="Cancel" variant="link" @click="$router.go(-1)" />
     </div>
-  </ConfirmationScreen>
+  </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 import Button from '@/components/ui/Button.vue';
-import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
-import ConfirmationScreen from '@@/views/ConfirmationScreen.vue';
+import { useStore } from '@/utils/useStore';
+// import { useStore } from '@/utils/useStore';
+import Header from '@@/components/Header.vue';
 
-export default defineComponent({
-  name: 'Whitelisted Page Remove',
-  components: {
-    Button,
-    ConfirmationScreen,
-  },
-  data: () => ({
-    loading: false,
-  }),
-  computed: {
-    site() {
-      return this.$store.state.extension.whitelistedWebsites.find((site) => site.origin === this.url);
-    },
-    url() {
-      return this.$route.query.url;
-    },
-  },
-  methods: {
-    async remove() {
-      this.loading = true;
-      await this.$store.dispatch(GlobalEmerisActionTypes.REMOVE_WHITELISTED_WEBSITE, {
-        website: this.url,
-      });
-      await this.$store.dispatch(GlobalEmerisActionTypes.GET_WHITELISTED_WEBSITES);
-      this.$router.push('/whitelisted');
-    },
-  },
+const store = useStore();
+const route = useRoute();
+
+const whitelistedWebsites = computed(() => {
+  return store.state.extension.whitelistedWebsites;
 });
+
+const currentWhitelistedWebsite = computed(() => {
+  console.log('route', route.params.index);
+  return whitelistedWebsites.value.filter((item, index) => index === Number(route.params.index))[0];
+});
+
+const removeWebsite = () => {
+  console.log('hello');
+};
 </script>
-<style lang="scss" scoped></style>
