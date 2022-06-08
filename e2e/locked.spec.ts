@@ -9,8 +9,6 @@ test.describe('Wallet not ready', () => {
     await page.goto(`https://emeris.com`);
     await emerisLoaded(page);
 
-    await page.pause();
-
     let errorMessage = '';
     try {
       await page.evaluate(async (defaultCosmosAddress) => {

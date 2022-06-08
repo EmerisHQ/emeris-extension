@@ -1,7 +1,8 @@
+/* eslint-disable max-lines-per-function */
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
-import { emerisLoaded, enableWebsite } from './helpers';
+import { emerisLoaded, enableWebsite, importAccount } from './helpers';
 
 test.describe('Whitelisting', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,6 +17,7 @@ test.describe('Whitelisting', () => {
     ).toBe(false); // TODO the response should be a thrown error imo
   });
   test('Request page whitelisting', async ({ page, context }) => {
+    await importAccount(page);
     await enableWebsite(context, page);
 
     // positive test
@@ -51,6 +53,7 @@ test.describe('Whitelisting', () => {
     ).toBe(false); // TODO the response should be a thrown error imo
   });
   test('Request page whitelisting with keplr compatible enable command', async ({ page, context }) => {
+    await importAccount(page);
     await enableWebsite(context, page, true);
 
     // positive test
