@@ -98,14 +98,11 @@ const goToCreateAccount = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
     currentFlow: 'NEW_CREATE_ACCOUNT',
   });
-  router.push('/create');
+  router.push('/accounts/create');
 };
 
 const goToImportAccount = () => {
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'NEW_ACCOUNT_IMPORT',
-  });
-  router.push('/accountImportInfo');
+  router.push('/accounts/account-import-info');
 };
 
 const goToAccount = (account) => {

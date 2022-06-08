@@ -6,7 +6,7 @@
     <div class="mb-8">
       <p class="secondary-text -text-1 mb-3">Wallet settings</p>
       <div class="bg-fg rounded-xl">
-        <div class="cursor-pointer p-4" @click="$router.push('/security')">
+        <div class="cursor-pointer p-4" @click="$router.push('/settings/security')">
           Security
           <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
@@ -16,7 +16,7 @@
           :class="{
             'pointer-events-none secondary-text': whitelistedWebsites.length === 0,
           }"
-          @click="$router.push('/whitelisted')"
+          @click="$router.push('/settings/whitelisted')"
         >
           Authorized websites
           <span class="inline-flex float-right mt-1">
@@ -33,7 +33,7 @@
           </span>
         </div>
         <hr class="mx-4 border-bg opacity-80" />
-        <div class="cursor-pointer p-4" @click="$router.push('/signoutConfirm')">
+        <div class="cursor-pointer p-4" @click="$router.push('/settings/signout-confirm')">
           Sign out <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
       </div>
@@ -120,7 +120,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://emeris.com', caption: 'Emeris web app' },
             })
           "
@@ -133,7 +133,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://emeris.com/support', caption: 'Emeris Support' },
             })
           "
@@ -146,7 +146,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://t.me/EmerisHQ', caption: 'Telegram community' },
             })
           "
@@ -159,7 +159,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://twitter.com/emerishq', caption: 'Twitter' },
             })
           "
@@ -217,17 +217,11 @@ const goToAccount = (account) => {
 };
 
 const goToCreateAccount = () => {
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'SETTINGS',
-  });
-  router.push('/create');
+  router.push('/settings/create');
 };
 
 const goToAccountImport = () => {
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'SETTINGS',
-  });
-  router.push('/accountImportInfo');
+  router.push('/settings/account-import-info');
 };
 
 const toLedger = () => {

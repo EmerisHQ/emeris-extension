@@ -43,7 +43,6 @@ import { useStore } from 'vuex';
 
 import Icon from '@/components/ui/Icon.vue';
 import Header from '@@/components/Header.vue';
-import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 
@@ -58,11 +57,8 @@ const backedUp = computed(() => {
 });
 
 const goToBackupPage = () => {
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'BACK_UP',
-  });
   if (!account.value.isLedger) {
-    router.push('/backup');
+    router.push('/account/backup');
   }
 };
 </script>

@@ -1,13 +1,15 @@
 <template>
   <div class="page">
-    <Header title="" back-to="/settings" />
+    <Header />
     <h1>Managed connected sites</h1>
     <div v-for="site in whitelistedWebsites" :key="site.origin" class="website">
-      <Brandmark style="margin-top: auto; margin-bottom: auto; margin-right: 18px" />
-      <div style="display: flex; flex-direction: column">
+      <Brandmark class="my-auto mr-4" />
+      <div class="flex flex-col">
         <span>{{ site.origin }}</span>
-        <span style="opacity: 67%">{{ site.origin }}</span>
-        <a style="color: #ff6072" @click="$router.push({ path: '/whitelisted/remove/', query: { url: site.origin } })"
+        <span class="opacity-60">{{ site.origin }}</span>
+        <a
+          style="color: #ff6072"
+          @click="$router.push({ path: '/settings/whitelisted/remove/', query: { url: site.origin } })"
           >disconnect</a
         >
       </div>
@@ -38,6 +40,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss" scoped>
 .website {
   padding: 24px;

@@ -24,14 +24,11 @@ const createWalletRoute = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
     currentFlow: 'CREATE_ACCOUNT',
   });
-  router.push('/create');
+  router.push('/welcome/create');
 };
 
 const importAccountRoute = () => {
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'IMPORT_ACCOUNT',
-  });
-  router.push('/accountImportInfo');
+  router.push('/welcome/account-import-info');
 };
 </script>
 

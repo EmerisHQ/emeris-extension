@@ -1,20 +1,11 @@
 <template>
   <div class="page">
     <Header back-to="/ledger?next=/ledger/connect" />
-    <div
-      style="
-        margin-bottom: 56px;
-        margin-top: 150px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex: 1;
-      "
-    >
+    <div class="flex flex-col items-center flex-1 mb-14 mt-36">
       <img class="loader" :src="'/images/EphemerisLoader.svg'" />
-      <img :src="'/images/LedgerBox.svg'" style="width: 151px; margin-top: 32px" />
+      <img :src="'/images/LedgerBox.svg'" class="mt-8 w-36" />
     </div>
-    <div style="text-align: center" class="secondary-text">Connecting Ledger...</div>
+    <div class="secondary-text text-center">Connecting Ledger...</div>
   </div>
 </template>
 
@@ -76,13 +67,13 @@ export default defineComponent({
         isLedger: true,
         setupState: AccountCreateStates.COMPLETE,
         keyHash: keyHashfromAddress(accounts[0].address),
-        path: '/accountCreate',
+        path: `${this.$route.fullPath}/create`,
       });
 
-      this.$router.push('/accountCreate');
+      this.$router.push(`${this.$route.fullPath}/create`);
     } catch (err) {
       this.$router.push(
-        '/ledger/error?error=' + err.message + '&backto=/ledger%3Fnext%3D%2Fledger%2Fconnect&retry=/ledger/connect',
+        `/ledger/error?error=${err.message}&backto=/ledger%3Fnext%3D%2Fledger%2Fconnect&retry=${this.$route.fullPath}`,
       );
     }
   },

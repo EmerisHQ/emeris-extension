@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -33,6 +33,7 @@ import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
+const route = useRoute();
 const router = useRouter();
 const store = useStore();
 
@@ -41,20 +42,14 @@ const currentFlow = computed(() => {
 });
 
 const backTo = computed(() => {
-  if (
-    currentFlow.value === 'CREATE_ACCOUNT' ||
-    currentFlow.value === 'NEW_CREATE_ACCOUNT' ||
-    currentFlow.value === 'SETTINGS'
-  )
-    return '/accountCreate?previous=/backup';
-  if (currentFlow.value === 'BACKUP_PORTFOLIO') return '/portfolio';
-  if (currentFlow.value === 'BACK_UP') return '/account';
   if (currentFlow.value?.includes('BACKUP_ACCOUNT_')) return `/account-settings/${currentFlow.value.split('_')[2]}`;
-  return undefined;
+
+  const goBackByRoute = route.fullPath.split('/').slice(0, -1).join('/');
+  return goBackByRoute.includes('/create') ? `${goBackByRoute}?previous=/backup` : goBackByRoute;
 });
 
 const goToShowMnemonic = async () => {
-  router.push('/backup/password');
+  router.push(`${route.fullPath}/password`);
 };
 </script>
 

@@ -4,7 +4,7 @@
   <div v-else-if="balances.length === 0" class="page">
     <img :src="'/images/EmptyPortfolioBG.png'" class="background" />
     <div class="flex relative mb-8">
-      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/portfolio/account')" />
     </div>
     <div class="mt-auto">
       <h1>{{ $t('ext.portfolio.emptyPage.title') }}</h1>
@@ -16,7 +16,7 @@
   <div v-else class="page">
     <img :src="'/images/PortfolioBG.png'" class="background" />
     <div class="flex relative mb-8">
-      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/portfolio/account')" />
       <img class="wordmark" :src="'/images/EmerisWordmark.svg'" />
     </div>
 
@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
@@ -68,7 +68,6 @@ import { GlobalGetterTypes } from '@/store';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
-import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates, BalanceDenom } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
@@ -76,6 +75,7 @@ import { webDebugging } from '@@/utils/web-debugging';
 useI18n({ useScope: 'global' });
 
 const store = useStore();
+const route = useRoute();
 const router = useRouter();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
@@ -125,10 +125,7 @@ const skipBackup = () => {
 };
 
 const goToBackup = () => {
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: 'BACKUP_PORTFOLIO',
-  });
-  router.push('/backup?previous=/accountCreate');
+  router.push(`${route.fullPath}/backup`);
 };
 </script>
 <style lang="scss" scoped>

@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="loading" />
   <div v-else class="page">
-    <Header title="Account Name" :back-to="backTo" />
+    <Header title="Account Name" />
     <div class="w-3/4 mx-auto mt-10">
       <div
         class="bg-brand w-16 h-16 rounded-full text-center font-medium text-2 text-inverse pt-3.5 mx-auto shadow-brand"
@@ -41,7 +41,6 @@ import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import Loader from '@@/components/Loader.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
-import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 import wordlist from '@@/wordlists/english.json';
 
@@ -87,15 +86,6 @@ const errorText = computed(() => {
   return '';
 });
 
-const currentFlow = computed(() => {
-  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
-});
-const backTo = computed(() => {
-  if (currentFlow.value === 'CREATE_ACCOUNT') return '/welcome';
-  if (currentFlow.value === 'NEW_CREATE_ACCOUNT') return '/accounts';
-  return '/settings';
-});
-
 watch(name.value, (newValue) => {
   store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
     ...newAccount.value,
@@ -127,7 +117,7 @@ onMounted(async () => {
     name.value = generatedName;
     store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
       ...newAccount.value,
-      route: '/accountCreate',
+      route: route.fullPath,
     });
   }
 });
@@ -154,7 +144,7 @@ const submit = async () => {
     if (newAccount.value?.setupState === AccountCreateStates.COMPLETE) {
       nextRoute = '/accountImportReady';
     } else {
-      nextRoute = '/backup?previous=/accountCreate';
+      nextRoute = `${route.fullPath}/backup`;
     }
 
     await store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow

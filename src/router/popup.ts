@@ -56,6 +56,15 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/create',
+    alias: [
+      '/welcome/create',
+      '/accounts/create',
+      '/settings/create',
+      '/ledger/connect/create',
+      '/welcome/account-import-info/account-import/create',
+      '/accounts/account-import-info/account-import/create',
+      '/settings/account-import-info/account-import/create',
+    ],
     name: 'Create Wallet',
     component: AccountCreate,
   },
@@ -85,20 +94,10 @@ const routes: Array<RouteRecordRaw> = [
     component: PasswordCreate,
   },
   {
-    path: '/accountCreate',
-    name: 'Account Create',
-    component: AccountCreate,
-  },
-  {
     path: '/accountRemove/:index',
     name: 'Account Remove',
     component: AccountRemove,
     props: true,
-  },
-  {
-    path: '/signoutConfirm',
-    name: 'Signout Confirm',
-    component: SignoutConfirm,
   },
   {
     path: '/accountRename/:index',
@@ -112,17 +111,29 @@ const routes: Array<RouteRecordRaw> = [
     component: AccountAddAdditional,
   },
   {
-    path: '/accountImport',
+    path: '/account-import',
+    alias: [
+      '/welcome/account-import-info/account-import',
+      '/accounts/account-import-info/account-import',
+      '/settings/account-import-info/account-import',
+    ],
     name: 'Account Import',
     component: AccountImport,
   },
   {
-    path: '/accountImportInfo',
+    path: '/account-import-info',
+    alias: ['/welcome/account-import-info', '/accounts/account-import-info', '/settings/account-import-info'],
     name: 'Account Import Info',
     component: AccountImportInfo,
   },
   {
-    path: '/accountImportHdPath',
+    path: '/account-import-HD-path',
+    alias: [
+      '/welcome/account-import-info/account-import/account-import-HD-path',
+      '/accounts/account-import-info/account-import/account-import-HD-path',
+      '/settings/account-import-info/account-import/account-import-HD-path',
+      '/ledger/account-import-HD-path',
+    ],
     name: 'HD Path',
     component: HdPath,
   },
@@ -148,6 +159,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/backup',
+    alias: ['/welcome/create/backup', '/accounts/create/backup', '/settings/create/backup', '/portfolio/backup'],
     name: 'Account Backup',
     component: AccountBackup,
   },
@@ -208,6 +220,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/account',
+    alias: ['/portfolio/account'],
     name: 'Account',
     component: Account,
   },
@@ -221,29 +234,35 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Account Settings',
     component: AccountSettings,
   },
+  /** Settings flows */
   {
     path: '/settings',
     name: 'Settings',
     component: Settings,
   },
   {
-    path: '/whitelisted',
-    name: 'Whitelisted Pages',
-    component: WhitelistedPages,
-  },
-  {
-    path: '/whitelisted/remove',
-    name: 'Whitelisted Page Remove',
-    component: WhitelistedPageRemove,
-  },
-  {
-    path: '/security',
-    name: 'Security',
+    path: '/settings/security',
+    name: 'Settings Security',
     component: Security,
   },
   {
-    path: '/support',
-    name: 'Support Warning',
+    path: '/settings/signout-confirm',
+    name: 'Settings Signout Confirm',
+    component: SignoutConfirm,
+  },
+  {
+    path: '/settings/whitelisted',
+    name: 'Settings Whitelisted Pages',
+    component: WhitelistedPages,
+  },
+  {
+    path: '/settings/whitelisted/remove',
+    name: 'Settings Whitelisted Page Remove',
+    component: WhitelistedPageRemove,
+  },
+  {
+    path: '/settings/support',
+    name: 'Settings Support Warning',
     component: SupportWarning,
   },
   {
