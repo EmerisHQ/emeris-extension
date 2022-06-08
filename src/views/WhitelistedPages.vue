@@ -19,7 +19,9 @@
 
     <!-- Empty search result -->
     <div v-if="filteredWhitelistedWebsites.length === 0" class="w-fit mx-auto">
-      <p class="secondary-text text-center">No "{{ keyword }}" website found.</p>
+      <p class="secondary-text text-center">
+        No <span v-if="keyword">"{{ keyword }}"</span> website found.
+      </p>
     </div>
   </div>
 </template>
