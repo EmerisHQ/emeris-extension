@@ -1,22 +1,37 @@
 <template>
-  <Loader v-if="!asset" />
+  <Loader v-if="!asset || !recipientAddress" />
   <template v-else>
-    <Header :title="`Receive ${asset.display_name}`" back-to="/receive" />
+    <Header :title="`Receive ${asset.display_name}`" :show-close="true" back-to="/receive" />
     <div class="text-center -mt-6">
-      <span class="secondary-text text-[13px]">on {{ asset.on_chain }}</span>
+      <p class="secondary-text text-sm">
+        on <span class="capitalize">{{ asset.on_chain.replace('-', ' ') }}</span>
+      </p>
     </div>
     <template v-if="recipientAddress">
-      <QrCode class="relative z-10 mx-auto mt-20 mb-[73px]" :value="recipientAddress" width="160" color="FFFFFF" />
-      <div class="text-left flex flex-col">
-        <span>Address</span>
-        <span class="secondary-text mb-6 break-words">{{ recipientAddress }}</span>
-        <div class="cursor-pointer flex text-quaternary" @click="pasteClip">
-          <Icon v-if="!copied" name="CopyIcon" :icon-size="1" class="mr-3" />
-          <span v-else class="mr-3">✓</span>
-          Copy to clipboard
+      <div class="text-left flex flex-col mt-6">
+        <span class="secondary-text -text-1 mb-1">{{ asset.display_name }} Address</span>
+        <span class="mb-2 break-words">{{ recipientAddress }}</span>
+        <div class="cursor-pointer flex -text-1 text-tertiary" @click="pasteClip">
+          <Icon v-if="!copied" name="CopyIcon" :icon-size="0.8" class="mr-3" />
+          <Icon v-else name="CheckIcon" :icon-size="0.8" class="mr-3" />
+          {{ copied ? 'Copied' : 'Copy' }} to clipboard
         </div>
       </div>
+      <div class="bg-fg rounded-lg flex py-3 px-4 my-6 items-start">
+        <Icon name="InformationIcon" class="text-warning mr-2" :icon-size="1" />
+        <p class="secondary-text -text-1">
+          This address will only support receiving ATOM. If you use it to receive unsupported assets, they may be
+          permanently lost.
+        </p>
+      </div>
+      <QrCode class="relative z-10 mx-auto mt-2 mb-4" :value="recipientAddress" width="120" color="FFFFFF" />
+      <p class="text-center secondary-text -text-1 mb-8">
+        Scan this code in a crypto wallet mobile app to enter this account as the recipient address.
+      </p>
     </template>
+    <div class="mt-auto">
+      <Button name="Done" @click="$router.push('/portfolio')" />
+    </div>
   </template>
 </template>
 
@@ -26,6 +41,7 @@ import orderBy from 'lodash.orderby';
 import { useStore } from 'vuex';
 
 import QrCode from '@/components/common/QrCode.vue';
+import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/ui/Icon.vue';
 import useAccount from '@/composables/useAccount';
 import { GlobalGetterTypes } from '@/store';
@@ -34,13 +50,14 @@ import Header from '@@/components/Header.vue';
 import Loader from '@@/components/Loader.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
-const store = useStore();
-const { nativeBalances } = useAccount();
-
-const props = defineProps<{
+interface Props {
   denom: string;
-}>();
+}
 
+const props = withDefaults(defineProps<Props>(), { denom: '' });
+
+const { nativeBalances } = useAccount();
+const store = useStore();
 let displayNameAddedList = ref([]);
 let recipientAddress = ref('');
 let copied = ref(false);
@@ -84,6 +101,5 @@ watch(
       chainId: assetValue.on_chain,
     });
   },
-  { immediate: true },
 );
 </script>

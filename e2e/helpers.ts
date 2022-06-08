@@ -52,7 +52,7 @@ export const emerisLoaded = async (page) => {
 };
 
 export const enableWebsite = async (context, page, withNetwork = false) => {
-  await page.goto(`https://www.google.com/`);
+  await page.goto(`https://emeris.com//`);
 
   await emerisLoaded(page);
 

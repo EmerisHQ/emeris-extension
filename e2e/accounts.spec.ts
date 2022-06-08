@@ -219,7 +219,7 @@ test.describe('Account Create', () => {
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/accounts`);
 
     const secondPage = await context.newPage();
-    await secondPage.goto('https://www.google.com');
+    await secondPage.goto('https://emeris.com/');
 
     // on changing the account see if the window receives the event
     await Promise.all([waitForEvent(secondPage, 'emeris_account_changed', 3), page.click('text=Test Import Account')]);
@@ -229,7 +229,7 @@ test.describe('Account Create', () => {
     await enableWebsite(context, page);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
-    await page.goto(`https://www.google.com/`);
+    await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 
     expect(

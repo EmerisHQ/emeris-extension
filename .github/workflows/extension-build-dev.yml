@@ -30,8 +30,9 @@ jobs:
         run: NODE_OPTIONS="--max_old_space_size=8192" NODE_ENV="production" npm run build
         env:
           # Put in secrets
-          VUE_APP_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
-          VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
+          VITE_EMERIS_PROD_ENDPOINT: https://api.emeris.com/v1
+          VITE_EMERIS_PROD_LIQUIDITY_ENDPOINT: https://api.emeris.com/v1/liquidity
+          VITE_ENCRYPTION_SALT: 8mbL9mEnOTXdiwvgXvgv
 
       - uses: thedoctor0/zip-release@master
         with:
