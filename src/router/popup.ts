@@ -32,6 +32,7 @@ import ReceiveDenom from '../views/ReceiveDenom.vue';
 import ReceiveQR from '../views/ReceiveQR.vue';
 import Security from '../views/Security.vue';
 import Settings from '../views/Settings.vue';
+import SignoutConfirm from '../views/SignoutConfirm.vue';
 import SupportWarning from '../views/SupportWarning.vue';
 import TransactionReview from '../views/TransactionReview.vue';
 import TransactionSigningLedger from '../views/TransactionSigningLedger.vue';
@@ -69,6 +70,11 @@ const routes: Array<RouteRecordRaw> = [
     component: Welcome,
   },
   {
+    path: '/signIn',
+    name: 'Sign In',
+    component: WelcomeBack,
+  },
+  {
     path: '/welcomeBack',
     name: 'Welcome Back',
     component: WelcomeBack,
@@ -88,6 +94,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Account Remove',
     component: AccountRemove,
     props: true,
+  },
+  {
+    path: '/signoutConfirm',
+    name: 'Signout Confirm',
+    component: SignoutConfirm,
   },
   {
     path: '/accountRename/:index',

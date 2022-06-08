@@ -33,9 +33,8 @@
           </span>
         </div>
         <hr class="mx-4 border-bg opacity-80" />
-        <div class="cursor-pointer p-4">
-          Sign out
-          <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
+        <div class="cursor-pointer p-4" @click="$router.push('/signoutConfirm')">
+          Sign out <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
       </div>
     </div>
