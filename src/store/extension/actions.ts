@@ -67,8 +67,8 @@ export const actions: ActionTree<State, RootState> & Actions = {
   },
   async [ActionTypes.LOAD_SESSION_DATA]({ dispatch, commit }) {
     const lastAccountused = await dispatch(ActionTypes.GET_LAST_ACCOUNT_USED); // also loads the last account to the state
-    await dispatch(GlobalActionTypes.USER.SIGN_OUT, null, { root: true });
     // HACK to conform with the current data handling in the demeris
+    commit('demerisUSER/SIGN_OUT', null, { root: true });
     commit(
       'demerisUSER/SET_ACCOUNT',
       {
