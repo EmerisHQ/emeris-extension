@@ -32,7 +32,7 @@ test.describe('Whitelisting', () => {
     ).toBe(true);
 
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html#/whitelisted?browser=true`);
-    await expect(page.locator('text=Managed connected sites')).toBeVisible();
+    await expect(page.locator('text=Authorized websites')).toBeVisible();
     await expect(page.locator('text=https://emeris.com').first()).toBeVisible();
 
     // disconnect page
@@ -40,7 +40,7 @@ test.describe('Whitelisting', () => {
     await page.click('text=Remove');
 
     // check if disconnected
-    await expect(page.locator('text=Managed connected sites')).toBeVisible();
+    await expect(page.locator('text=Authorized websites')).toBeVisible();
     await expect(page.locator('text=https://emeris.com')).not.toBeVisible();
     await page.goto(`https://emeris.com/`);
     await emerisLoaded(page);

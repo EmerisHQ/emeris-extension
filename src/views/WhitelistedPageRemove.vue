@@ -55,8 +55,8 @@ const currentWhitelistedWebsite = computed(() => {
   return whitelistedWebsites.value.filter((item, index) => index === Number(route.params.index))[0];
 });
 
-const removeWebsite = () => {
-  store.dispatch(GlobalEmerisActionTypes.REMOVE_WHITELISTED_WEBSITE, {
+const removeWebsite = async () => {
+  await store.dispatch(GlobalEmerisActionTypes.REMOVE_WHITELISTED_WEBSITE, {
     website: currentWhitelistedWebsite.value.origin,
   });
   router.push('/whitelisted');
