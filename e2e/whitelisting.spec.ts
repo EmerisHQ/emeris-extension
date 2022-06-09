@@ -36,8 +36,7 @@ test.describe('Whitelisting', () => {
     await expect(page.locator('text=https://emeris.com').first()).toBeVisible();
 
     // disconnect page
-    await page.click('text=disconnect');
-    await page.click('text=Remove');
+    await page.click('text=Yes, remove');
 
     // check if disconnected
     await expect(page.locator('text=Authorized websites')).toBeVisible();
