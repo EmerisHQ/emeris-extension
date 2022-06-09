@@ -1,16 +1,16 @@
 <template>
   <div class="page">
-    <Header title="Authorized websites" />
+    <Header title="Authorized websites" back-to="/settings" />
     <Search v-model:keyword="keyword" placeholder="Search websites" class="w-full mx-auto max-w-md pb-3 mb-4" />
     <div v-if="filteredWhitelistedWebsites.length > 0">
-      <div v-for="(site, index) in filteredWhitelistedWebsites" :key="site.origin" class="flex items-start mb-4">
+      <div v-for="(site, index) in filteredWhitelistedWebsites" :key="index" class="flex items-start mb-4">
         <div class="w-1/6 mr-2">
           <img class="h-12 w-12" :src="'/images/Avatar.svg'" />
         </div>
         <div class="flex items-center justify-between border-b border-border w-5/6 pb-4">
           <div class="w-3/4">
-            <p class="text-ellipsis overflow-hidden whitespace-nowrap">Emeris</p>
-            <p class="secondary-text text-ellipsis overflow-hidden">app.emeris.com</p>
+            <p class="text-ellipsis overflow-hidden whitespace-nowrap">{{ site.title }}</p>
+            <p class="secondary-text text-ellipsis overflow-hidden">{{ site.origin }}</p>
           </div>
           <p class="text-negative-text cursor-pointer" @click="$router.push(`/whitelisted/remove/${index}`)">Remove</p>
         </div>
@@ -37,8 +37,21 @@ import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 const keyword = ref('');
 const store = useStore();
 
+const getWebsiteTitle = (origin: string) => {
+  if (origin.includes('https://')) {
+    return origin.replace('https://', '');
+  } else if (origin.includes('http://')) {
+    return origin.replace('http://', '');
+  } else {
+    return origin;
+  }
+};
+
 const whitelistedWebsites = computed(() => {
-  return store.state.extension.whitelistedWebsites;
+  const websites = store.state.extension.whitelistedWebsites;
+  return websites.map((item) => {
+    return { ...item, title: getWebsiteTitle(item.origin) };
+  });
 });
 
 const filteredWhitelistedWebsites = computed(() => {

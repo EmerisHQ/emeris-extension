@@ -9,7 +9,7 @@
       <div class="text-center">
         <p class="text-2 font-bold mb-2">Are you sure you want to remove {{ currentWhitelistedWebsite.title }}?</p>
         <p class="secondary-text">
-          {{ currentWhitelistedWebsite.url }} will no longer be able to view your accounts and approve transactions.
+          {{ currentWhitelistedWebsite.origin }} will no longer be able to view your accounts and approve transactions.
         </p>
       </div>
     </div>
@@ -22,26 +22,43 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import Button from '@/components/ui/Button.vue';
 import { useStore } from '@/utils/useStore';
 // import { useStore } from '@/utils/useStore';
 import Header from '@@/components/Header.vue';
+import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
+
+const getWebsiteTitle = (origin: string) => {
+  if (origin.includes('https://')) {
+    return origin.replace('https://', '');
+  } else if (origin.includes('http://')) {
+    return origin.replace('http://', '');
+  } else {
+    return origin;
+  }
+};
 
 const whitelistedWebsites = computed(() => {
-  return store.state.extension.whitelistedWebsites;
+  const websites = store.state.extension.whitelistedWebsites;
+  return websites.map((item) => {
+    return { ...item, title: getWebsiteTitle(item.origin) };
+  });
 });
 
 const currentWhitelistedWebsite = computed(() => {
-  console.log('route', route.params.index);
   return whitelistedWebsites.value.filter((item, index) => index === Number(route.params.index))[0];
 });
 
 const removeWebsite = () => {
-  console.log('hello');
+  store.dispatch(GlobalEmerisActionTypes.REMOVE_WHITELISTED_WEBSITE, {
+    website: currentWhitelistedWebsite.value.origin,
+  });
+  router.push('/whitelisted');
 };
 </script>
