@@ -16,7 +16,7 @@
     <!-- Wallet settings -->
     <div class="mb-4">
       <div class="bg-fg rounded-xl">
-        <div class="cursor-pointer p-4" @click="$router.push('/accountRename/' + $route.params.index)">
+        <div class="cursor-pointer p-4" @click="router.push(`${route.path}/account-rename`)">
           Account name <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
         <hr class="mx-4 border-bg opacity-80" />
@@ -54,10 +54,7 @@
     <!-- Remove account -->
     <div class="mb-8">
       <div class="bg-fg rounded-xl">
-        <div
-          class="cursor-pointer p-4 text-negative-text"
-          @click="$router.push('/accountRemove/' + $route.params.index)"
-        >
+        <div class="cursor-pointer p-4 text-negative-text" @click="router.push(`${route.path}/account-remove`)">
           Remove account <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
       </div>
@@ -99,10 +96,7 @@ const goToBackup = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
     accountName: currentWallet.value.accountName,
   });
-  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-    currentFlow: `BACKUP_ACCOUNT_${route.params.index}`,
-  });
-  router.push('/backup');
+  router.push(`${route.path}/backup`);
 };
 </script>
 

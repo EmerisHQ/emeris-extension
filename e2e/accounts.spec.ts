@@ -54,7 +54,7 @@ test.describe('Account Create', () => {
     await expect(page.locator('text=Get started by funding your wallet >> visible=true')).toBeVisible();
 
     // test if seed shows correctly
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/backup`);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/portfolio/backup`);
 
     await page.click('text=Show secret recovery phrase');
 
@@ -91,7 +91,7 @@ test.describe('Account Create', () => {
     await expect(page.locator('text=cosmos1')).toHaveText(defaultCosmosAddress);
 
     // test if seed shows correctly
-    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/backup`);
+    await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true#/portfolio/backup`);
 
     await page.click('text=Show secret recovery phrase');
 

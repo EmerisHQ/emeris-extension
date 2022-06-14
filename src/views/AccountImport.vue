@@ -79,14 +79,14 @@ const errorText = computed(() => {
 const submit = () => {
   if (!hasInvalidChar.value && unknownWords.value.length === 0) {
     storeNewAccount();
-    router.push({ path: `${route.fullPath}/create` });
+    router.push({ path: `${route.path}/create` });
   }
 };
 
 const toHdPath = () => {
   if (!hasInvalidChar.value && unknownWords.value.length === 0) {
     storeNewAccount();
-    router.push(`${route.fullPath}/account-import-HD-path`);
+    router.push(`${route.path}/account-import-HD-path`);
   }
 };
 
@@ -95,7 +95,7 @@ const storeNewAccount = () => {
     ...store.state.extension.newAccount,
     accountMnemonic: mnemonicFormat(mnemonic.value),
     setupState: AccountCreateStates.COMPLETE,
-    route: route.fullPath,
+    route: route.path,
   });
 };
 

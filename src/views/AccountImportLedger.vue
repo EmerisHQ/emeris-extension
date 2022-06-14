@@ -36,17 +36,17 @@ const router = useRouter();
 onMounted(async () => {
   const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
   if (!hasPassword) {
-    router.push({ path: '/passwordCreate', query: { returnTo: route.fullPath } });
+    router.push({ path: '/password-create', query: { returnTo: route.path } });
   }
 
   store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
     ...store.state.extension.newAccount,
-    route: route.fullPath,
+    route: route.path,
   });
 });
 
 const toHdPath = () => {
-  router.push(`${route.fullPath}/account-import-HD-path`);
+  router.push(`${route.path}/account-import-HD-path`);
 };
 
 const next = () => {

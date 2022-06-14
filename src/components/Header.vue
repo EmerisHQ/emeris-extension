@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const goBack = () => {
-  const goBackByRoute = route.fullPath.split('/').slice(0, -1).join('/') ?? '/';
+  const goBackByRoute = route.path.split('/').slice(0, -1).join('/') ?? '/';
   console.log(goBackByRoute);
   router.push(props.backTo ? props.backTo : goBackByRoute);
 };

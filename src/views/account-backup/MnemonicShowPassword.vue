@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Enter password" back-to="/backup" />
+    <Header title="Enter password" />
     <form class="form" @submit.prevent="submit">
       <span class="secondary-text mb-8">
         For your security, enter your account password to view your secret recovery phrase.
@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -28,6 +28,7 @@ import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const password = ref(undefined);
 const error = ref(undefined);
@@ -43,7 +44,7 @@ const submit = async () => {
       accountName: account.value.accountName,
       password: password.value,
     });
-    router.push('/backup/show');
+    router.push(`${route.path.replace('/show', '')}/show`);
   } catch (e) {
     error.value = true;
   }

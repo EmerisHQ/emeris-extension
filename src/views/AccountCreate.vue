@@ -97,8 +97,8 @@ onMounted(async () => {
   const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
   if (!hasPassword) {
     router.push({
-      path: '/passwordCreate',
-      query: { returnTo: route.fullPath },
+      path: '/password-create',
+      query: { returnTo: route.path },
     });
   }
 
@@ -117,7 +117,7 @@ onMounted(async () => {
     name.value = generatedName;
     store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
       ...newAccount.value,
-      route: route.fullPath,
+      route: route.path,
     });
   }
 });
@@ -144,7 +144,7 @@ const submit = async () => {
     if (newAccount.value?.setupState === AccountCreateStates.COMPLETE) {
       nextRoute = '/accountImportReady';
     } else {
-      nextRoute = `${route.fullPath}/backup`;
+      nextRoute = `${route.path}/backup`;
     }
 
     await store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow

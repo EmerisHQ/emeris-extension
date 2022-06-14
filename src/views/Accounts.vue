@@ -28,7 +28,7 @@
         :class="{ 'ml-auto': !account.isLedger, 'ml-3': account.isLedger }"
         name="ThreeDotsIcon"
         :icon-size="1.5"
-        @click="$router.push(`/account-settings/${index}`)"
+        @click="$router.push(`/accounts/account-settings/${index}`)"
       />
       <div
         v-else-if="account.accountName === lastAccount"

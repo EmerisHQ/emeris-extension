@@ -18,7 +18,7 @@
       caption="Any secret recovery phrase you enter to import an account will be stored on your device, and fully encrypted."
     />
 
-    <Button class="mt-auto" name="Continue" @click="() => router.push(`${route.fullPath}/account-import`)" />
+    <Button class="mt-auto" name="Continue" @click="() => router.push(`${route.path}/account-import`)" />
 
     <Slideout :open="infoOpen" @update:open="infoOpen = $event">
       <h1 class="mb-4">What’s a secret recovery phrase?</h1>
@@ -55,7 +55,7 @@ onMounted(async () => {
   const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
 
   if (!hasPassword) {
-    router.push({ path: '/passwordCreate', query: { returnTo: route.fullPath } });
+    router.push({ path: '/password-create', query: { returnTo: route.path } });
   }
 });
 </script>

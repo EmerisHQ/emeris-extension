@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Remove account" :back-to="$route.query.backto" />
+    <Header title="Remove account" />
     <div v-if="!backedUp(account)" class="text-center mt-10">
       <Icon name="WarningTriangleIcon" :icon-size="2" class="text-warning mb-4" />
       <p class="font-medium text-2 mb-4">This account is not backed up</p>
@@ -16,14 +16,14 @@
     <div class="mt-auto">
       <Button class="reset-btn mb-4" name="Remove account" @click="removeWallet" />
       <Button v-if="!backedUp(account)" class="mb-4" variant="secondary" name="Back up account" @click="backUpWallet" />
-      <Button name="Cancel" variant="link" @click="$router.push(`/account-settings/${index}`)" />
+      <Button name="Cancel" variant="link" @click="router.push(currentRoute)" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -34,19 +34,16 @@ import { AccountCreateStates } from '@@/types';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
-interface Props {
-  index: number;
-}
-
-const props = withDefaults(defineProps<Props>(), { index: 0 });
+const currentRoute = ref(route.path.split('/').slice(0, -1).join('/') ?? '/');
 
 const wallet = computed(() => {
   return store.state.extension.wallet;
 });
 
 const account = computed(() => {
-  return wallet.value[props.index];
+  return wallet.value[+route.params.index];
 });
 
 const backedUp = (account) => {
@@ -65,7 +62,7 @@ const backUpWallet = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
     accountName: account.value.accountName,
   });
-  router.push('/backup');
+  router.push(`${route.path}/backup`);
 };
 </script>
 

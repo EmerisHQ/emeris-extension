@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="!account.accountMnemonic" />
   <div v-else class="page">
-    <Header title="Secret recovery phrase" back-to="/backup?previous=/accountCreate" />
+    <Header title="Secret recovery phrase" />
     <span class="secondary-text mb-6">
       Write down the {{ account.accountMnemonic.trim().split(' ').length }} words below and store them in a safe place.
     </span>
@@ -40,7 +40,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -52,6 +52,7 @@ import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const checked = ref(false);
 const backUpLater = ref(false);
@@ -74,7 +75,7 @@ const goToEndCreate = () => {
 };
 
 const submit = () => {
-  router.push('/backup/confirm');
+  router.push(`${route.path}/confirm`);
 };
 </script>
 

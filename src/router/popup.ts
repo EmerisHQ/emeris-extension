@@ -54,20 +54,6 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Portfolio',
     component: Portfolio,
   },
-  {
-    path: '/create',
-    alias: [
-      '/welcome/create',
-      '/accounts/create',
-      '/settings/create',
-      '/ledger/connect/create',
-      '/welcome/account-import-info/account-import/create',
-      '/accounts/account-import-info/account-import/create',
-      '/settings/account-import-info/account-import/create',
-    ],
-    name: 'Create Wallet',
-    component: AccountCreate,
-  },
   // {
   //   path: '/unlock',
   //   name: 'Unlock Wallet',
@@ -89,59 +75,85 @@ const routes: Array<RouteRecordRaw> = [
     component: WelcomeBack,
   },
   {
-    path: '/passwordCreate',
+    path: '/password-create',
     name: 'Choose Password',
     component: PasswordCreate,
-  },
-  {
-    path: '/accountRemove/:index',
-    name: 'Account Remove',
-    component: AccountRemove,
-    props: true,
-  },
-  {
-    path: '/accountRename/:index',
-    name: 'Account Rename',
-    component: AccountRename,
-    props: true,
   },
   {
     path: '/accountAddAdditional',
     name: 'Account Add Additional',
     component: AccountAddAdditional,
   },
+  /** Account Creation flows */
   {
-    path: '/account-import',
-    alias: [
-      '/welcome/account-import-info/account-import',
-      '/accounts/account-import-info/account-import',
-      '/settings/account-import-info/account-import',
-    ],
-    name: 'Account Import',
-    component: AccountImport,
+    path: '/welcome/create',
+    alias: ['/accounts/create', '/settings/create', '/ledger/connect/create'],
+    name: 'Create Wallet',
+    component: AccountCreate,
   },
   {
-    path: '/account-import-info',
-    alias: ['/welcome/account-import-info', '/accounts/account-import-info', '/settings/account-import-info'],
+    path: '/welcome/create/backup',
+    alias: ['/accounts/create/backup', '/settings/create/backup'],
+    name: 'Create Wallet Backup',
+    component: AccountBackup,
+  },
+
+  {
+    path: '/welcome/create/backup/password',
+    alias: ['/accounts/create/backup/password', '/settings/create/backup/password'],
+    name: 'Create Wallet Password',
+    component: MnemonicShowPassword,
+  },
+  {
+    path: '/welcome/create/backup/password/show',
+    alias: ['/accounts/create/backup/password/show', '/settings/create/backup/password/show'],
+    name: 'Create Wallet Show Phrase',
+    component: MnemonicShow,
+  },
+  {
+    path: '/welcome/create/backup/password/show/confirm',
+    alias: ['/accounts/create/backup/password/show/confirm', '/settings/create/backup/password/show/confirm'],
+    name: 'Create Wallet Recovery Confirm',
+    component: MnemonicConfirm,
+  },
+  /** Account Import flows */
+  {
+    path: '/welcome/account-import-info',
+    alias: ['/accounts/account-import-info', '/settings/account-import-info'],
     name: 'Account Import Info',
     component: AccountImportInfo,
   },
   {
-    path: '/account-import-HD-path',
+    path: '/welcome/account-import-info/account-import',
+    alias: ['/accounts/account-import-info/account-import', '/settings/account-import-info/account-import'],
+    name: 'Account Import',
+    component: AccountImport,
+  },
+  {
+    path: '/ledger/account-import-HD-path',
     alias: [
       '/welcome/account-import-info/account-import/account-import-HD-path',
       '/accounts/account-import-info/account-import/account-import-HD-path',
       '/settings/account-import-info/account-import/account-import-HD-path',
-      '/ledger/account-import-HD-path',
     ],
     name: 'HD Path',
     component: HdPath,
   },
   {
-    path: '/accountCreationResume',
+    path: '/welcome/account-import-info/account-import/create',
+    alias: [
+      '/accounts/account-import-info/account-import/create',
+      '/settings/account-import-info/account-import/create',
+    ],
+    name: 'Create Wallet from Imported',
+    component: AccountCreate,
+  },
+  {
+    path: '/create-resume',
     name: 'Account Creation Resume',
     component: AccountCreationResume,
   },
+  /** Extension reset flow */
   {
     path: '/extensionReset',
     name: 'Forgot Password',
@@ -157,24 +169,28 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Extension Reset Confirmed',
     component: ExtensionResetConfirmed,
   },
+  /** Backup (generic) flows */
   {
-    path: '/backup',
-    alias: ['/welcome/create/backup', '/accounts/create/backup', '/settings/create/backup', '/portfolio/backup'],
+    path: '/portfolio/backup',
+    alias: ['/account/backup'],
     name: 'Account Backup',
     component: AccountBackup,
   },
   {
-    path: '/backup/password',
+    path: '/portfolio/backup/password',
+    alias: ['/account/backup/password'],
     name: 'Recovery Phrase Password',
     component: MnemonicShowPassword,
   },
   {
-    path: '/backup/show',
+    path: '/portfolio/backup/password/show',
+    alias: ['/account/backup/password/show'],
     name: 'Recovery Phrase',
     component: MnemonicShow,
   },
   {
-    path: '/backup/confirm',
+    path: '/portfolio/backup/password/show/confirm',
+    alias: ['/account/backup/password/show/confirm'],
     name: 'Recovery Confirm',
     component: MnemonicConfirm,
   },
@@ -198,6 +214,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Account Backed Up For Remove',
     component: AccountBackedUpForRemove,
   },
+  /** Ledger flows */
   {
     path: '/ledger',
     name: 'Import Ledger',
@@ -224,15 +241,53 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Account',
     component: Account,
   },
+  /** Accounts flows */
   {
     path: '/accounts',
     name: 'Accounts',
     component: Accounts,
   },
+  /** Accounts -- Account settings flows */
   {
-    path: '/account-settings/:index',
+    path: '/accounts/account-settings/:index',
     name: 'Account Settings',
     component: AccountSettings,
+  },
+  /** --- Init Remove flows */
+  {
+    path: '/accounts/account-settings/:index/account-remove',
+    name: 'Account Remove',
+    component: AccountRemove,
+  },
+  {
+    path: '/accounts/account-settings/:index/backup',
+    alias: ['/accounts/account-settings/:index/account-remove/backup'],
+    name: 'Account Settings Backup',
+    component: AccountBackup,
+  },
+  {
+    path: '/accounts/account-settings/:index/backup/password',
+    alias: ['/accounts/account-settings/:index/account-remove/backup/password'],
+    name: 'Account Settings Password',
+    component: MnemonicShowPassword,
+  },
+  {
+    path: '/accounts/account-settings/:index/backup/password/show',
+    alias: ['/accounts/account-settings/:index/account-remove/backup/password/show'],
+    name: 'Account Settings Show Phrase',
+    component: MnemonicShow,
+  },
+  {
+    path: '/accounts/account-settings/:index/backup/password/show/confirm',
+    alias: ['/accounts/account-settings/:index/account-remove/backup/password/show/confirm'],
+    name: 'Account Settings Recovery Confirm',
+    component: MnemonicConfirm,
+  },
+  /** --- Init Update flow */
+  {
+    path: '/accounts/account-settings/:index/account-rename',
+    name: 'Account Rename',
+    component: AccountRename,
   },
   /** Settings flows */
   {
@@ -265,6 +320,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Settings Support Warning',
     component: SupportWarning,
   },
+  /** Receive flows */
   {
     path: '/receive',
     name: 'Receive Denom',

@@ -67,13 +67,13 @@ export default defineComponent({
         isLedger: true,
         setupState: AccountCreateStates.COMPLETE,
         keyHash: keyHashfromAddress(accounts[0].address),
-        path: `${this.$route.fullPath}/create`,
+        path: `${this.$route.path}/create`,
       });
 
-      this.$router.push(`${this.$route.fullPath}/create`);
+      this.$router.push(`${this.$route.path}/create`);
     } catch (err) {
       this.$router.push(
-        `/ledger/error?error=${err.message}&backto=/ledger%3Fnext%3D%2Fledger%2Fconnect&retry=${this.$route.fullPath}`,
+        `/ledger/error?error=${err.message}&backto=/ledger%3Fnext%3D%2Fledger%2Fconnect&retry=${this.$route.path}`,
       );
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Account Name" :back-to="`/account-settings/${route.params.index}`" />
+    <Header title="Account Name" />
     <span class="secondary-text mt-4 mb-6">
       If you have multiple accounts this will help you to find the right one
     </span>

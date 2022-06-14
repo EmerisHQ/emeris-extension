@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Back up account" :back-to="backTo" />
+    <Header title="Back up account" :back-to="goBackTo" />
     <span class="secondary-text mb-4">
       Back up your secret recovery phrase to recover your account if your device is lost.
     </span>
@@ -26,30 +26,21 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
-import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
 
-const currentFlow = computed(() => {
-  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
-});
-
-const backTo = computed(() => {
-  if (currentFlow.value?.includes('BACKUP_ACCOUNT_')) return `/account-settings/${currentFlow.value.split('_')[2]}`;
-
-  const goBackByRoute = route.fullPath.split('/').slice(0, -1).join('/');
+const goBackTo = computed(() => {
+  const goBackByRoute = route.path.split('/').slice(0, -1).join('/');
   return goBackByRoute.includes('/create') ? `${goBackByRoute}?previous=/backup` : goBackByRoute;
 });
 
 const goToShowMnemonic = async () => {
-  router.push(`${route.fullPath}/password`);
+  router.push(`${route.path}/password`);
 };
 </script>
 

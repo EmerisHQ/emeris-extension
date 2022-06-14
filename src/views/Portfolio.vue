@@ -4,30 +4,30 @@
   <div v-else-if="balances.length === 0" class="page">
     <img :src="'/images/EmptyPortfolioBG.png'" class="background" />
     <div class="flex relative mb-8">
-      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/portfolio/account')" />
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="router.push('/portfolio/account')" />
     </div>
     <div class="mt-auto">
       <h1>{{ $t('ext.portfolio.emptyPage.title') }}</h1>
       <p class="secondary-text mb-8 mt-4 text-center">{{ $t('ext.portfolio.emptyPage.subtitle') }}</p>
-      <Button name="Receive assets" @click="() => $router.push('/receive')" />
+      <Button name="Receive assets" @click="() => router.push('/receive')" />
     </div>
   </div>
 
   <div v-else class="page">
     <img :src="'/images/PortfolioBG.png'" class="background" />
     <div class="flex relative mb-8">
-      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/portfolio/account')" />
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="router.push('/portfolio/account')" />
       <img class="wordmark" :src="'/images/EmerisWordmark.svg'" />
     </div>
 
-    <span class="secondary-text account-selector mb-2 cursor-pointer" @click="$router.push('/accounts')"
+    <span class="secondary-text account-selector mb-2 cursor-pointer" @click="router.push('/accounts')"
       >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
     /></span>
     <h1 class="text-2 text-left mb-6">
       <SumBalances :balances="balances" />
     </h1>
     <div class="flex">
-      <Button name="Receive" class="mr-3 flex-1" @click="$router.push('/receive')" />
+      <Button name="Receive" class="mr-3 flex-1" @click="router.push('/receive')" />
       <Button name="Send" variant="secondary" class="flex-1" disabled />
     </div>
 
@@ -125,7 +125,7 @@ const skipBackup = () => {
 };
 
 const goToBackup = () => {
-  router.push(`${route.fullPath}/backup`);
+  router.push(`${route.path}/backup`);
 };
 </script>
 <style lang="scss" scoped>
