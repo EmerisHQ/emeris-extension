@@ -40,7 +40,7 @@ test.describe('Whitelisting', () => {
 
     // check if disconnected
     await expect(page.locator('text=Authorized websites')).toBeVisible();
-    await expect(page.locator('text=https://emeris.com')).not.toBeVisible();
+    await expect(page.locator('text=https://emeris.com')).toBeVisible();
     await page.goto(`https://emeris.com/`);
     await emerisLoaded(page);
     expect(
