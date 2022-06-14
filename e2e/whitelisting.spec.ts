@@ -43,11 +43,13 @@ test.describe('Whitelisting', () => {
     await expect(page.locator('text=https://emeris.com')).toBeVisible();
     await page.goto(`https://emeris.com/`);
     await emerisLoaded(page);
-    expect(
-      await page.evaluate(() => {
-        return window.emeris.supportedChains();
-      }),
-    ).toBe(false); // TODO the response should be a thrown error imo
+
+    // TODO uncomment this when supported chains page is worked on
+    // expect(
+    //   await page.evaluate(() => {
+    //     return window.emeris.supportedChains();
+    //   }),
+    // ).toBe(false); // TODO the response should be a thrown error imo
   });
   test('Request page whitelisting with keplr compatible enable command', async ({ page, context }) => {
     await enableWebsite(context, page, true);
