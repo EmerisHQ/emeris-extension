@@ -14,7 +14,6 @@ export const accountCreate = async (page) => {
   await page.click('text=Continue');
 
   await page.fill('[placeholder="Surfer"]', 'Test Account Created');
-  await expect(page.locator('text=Continue >> visible=true')).toBeVisible();
   await page.click('text=Continue');
 };
 
