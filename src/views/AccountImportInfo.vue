@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account" :back-to="$route.query.backto" />
+    <Header title="Import account" :back-to="backTo" />
 
     <span class="secondary-text mb-4">Find the recovery phrase for the account you’d like to import.</span>
     <a class="text-sm mb-4" @click="infoOpen = true">What’s a secret recovery phrase?</a>
@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -44,11 +44,21 @@ import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
 import Slideout from '@@/components/Slideout.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
+import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const store = useStore();
 const router = useRouter();
 
 const infoOpen = ref(false);
+
+const currentFlow = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
+});
+const backTo = computed(() => {
+  if (currentFlow.value === 'IMPORT_ACCOUNT') return '/welcome';
+  if (currentFlow.value === 'NEW_ACCOUNT_IMPORT') return '/accounts';
+  return '/settings';
+});
 
 onMounted(async () => {
   const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);

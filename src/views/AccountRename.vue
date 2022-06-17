@@ -1,70 +1,55 @@
 <template>
   <div class="page">
-    <Header title="Account Name" />
-    <span class="secondary-text" style="margin-top: 16px; margin-bottom: 24px"
-      >If you have multiple accounts this will help you to find the right one</span
-    >
-    <div style="margin-bottom: 16px">
+    <Header title="Account Name" :back-to="`/account-settings/${route.params.index}`" />
+    <span class="secondary-text mt-4 mb-6">
+      If you have multiple accounts this will help you to find the right one
+    </span>
+    <div class="mb-4">
       <Input v-model="accountName" />
     </div>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
+    <div class="mt-auto">
       <Button name="Continue" @click="submit" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
+<script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Header from '@@/components/Header.vue';
-import { RootState } from '@@/store';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
-export default defineComponent({
-  name: 'Account Rename',
-  components: { Button, Input, Header },
-  data: () => ({
-    accountName: '',
-  }),
-  computed: {
-    ...mapState({
-      wallet: (state: RootState) => state.extension.wallet,
-    }),
-    account() {
-      return this.wallet[this.index];
-    },
-  },
-  mounted() {
-    this.$data.accountName = this.account.accountName;
-  },
-  props: {
-    index: { type: String, required: true },
-  },
-  methods: {
-    async submit() {
-      try {
-        await this.$store.dispatch(GlobalEmerisActionTypes.UPDATE_ACCOUNT, {
-          targetAccountName: this.account.accountName,
-          newAccountName: this.accountName,
-        });
-        this.$store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
-        this.$router.push('/accounts');
-      } catch (err) {
-        console.error(err);
-      }
-    },
-  },
+const router = useRouter();
+const route = useRoute();
+const store = useStore();
+
+const accountName = ref('');
+
+const wallet = computed(() => {
+  return store.state.extension.wallet;
 });
+const account = computed(() => {
+  return wallet.value[+route.params.index];
+});
+
+onMounted(() => {
+  accountName.value = account.value.accountName;
+});
+
+const submit = async () => {
+  try {
+    await store.dispatch(GlobalEmerisActionTypes.UPDATE_ACCOUNT, {
+      targetAccountName: account.value.accountName,
+      newAccountName: accountName.value,
+    });
+    store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
+    router.push('/accounts');
+  } catch (err) {
+    console.error(err);
+  }
+};
 </script>
-<style scoped>
-.terms-of-use {
-  font-size: 13px;
-}
-</style>

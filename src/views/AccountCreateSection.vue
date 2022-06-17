@@ -1,9 +1,7 @@
 <template>
   <div class="buttons">
     <Button name="Create account" @click="createWalletRoute" />
-    <router-link :to="{ name: 'Account Import Info' }">
-      <Button name="Import Account" variant="secondary" />
-    </router-link>
+    <Button name="Import Account" variant="secondary" @click="importAccountRoute" />
     <Button name="Import Ledger" variant="link" @click="toLedger" />
   </div>
 </template>
@@ -27,6 +25,13 @@ const createWalletRoute = () => {
     currentFlow: 'CREATE_ACCOUNT',
   });
   router.push('/create');
+};
+
+const importAccountRoute = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'IMPORT_ACCOUNT',
+  });
+  router.push('/accountImportInfo');
 };
 </script>
 

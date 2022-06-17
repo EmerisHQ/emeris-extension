@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Account settings" :back-to="$route.query.backto" />
+    <Header title="Account settings" back-to="/accounts" />
 
     <!-- Account -->
     <div class="text-center my-8">
@@ -24,7 +24,7 @@
           <div
             class="cursor-pointer p-4 flex justify-between"
             :class="{ 'pointer-events-none secondary-text': currentWallet.isLedger }"
-            @click="backUp"
+            @click="goToBackup()"
           >
             <div>
               <p>Secret recovery phrase</p>
@@ -76,8 +76,8 @@ import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates } from '@@/types';
 
 const store = useStore();
-const route = useRoute();
 const router = useRouter();
+const route = useRoute();
 
 const wallet = computed(() => {
   return store.state.extension.wallet;
@@ -95,9 +95,12 @@ const nameFirstLetter = (name) => {
   return name && name.length > 0 ? name.slice(0, 1) : 'S';
 };
 
-const backUp = () => {
+const goToBackup = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
     accountName: currentWallet.value.accountName,
+  });
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: `BACKUP_ACCOUNT_${route.params.index}`,
   });
   router.push('/backup');
 };

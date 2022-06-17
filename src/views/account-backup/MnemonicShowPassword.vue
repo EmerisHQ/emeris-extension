@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Enter password" />
+    <Header title="Enter password" back-to="/backup" />
     <form class="form" @submit.prevent="submit">
       <span class="secondary-text mb-8">
         For your security, enter your account password to view your secret recovery phrase.

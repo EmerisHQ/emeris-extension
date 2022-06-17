@@ -49,7 +49,7 @@
       <p class="checkbox__label ml-4 -text-1 leading-copy">{{ $t('ext.portfolio.backupDetail') }}</p>
     </div>
     <div class="buttons">
-      <Button :name="$t('ext.portfolio.backupButton')" @click="() => $router.push('/backup?previous=/accountCreate')" />
+      <Button :name="$t('ext.portfolio.backupButton')" @click="goToBackup()" />
       <Button :name="$t('ext.portfolio.backupButtonLater')" variant="link" @click="skipBackup" />
     </div>
   </Slideout>
@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
@@ -67,6 +68,7 @@ import { GlobalGetterTypes } from '@/store';
 import Loader from '@@/components/Loader.vue';
 import Slideout from '@@/components/Slideout.vue';
 import SumBalances from '@@/components/SumBalances.vue';
+import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates, BalanceDenom } from '@@/types/index';
 import { webDebugging } from '@@/utils/web-debugging';
@@ -74,6 +76,7 @@ import { webDebugging } from '@@/utils/web-debugging';
 useI18n({ useScope: 'global' });
 
 const store = useStore();
+const router = useRouter();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
@@ -119,6 +122,13 @@ const skipBackup = () => {
   const nowInSeconds = Math.floor(Date.now() / 1000);
   window.localStorage.setItem(localStorageKey, `${nowInSeconds + CHECK_INTERVAL_SECONDS}`);
   showMnemonicBackup.value = false;
+};
+
+const goToBackup = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'BACKUP_PORTFOLIO',
+  });
+  router.push('/backup?previous=/accountCreate');
 };
 </script>
 <style lang="scss" scoped>

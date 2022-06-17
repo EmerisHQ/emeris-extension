@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="!account.accountMnemonic" />
   <div v-else class="page">
-    <Header title="Secret recovery phrase" />
+    <Header title="Secret recovery phrase" back-to="/backup?previous=/accountCreate" />
     <span class="secondary-text mb-6">
       Write down the {{ account.accountMnemonic.trim().split(' ').length }} words below and store them in a safe place.
     </span>
@@ -31,11 +31,7 @@
         label="I understand that if I don’t back up my account, I risk losing access to it."
       />
       <div class="buttons">
-        <Button
-          name="Back up later"
-          :disabled="!backUpLaterChecked"
-          @click="() => $router.push(currentFlow === 'CREATE_ACCOUNT' ? '/accountReadyNoBackup' : '/account')"
-        />
+        <Button name="Back up later" :disabled="!backUpLaterChecked" @click="goToEndCreate()" />
         <Button name="Cancel" variant="link" @click="() => (backUpLater = false)" />
       </div>
     </Slideout>
@@ -68,6 +64,14 @@ const account = computed(() => {
 const currentFlow = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
 });
+
+const goToEndCreate = () => {
+  if (currentFlow.value === 'CREATE_ACCOUNT' || currentFlow.value === 'NEW_CREATE_ACCOUNT') {
+    router.push('/accountReadyNoBackup');
+  } else {
+    router.push('/account');
+  }
+};
 
 const submit = () => {
   router.push('/backup/confirm');

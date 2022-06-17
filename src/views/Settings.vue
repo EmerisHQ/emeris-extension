@@ -74,7 +74,7 @@
         </div>
       </div>
       <div class="bg-fg rounded-xl">
-        <div class="cursor-pointer p-4 flex justify-between items-center" @click="$router.push('/create')">
+        <div class="cursor-pointer p-4 flex justify-between items-center" @click="goToCreateAccount()">
           <div class="flex">
             <div class="mr-4 bg-text w-6 h-6 rounded-full text-center text-inverse text-1 pt-1">
               <Icon name="PlusIcon" :icon-size="1" />
@@ -86,7 +86,7 @@
           </span>
         </div>
         <hr class="mx-4 border-bg opacity-80" />
-        <div class="cursor-pointer p-4 flex justify-between items-center" @click="$router.push('/accountImportInfo')">
+        <div class="cursor-pointer p-4 flex justify-between items-center" @click="goToAccountImport()">
           <div class="flex">
             <div class="mr-4 bg-text w-6 h-6 rounded-full text-center text-inverse text-1 pt-1.5">
               <Icon name="ArrowDownIcon" :icon-size="0.7" />
@@ -214,6 +214,20 @@ const goToAccount = (account) => {
   store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
   store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
   router.push('/portfolio');
+};
+
+const goToCreateAccount = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'SETTINGS',
+  });
+  router.push('/create');
+};
+
+const goToAccountImport = () => {
+  store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
+    currentFlow: 'SETTINGS',
+  });
+  router.push('/accountImportInfo');
 };
 
 const toLedger = () => {
