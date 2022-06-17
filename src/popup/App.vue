@@ -27,6 +27,7 @@ export default defineComponent({
         'demerisAPI/' + MutationTypes.INIT,
         {
           endpoint: process.env.VUE_APP_EMERIS_PROD_ENDPOINT || 'https://api.emeris.com/v1',
+          hub_chain: 'cosmos-hub',
         },
         { root: true },
       );
@@ -70,41 +71,53 @@ export default defineComponent({
             localStorage.setItem('chains', JSON.stringify(store.getters['demerisAPI/getChains']));
           });
         try {
-          if (localStorage.getItem('prices')) {
-            store.commit('demerisAPI/' + MutationTypes.SET_PRICES, {
-              value: JSON.parse(localStorage.getItem('prices')),
-            });
-          }
+          // init starport store
           store
-            .dispatch(GlobalActionTypes.GET_PRICES, {
-              subscribe: true,
+            .dispatch('common/env/config', {
+              apiNode: process.env.VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT || 'https://api.emeris.com/v1/liquidity',
+              rpcNode: null,
+              wsNode: null,
+              chainId: 'cosmos-hub',
+              addrPrefix: 'cosmos',
+              sdkVersion: 'Stargate',
+              getTXApi: null,
+              offline: true,
+              refresh: 10000,
             })
-            .then((prices) => {
-              localStorage.setItem('prices', JSON.stringify(prices));
+            .then(async () => {
+              await store
+                .dispatch('cosmos.bank.v1beta1/QueryTotalSupply', { options: { subscribe: true, all: true } })
+                .catch((e) => {
+                  console.error('Could not load denom supply: ' + e);
+                });
+              store
+                .dispatch('tendermint.liquidity.v1beta1/QueryLiquidityPools', {
+                  options: { subscribe: true },
+                })
+                .catch((e) => {
+                  console.error('Could not load liquidity pools: ' + e);
+                })
+                .finally(() => {
+                  if (localStorage.getItem('prices')) {
+                    store.commit('demerisAPI/' + MutationTypes.SET_PRICES, {
+                      value: JSON.parse(localStorage.getItem('prices')),
+                    });
+                  }
+                  store
+                    .dispatch(GlobalActionTypes.GET_PRICES, {
+                      subscribe: true,
+                    })
+                    .then((prices) => {
+                      console.log(prices);
+                      localStorage.setItem('prices', JSON.stringify(prices));
+                    })
+                    .catch((e) => console.error(e));
+                });
+            })
+            .catch((e) => {
+              console.error(e);
             });
-        } catch (e) {
-          //
-        }
-        // init starport store
-        store
-          .dispatch('common/env/config', {
-            apiNode: process.env.VUE_APP_EMERIS_PROD_LIQUIDITY_ENDPOINT || 'https://api.emeris.com/v1/liquidity',
-            rpcNode: null,
-            wsNode: null,
-            chainId: 'cosmos-hub',
-            addrPrefix: 'cosmos',
-            sdkVersion: 'Stargate',
-            getTXApi: null,
-            offline: true,
-            refresh: 10000,
-          })
-          .then(() => {
-            store.dispatch(
-              'tendermint.liquidity.v1beta1/QueryLiquidityPools',
-              { options: { subscribe: false, all: true }, params: {} },
-              { root: true },
-            );
-          });
+        } catch (e) {}
       };
       loadData();
     });
