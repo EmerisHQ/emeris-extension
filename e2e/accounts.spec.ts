@@ -226,9 +226,10 @@ test.describe('Account Create', () => {
   });
 
   test('Get active account', async ({ page, context }) => {
-    await enableWebsite(context, page);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
+
+    await enableWebsite(context, page);
     await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 

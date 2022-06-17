@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { IEmeris } from '@@/types/emeris';
 
 function injectScript(file: string) {

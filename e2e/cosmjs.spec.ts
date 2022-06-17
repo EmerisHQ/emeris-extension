@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { expect } from '@playwright/test';
 
 import { test } from './extension-setup';
@@ -5,9 +6,9 @@ import { defaultCosmosAddress, emerisLoaded, enableWebsite, importAccount } from
 
 test.describe('CosmJs', () => {
   test('OfflineSigner', async ({ context, page }) => {
-    await enableWebsite(context, page, true);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
+    await enableWebsite(context, page, true);
     await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
 
@@ -82,11 +83,11 @@ test.describe('CosmJs', () => {
   });
 
   test('Get accounts', async ({ context, page }) => {
-    await enableWebsite(context, page, true);
     await page.goto(`chrome-extension://${process.env.EXTENSION_ID}/popup.html?browser=true`);
     await importAccount(page);
     await page.goto(`https://emeris.com//`);
     await emerisLoaded(page);
+    await enableWebsite(context, page, true);
 
     const result = await page.evaluate(() => {
       return window.emeris.getOfflineSigner('cosmoshub-4').getAccounts();
