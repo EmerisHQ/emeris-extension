@@ -19,7 +19,9 @@
     <!-- Empty search result -->
     <div v-if="keywordFilteredAssets.length === 0" class="w-fit mx-auto">
       <img class="-mt-20 h-[171px] w-[209px]" src="/images/no-search-result.png" />
-      <p class="secondary-text mt-6 text-center">No "{{ keyword }}" asset found.</p>
+      <p class="secondary-text mt-6 text-center">
+        No <span v-if="keyword">"{{ keyword }}"</span> asset found.
+      </p>
     </div>
   </div>
 </template>

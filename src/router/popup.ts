@@ -232,7 +232,7 @@ const routes: Array<RouteRecordRaw> = [
     component: WhitelistedPages,
   },
   {
-    path: '/whitelisted/remove',
+    path: '/whitelisted/remove/:index',
     name: 'Whitelisted Page Remove',
     component: WhitelistedPageRemove,
   },

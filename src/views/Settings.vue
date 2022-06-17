@@ -173,7 +173,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -215,6 +215,10 @@ const goToAccount = (account) => {
   store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
   router.push('/portfolio');
 };
+
+onMounted(() => {
+  store.dispatch(GlobalEmerisActionTypes.GET_WHITELISTED_WEBSITES);
+});
 
 const toLedger = () => {
   window.open('popup.html#/ledger?next=/ledger/connect');
