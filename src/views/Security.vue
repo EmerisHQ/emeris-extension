@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Security" back-to="/settings" />
+    <Header title="Security" />
     <!-- <div class="menu-item" @click="$router.push('/passwordChange/old')">
       Change Password <Icon name="ChevronRightIcon" />
     </div> -->
@@ -9,24 +9,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { mapState } from 'vuex';
-
+<script lang="ts" setup>
 // import Icon from "@/components/ui/Icon.vue";
 import Header from '@@/components/Header.vue';
-
-export default defineComponent({
-  name: 'Security',
-  computed: {
-    ...mapState({}),
-  },
-  components: {
-    Header,
-    // Icon,
-  },
-});
 </script>
+
 <style lang="scss" scoped>
 .menu-item {
   padding: 14px 0;

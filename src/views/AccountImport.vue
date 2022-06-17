@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account" :back-to="'/accountImportInfo'">
+    <Header title="Import account">
       <a
         :style="{
           opacity: !mnemonic || hasInvalidChar || unknownWords.length > 0 ? 0.6 : 1,
@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import { Secp256k1HdWallet } from '@cosmjs/amino';
 import { computed, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -49,6 +49,7 @@ import { AccountCreateStates } from '@@/types';
 import wordlist from '@@/wordlists/english.json';
 
 const store = useStore();
+const route = useRoute();
 const router = useRouter();
 
 const mnemonicFormat = (mnemonic) => mnemonic?.trim().replace(/\s/, ' ');
@@ -78,14 +79,14 @@ const errorText = computed(() => {
 const submit = () => {
   if (!hasInvalidChar.value && unknownWords.value.length === 0) {
     storeNewAccount();
-    router.push({ path: '/accountCreate' });
+    router.push({ path: `${route.path}/create` });
   }
 };
 
 const toHdPath = () => {
   if (!hasInvalidChar.value && unknownWords.value.length === 0) {
     storeNewAccount();
-    router.push('/accountImportHdPath?previous=/accountImport');
+    router.push(`${route.path}/account-import-HD-path`);
   }
 };
 
@@ -94,7 +95,7 @@ const storeNewAccount = () => {
     ...store.state.extension.newAccount,
     accountMnemonic: mnemonicFormat(mnemonic.value),
     setupState: AccountCreateStates.COMPLETE,
-    route: '/accountImport',
+    route: route.path,
   });
 };
 

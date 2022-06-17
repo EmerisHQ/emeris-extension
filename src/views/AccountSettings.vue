@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Account settings" :back-to="$route.query.backto" />
+    <Header title="Account settings" back-to="/accounts" />
 
     <!-- Account -->
     <div class="text-center my-8">
@@ -16,7 +16,7 @@
     <!-- Wallet settings -->
     <div class="mb-4">
       <div class="bg-fg rounded-xl">
-        <div class="cursor-pointer p-4" @click="$router.push('/accountRename/' + $route.params.index)">
+        <div class="cursor-pointer p-4" @click="router.push(`${route.path}/account-rename`)">
           Account name <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
         <hr class="mx-4 border-bg opacity-80" />
@@ -24,7 +24,7 @@
           <div
             class="cursor-pointer p-4 flex justify-between"
             :class="{ 'pointer-events-none secondary-text': currentWallet.isLedger }"
-            @click="backUp"
+            @click="goToBackup()"
           >
             <div>
               <p>Secret recovery phrase</p>
@@ -54,10 +54,7 @@
     <!-- Remove account -->
     <div class="mb-8">
       <div class="bg-fg rounded-xl">
-        <div
-          class="cursor-pointer p-4 text-negative-text"
-          @click="$router.push('/accountRemove/' + $route.params.index)"
-        >
+        <div class="cursor-pointer p-4 text-negative-text" @click="router.push(`${route.path}/account-remove`)">
           Remove account <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
       </div>
@@ -76,8 +73,8 @@ import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { AccountCreateStates } from '@@/types';
 
 const store = useStore();
-const route = useRoute();
 const router = useRouter();
+const route = useRoute();
 
 const wallet = computed(() => {
   return store.state.extension.wallet;
@@ -95,11 +92,11 @@ const nameFirstLetter = (name) => {
   return name && name.length > 0 ? name.slice(0, 1) : 'S';
 };
 
-const backUp = () => {
+const goToBackup = () => {
   store.dispatch(GlobalEmerisActionTypes.SET_LAST_ACCOUNT_USED, {
     accountName: currentWallet.value.accountName,
   });
-  router.push('/backup');
+  router.push(`${route.path}/backup`);
 };
 </script>
 

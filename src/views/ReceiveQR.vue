@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="!asset || !recipientAddress" />
   <template v-else>
-    <Header :title="`Receive ${asset.display_name}`" :show-close="true" />
+    <Header :title="`Receive ${asset.display_name}`" :show-close="true" back-to="/receive" />
     <div class="text-center -mt-6">
       <p class="secondary-text text-sm">
         on <span class="capitalize">{{ asset.on_chain.replace('-', ' ') }}</span>
@@ -35,7 +35,7 @@
   </template>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref, watch } from '@vue/runtime-core';
 import orderBy from 'lodash.orderby';
 import { useStore } from 'vuex';

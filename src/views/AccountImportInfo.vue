@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account" :back-to="$route.query.backto" />
+    <Header title="Import account" />
 
     <span class="secondary-text mb-4">Find the recovery phrase for the account you’d like to import.</span>
     <a class="text-sm mb-4" @click="infoOpen = true">What’s a secret recovery phrase?</a>
@@ -18,7 +18,7 @@
       caption="Any secret recovery phrase you enter to import an account will be stored on your device, and fully encrypted."
     />
 
-    <Button class="mt-auto" name="Continue" @click="() => $router.push('/accountImport')" />
+    <Button class="mt-auto" name="Continue" @click="() => router.push(`${route.path}/account-import`)" />
 
     <Slideout :open="infoOpen" @update:open="infoOpen = $event">
       <h1 class="mb-4">What’s a secret recovery phrase?</h1>
@@ -36,7 +36,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -46,6 +46,7 @@ import Slideout from '@@/components/Slideout.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
 const store = useStore();
+const route = useRoute();
 const router = useRouter();
 
 const infoOpen = ref(false);
@@ -54,7 +55,7 @@ onMounted(async () => {
   const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET);
 
   if (!hasPassword) {
-    router.push({ path: '/passwordCreate', query: { returnTo: '/accountImportInfo' } });
+    router.push({ path: '/password-create', query: { returnTo: route.path } });
   }
 });
 </script>

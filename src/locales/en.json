@@ -9,8 +9,8 @@
         },
         "assetsHeader": "Assets",
         "backupAccount": "Back up your account",
-        "backupDetail": "Your funds are not secured, please backup your wallet.",
-        "backupButton": "Continue",
+        "backupDetail": "Your assets are not secured. Please backup your wallet.",
+        "backupButton": "Back up now",
         "backupButtonLater": "Back up later"
       }
     }

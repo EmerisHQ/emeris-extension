@@ -228,12 +228,12 @@ export class Emeris implements IEmeris {
           if (this.selectedAccount === message.data.data.accountName) {
             this.selectedAccount === undefined;
           }
+          this.wallet = await this.storage.unlockWallet(this.cryptoKey);
           await this.storeSession();
-          return await this.storage.unlockWallet(this.cryptoKey);
         } catch (e) {
           console.log(e);
         }
-        return this.wallet;
+        return;
       case 'getWallet':
         return this.getDisplayAccounts();
       case 'getAddress':

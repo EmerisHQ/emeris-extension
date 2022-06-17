@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -28,6 +28,7 @@ import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const password = ref(undefined);
 const error = ref(undefined);
@@ -43,7 +44,7 @@ const submit = async () => {
       accountName: account.value.accountName,
       password: password.value,
     });
-    router.push('/backup/show');
+    router.push(`${route.path.replace('/show', '')}/show`);
   } catch (e) {
     error.value = true;
   }

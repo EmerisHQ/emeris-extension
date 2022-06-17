@@ -1,5 +1,5 @@
 <template>
-  <Header title="Receive asset" :show-back="false" :show-close="true" />
+  <Header title="Receive asset" :show-back="false" :show-close="true" back-to="/" />
   <div class="search-bar relative flex-1 min-h-0 flex flex-col">
     <Search v-model:keyword="keyword" placeholder="Search assets" class="w-full mx-auto max-w-md pb-3" />
     <div class="scroll-container overflow-y-auto flex-grow min-h-0 pt-1">
@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import { computed, ref, watch } from '@vue/runtime-core';
 import orderBy from 'lodash.orderby';
 import { useStore } from 'vuex';
@@ -36,60 +36,46 @@ import { GlobalGetterTypes } from '@/store';
 import { getDisplayName } from '@/utils/actionHandler';
 import Header from '@@/components/Header.vue';
 
-export default {
-  name: 'Receive Denom',
-  components: {
-    Header,
-    Search,
-    CoinList,
-  },
-  setup() {
-    const { nativeBalances } = useAccount();
-    const store = useStore();
-    let displayNameAddedList = ref([]);
-    let keyword = ref('');
+const store = useStore();
+const { nativeBalances } = useAccount();
 
-    const assetsList = computed(() => {
-      if (!store.getters[GlobalGetterTypes.API.getVerifiedDenoms]) return [];
-      return orderBy(nativeBalances.value, (item) => (item.base_denom.startsWith('pool') ? 1 : -1));
-    });
+let displayNameAddedList = ref([]);
+let keyword = ref('');
 
-    const keywordFilteredAssets = computed(() => {
-      const filteredAssets = (displayNameAddedList.value.length > 0 ? displayNameAddedList.value : []).filter(
-        (asset) => {
-          return asset.display_name?.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1;
-        },
-      );
+const assetsList = computed(() => {
+  if (!store.getters[GlobalGetterTypes.API.getVerifiedDenoms]) return [];
+  return orderBy(nativeBalances.value, (item) => (item.base_denom.startsWith('pool') ? 1 : -1));
+});
 
-      return filteredAssets;
-    });
+const keywordFilteredAssets = computed(() => {
+  const filteredAssets = (displayNameAddedList.value.length > 0 ? displayNameAddedList.value : []).filter((asset) => {
+    return asset.display_name?.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1;
+  });
 
-    watch(
-      () => assetsList.value,
-      async (value) => {
-        displayNameAddedList.value = await Promise.all(
-          value.map(async (asset) => {
-            return {
-              ...asset,
-              display_name: await getDisplayName(asset.base_denom, store.getters[GlobalGetterTypes.API.getDexChain]),
-            };
-          }),
-        );
-      },
-      { immediate: true },
+  return filteredAssets;
+});
+
+watch(
+  () => assetsList.value,
+  async (value) => {
+    displayNameAddedList.value = await Promise.all(
+      value.map(async (asset) => {
+        return {
+          ...asset,
+          display_name: await getDisplayName(asset.base_denom, store.getters[GlobalGetterTypes.API.getDexChain]),
+        };
+      }),
     );
-
-    return { assetsList, keywordFilteredAssets, keyword };
   },
-};
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
 :deep(.scroll-container > div > div) {
-  margin: 0;
+  @apply m-0;
 }
 :deep(.search) {
-  padding-left: 0;
-  padding-right: 0;
+  @apply px-0;
 }
 </style>

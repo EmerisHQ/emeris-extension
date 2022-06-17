@@ -7,19 +7,12 @@
       </template>
       <Icon name="ChevronRightIcon" @click="$router.push('/portfolio')" />
     </Header>
-    <img
-      style="height: 72px; width: 72px; margin-top: 40px; margin-left: auto; margin-right: auto"
-      :src="'/images/Avatar.svg'"
-    />
-    <span
-      class="account-selector"
-      style="text-align: center; margin-bottom: 32px; cursor: pointer; font-size: 21px"
-      @click="$router.push('/accounts')"
-      >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
-    /></span>
+    <img class="h-[72px] w-[72px] mt-10 mx-auto" :src="'/images/Avatar.svg'" />
+    <span class="account-selector text-center mb-8 cursor-pointer text-1" @click="$router.push('/accounts')">
+      {{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1" />
+    </span>
     <div
-      class="list-card-container"
-      style="margin-bottom: 16px"
+      class="list-card-container mb-4"
       :style="{
         opacity: account.isLedger ? 0.6 : 1,
       }"
@@ -30,7 +23,7 @@
       <span v-if="account.isLedger" class="secondary-text">Not possible on Ledger devices</span>
       <Icon name="ChevronRightIcon" :icon-size="1" />
     </div>
-    <div class="list-card-container" style="margin-bottom: 16px">
+    <div class="list-card-container mb-4">
       <h2>Swap</h2>
       <span class="secondary-text">Swap assets wih Emeris</span>
       <img :src="'/images/SwapListItemGraphic.svg'" />
@@ -43,78 +36,55 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Icon from '@/components/ui/Icon.vue';
 import Header from '@@/components/Header.vue';
-import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 import { AccountCreateStates } from '@@/types';
 
-export default defineComponent({
-  name: 'Account',
-  components: {
-    Icon,
-    Header,
-  },
-  computed: {
-    account() {
-      return this.$store.getters[GlobalEmerisGetterTypes.getAccount] || {};
-    },
-    backedUp() {
-      return this.account.setupState === AccountCreateStates.COMPLETE;
-    },
-  },
-  methods: {
-    goToBackupPage() {
-      this.$store.dispatch(GlobalEmerisActionTypes.SET_CURRENT_FLOW, {
-        currentFlow: 'BACK_UP',
-      });
-      if (!this.account.isLedger) {
-        this.$router.push('/backup');
-      }
-    },
-  },
+const store = useStore();
+const router = useRouter();
+
+const account = computed(() => {
+  return store.getters[GlobalEmerisGetterTypes.getAccount] || {};
 });
+const backedUp = computed(() => {
+  return account.value.setupState === AccountCreateStates.COMPLETE;
+});
+
+const goToBackupPage = () => {
+  if (!account.value.isLedger) {
+    router.push('/account/backup');
+  }
+};
 </script>
+
 <style lang="scss" scoped>
 .account-selector {
   .icon {
-    display: inline-block;
-    transform: rotate(90deg) translateX(2px);
+    @apply inline-block rotate-90 translate-x-[2px];
   }
 }
 .list-card-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  height: 90px;
-  cursor: pointer;
+  @apply relative flex flex-col items-start p-6 h-24 cursor-pointer overflow-hidden rounded-[10px];
 
   background: linear-gradient(0deg, #171717 0%, #040404 100%);
-
   box-shadow: 3px 9px 32px -4px rgba(0, 0, 0, 0.07);
-  border-radius: 10px;
-
-  position: relative;
-  overflow: hidden;
 
   img {
-    position: absolute;
-    top: 0;
-    right: 0;
+    @apply absolute top-0 right-0;
   }
 
   .icon {
-    position: absolute;
-    top: 50%;
-    right: 24px;
+    @apply absolute top-1/2 right-6;
   }
 
   .secondary-text {
-    font-size: 13px;
+    @apply text-[13px];
   }
 }
 </style>

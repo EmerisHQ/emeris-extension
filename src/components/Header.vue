@@ -18,10 +18,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import Icon from '@/components/ui/Icon.vue';
 
+const route = useRoute();
 const router = useRouter();
 
 interface Props {
@@ -37,7 +38,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const goBack = () => {
-  props.backTo ? router.push(props.backTo) : router.go(-1);
+  const goBackByRoute = route.path.split('/').slice(0, -1).join('/') ?? '/';
+  router.push(props.backTo ? props.backTo : goBackByRoute);
 };
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Back up account" :back-to="backToPath" />
+    <Header title="Back up account" :back-to="goBackTo" />
     <span class="secondary-text mb-4">
       Back up your secret recovery phrase to recover your account if your device is lost.
     </span>
@@ -24,27 +24,24 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
 
-const backToPath = ref(undefined);
+const goBackTo = computed(() => {
+  const goBackByRoute = route.path.split('/').slice(0, -1).join('/');
+  return goBackByRoute.includes('/create') ? `${goBackByRoute}?previous=/backup` : goBackByRoute;
+});
 
 const goToShowMnemonic = async () => {
-  router.push('/backup/password');
+  router.push(`${route.path}/password`);
 };
-
-onMounted(() => {
-  if (route.query.previous === '/accountCreate') {
-    backToPath.value = `${route.query.previous}?previous=/backup`;
-  }
-});
 </script>
 
 <style lang="scss" scoped>

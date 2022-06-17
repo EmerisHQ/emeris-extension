@@ -6,7 +6,7 @@
     <div class="mb-8">
       <p class="secondary-text -text-1 mb-3">Wallet settings</p>
       <div class="bg-fg rounded-xl">
-        <div class="cursor-pointer p-4" @click="$router.push('/security')">
+        <div class="cursor-pointer p-4" @click="$router.push('/settings/security')">
           Security
           <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
@@ -16,7 +16,7 @@
           :class="{
             'pointer-events-none secondary-text': whitelistedWebsites.length === 0,
           }"
-          @click="$router.push('/whitelisted')"
+          @click="$router.push('/settings/whitelisted')"
         >
           Authorized websites
           <span class="inline-flex float-right mt-1">
@@ -33,7 +33,7 @@
           </span>
         </div>
         <hr class="mx-4 border-bg opacity-80" />
-        <div class="cursor-pointer p-4" @click="$router.push('/signoutConfirm')">
+        <div class="cursor-pointer p-4" @click="$router.push('/settings/signout-confirm')">
           Sign out <Icon name="ChevronRightIcon" :icon-size="1" class="inline-flex float-right mt-1" />
         </div>
       </div>
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div class="bg-fg rounded-xl">
-        <div class="cursor-pointer p-4 flex justify-between items-center" @click="$router.push('/create')">
+        <div class="cursor-pointer p-4 flex justify-between items-center" @click="goToCreateAccount()">
           <div class="flex">
             <div class="mr-4 bg-text w-6 h-6 rounded-full text-center text-inverse text-1 pt-1">
               <Icon name="PlusIcon" :icon-size="1" />
@@ -86,7 +86,7 @@
           </span>
         </div>
         <hr class="mx-4 border-bg opacity-80" />
-        <div class="cursor-pointer p-4 flex justify-between items-center" @click="$router.push('/accountImportInfo')">
+        <div class="cursor-pointer p-4 flex justify-between items-center" @click="goToAccountImport()">
           <div class="flex">
             <div class="mr-4 bg-text w-6 h-6 rounded-full text-center text-inverse text-1 pt-1.5">
               <Icon name="ArrowDownIcon" :icon-size="0.7" />
@@ -120,7 +120,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://emeris.com', caption: 'Emeris web app' },
             })
           "
@@ -133,7 +133,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://emeris.com/support', caption: 'Emeris Support' },
             })
           "
@@ -146,7 +146,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://t.me/EmerisHQ', caption: 'Telegram community' },
             })
           "
@@ -159,7 +159,7 @@
           class="cursor-pointer p-4"
           @click="
             $router.push({
-              path: '/support',
+              path: '/settings/support',
               query: { url: 'https://twitter.com/emerishq', caption: 'Twitter' },
             })
           "
@@ -214,6 +214,14 @@ const goToAccount = (account) => {
   store.dispatch(GlobalEmerisActionTypes.GET_WALLET);
   store.dispatch(GlobalEmerisActionTypes.LOAD_SESSION_DATA);
   router.push('/portfolio');
+};
+
+const goToCreateAccount = () => {
+  router.push('/settings/create');
+};
+
+const goToAccountImport = () => {
+  router.push('/settings/account-import-info');
 };
 
 const toLedger = () => {

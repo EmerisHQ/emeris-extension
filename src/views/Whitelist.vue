@@ -44,7 +44,7 @@ onMounted(async () => {
   const hasWallet = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // checking if the password was set
   if (!hasWallet) {
     // if no password is set, first set a password
-    router.push('/passwordCreate?returnTo=/');
+    router.push('/password-create?returnTo=/');
     return;
   }
 

@@ -1,9 +1,9 @@
 <template>
   <div class="page">
     <Header title="Import account" :back-to="$route.query.backto" />
-    <div style="margin-bottom: 56px; margin-top: 150px; display: flex; flex-direction: column; align-items: center">
-      <img :src="'/images/LedgerBox.svg'" style="width: 151px; margin-top: 32px" />
-      <div style="text-align: center; margin-top: 32px">
+    <div class="flex flex-col items-center mt-[150px] mb-14">
+      <img :src="'/images/LedgerBox.svg'" class="mt-8 w-[151px]" />
+      <div class="text-center mt-8">
         <span>{{ $route.query.error }}</span>
         <br />
         <span class="secondary-text">Please try again or contact our Emeris support</span>
@@ -11,33 +11,20 @@
         <a
           href=""
           @click="$router.push({ path: '/support', query: { url: 'https://emeris.com/support', caption: 'Support' } })"
-          >Visit Emeris Support ↗️</a
         >
+          Visit Emeris Support ↗️
+        </a>
       </div>
     </div>
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-    >
+    <div class="mt-auto">
       <Button name="Try again" @click="$router.push($route.query.retry)" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
-
-export default defineComponent({
-  name: 'Ledger Error',
-  components: {
-    Header,
-    Button,
-  },
-});
 </script>
 
 <style lang="scss" scoped>

@@ -31,11 +31,7 @@
         label="I understand that if I don’t back up my account, I risk losing access to it."
       />
       <div class="buttons">
-        <Button
-          name="Back up later"
-          :disabled="!backUpLaterChecked"
-          @click="() => $router.push(currentFlow === 'CREATE_ACCOUNT' ? '/accountReadyNoBackup' : '/account')"
-        />
+        <Button name="Back up later" :disabled="!backUpLaterChecked" @click="goToEndCreate()" />
         <Button name="Cancel" variant="link" @click="() => (backUpLater = false)" />
       </div>
     </Slideout>
@@ -44,7 +40,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
@@ -56,6 +52,7 @@ import { GlobalEmerisGetterTypes } from '@@/store/extension/getter-types';
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const checked = ref(false);
 const backUpLater = ref(false);
@@ -69,8 +66,16 @@ const currentFlow = computed(() => {
   return store.getters[GlobalEmerisGetterTypes.getCurrentFlow];
 });
 
+const goToEndCreate = () => {
+  if (currentFlow.value === 'CREATE_ACCOUNT' || currentFlow.value === 'NEW_CREATE_ACCOUNT') {
+    router.push('/accountReadyNoBackup');
+  } else {
+    router.push('/account');
+  }
+};
+
 const submit = () => {
-  router.push('/backup/confirm');
+  router.push(`${route.path}/confirm`);
 };
 </script>
 

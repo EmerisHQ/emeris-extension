@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Import account" back-to="/">
+    <Header title="Import account">
       <a @click="toHdPath">Advanced</a>
     </Header>
     <img :src="'/images/ImportLedgerBG.png'" class="background" />
@@ -19,36 +19,38 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
 import ListCard from '@@/components/ListCard.vue';
 import { GlobalEmerisActionTypes } from '@@/store/extension/action-types';
 
-export default defineComponent({
-  name: 'Connect Ledger',
-  components: { ListCard, Header, Button },
-  async mounted() {
-    const hasPassword = await this.$store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
-    if (!hasPassword) {
-      this.$router.push({ path: '/passwordCreate', query: { returnTo: this.$route.fullPath } });
-    }
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
 
-    this.$store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
-      ...this.$store.state.extension.newAccount,
-      route: '/ledger',
-    });
-  },
-  methods: {
-    toHdPath() {
-      this.$router.push('/accountImportHdPath?previous=' + encodeURI(this.$route.fullPath));
-    },
-    next() {
-      // we use the same component for account gathering and signing
-      this.$router.push(this.$route.query.next);
-    },
-  },
+onMounted(async () => {
+  const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
+  if (!hasPassword) {
+    router.push({ path: '/password-create', query: { returnTo: route.path } });
+  }
+
+  store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
+    ...store.state.extension.newAccount,
+    route: route.path,
+  });
 });
+
+const toHdPath = () => {
+  router.push(`${route.path}/account-import-HD-path`);
+};
+
+const next = () => {
+  // we use the same component for account gathering and signing
+  router.push(route.query.next);
+};
 </script>

@@ -1,12 +1,7 @@
 <template>
   <Loader v-if="loading" />
   <ConfirmationScreen v-else :title="`Are you sure you want to disconnect from ${site.origin}?`">
-    <div
-      :style="{
-        marginTop: 'auto',
-      }"
-      class="buttons"
-    >
+    <div class="buttons mt-auto">
       <Button name="Remove" @click="remove" />
       <Button name="Cancel" variant="link" @click="$router.go(-1)" />
     </div>
@@ -44,7 +39,7 @@ export default defineComponent({
         website: this.url,
       });
       await this.$store.dispatch(GlobalEmerisActionTypes.GET_WHITELISTED_WEBSITES);
-      this.$router.push('/whitelisted');
+      this.$router.push('/settings/whitelisted');
     },
   },
 });

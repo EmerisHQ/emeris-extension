@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <Header title="Forgot password" />
+    <Header title="Forgot password" back-to="/welcomeBack" />
     <p class="font-medium text-1">Important</p>
     <p class="secondary-text mt-6 mb-1.5">
       Important There is no way to recover your lost or forgotten Emeris wallet password, and resetting the Emeris
@@ -20,17 +20,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import Button from '@/components/ui/Button.vue';
 import Header from '@@/components/Header.vue';
-
-export default defineComponent({
-  name: 'Extension Reset',
-  components: {
-    Button,
-    Header,
-  },
-});
 </script>

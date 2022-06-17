@@ -36,7 +36,7 @@ const subtitleText = computed(() => {
 });
 
 const title = computed(() => {
-  return route.fullPath.includes('/signIn') ? 'Sign in' : 'Welcome back';
+  return route.path.includes('/signIn') ? 'Sign in' : 'Welcome back';
 });
 
 const checkPassword = async () => {

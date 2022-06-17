@@ -4,30 +4,30 @@
   <div v-else-if="balances.length === 0" class="page">
     <img :src="'/images/EmptyPortfolioBG.png'" class="background" />
     <div class="flex relative mb-8">
-      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="router.push('/portfolio/account')" />
     </div>
     <div class="mt-auto">
       <h1>{{ $t('ext.portfolio.emptyPage.title') }}</h1>
       <p class="secondary-text mb-8 mt-4 text-center">{{ $t('ext.portfolio.emptyPage.subtitle') }}</p>
-      <Button name="Receive assets" @click="() => $router.push('/receive')" />
+      <Button name="Receive assets" @click="() => router.push('/receive')" />
     </div>
   </div>
 
   <div v-else class="page">
     <img :src="'/images/PortfolioBG.png'" class="background" />
     <div class="flex relative mb-8">
-      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="$router.push('/account')" />
+      <img class="w-6 h-6 absolute" :src="'/images/Avatar.svg'" @click="router.push('/portfolio/account')" />
       <img class="wordmark" :src="'/images/EmerisWordmark.svg'" />
     </div>
 
-    <span class="secondary-text account-selector mb-2 cursor-pointer" @click="$router.push('/accounts')"
+    <span class="secondary-text account-selector mb-2 cursor-pointer" @click="router.push('/accounts')"
       >{{ account.accountName }} <Icon name="ChevronRightIcon" :icon-size="1"
     /></span>
     <h1 class="text-2 text-left mb-6">
       <SumBalances :balances="balances" />
     </h1>
     <div class="flex">
-      <Button name="Receive" class="mr-3 flex-1" @click="$router.push('/receive')" />
+      <Button name="Receive" class="mr-3 flex-1" @click="router.push('/receive')" />
       <Button name="Send" variant="secondary" class="flex-1" disabled />
     </div>
 
@@ -49,7 +49,7 @@
       <p class="checkbox__label ml-4 -text-1 leading-copy">{{ $t('ext.portfolio.backupDetail') }}</p>
     </div>
     <div class="buttons">
-      <Button :name="$t('ext.portfolio.backupButton')" @click="() => $router.push('/backup?previous=/accountCreate')" />
+      <Button :name="$t('ext.portfolio.backupButton')" @click="goToBackup()" />
       <Button :name="$t('ext.portfolio.backupButtonLater')" variant="link" @click="skipBackup" />
     </div>
   </Slideout>
@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 import AssetsTable from '@/components/assets/AssetsTable/AssetsTable.vue';
@@ -74,6 +75,8 @@ import { webDebugging } from '@@/utils/web-debugging';
 useI18n({ useScope: 'global' });
 
 const store = useStore();
+const route = useRoute();
+const router = useRouter();
 
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 24; //  1 day
 
@@ -119,6 +122,10 @@ const skipBackup = () => {
   const nowInSeconds = Math.floor(Date.now() / 1000);
   window.localStorage.setItem(localStorageKey, `${nowInSeconds + CHECK_INTERVAL_SECONDS}`);
   showMnemonicBackup.value = false;
+};
+
+const goToBackup = () => {
+  router.push(`${route.path}/backup`);
 };
 </script>
 <style lang="scss" scoped>

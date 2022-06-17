@@ -92,7 +92,7 @@ export default defineComponent({
       // return to account creation
       const newAccount = await this.$store.dispatch(GlobalEmerisActionTypes.GET_NEW_ACCOUNT);
       if (newAccount) {
-        this.$router.push('/accountCreationResume');
+        this.$router.push('/create-resume');
         return;
       }
 

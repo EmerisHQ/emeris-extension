@@ -22,7 +22,7 @@
 
       <div class="mt-auto">
         <Button name="Confirm" :disabled="hdPathError" @click="updateHdPath" />
-        <Button name="Cancel" variant="link" @click="$router.push($route.query.previous)" />
+        <Button name="Cancel" variant="link" @click="router.push(goBackByRoute)" />
       </div>
     </form>
 
@@ -61,8 +61,13 @@ const addressIndex = ref('0');
 
 const infoOpen = ref(false);
 
+const goBackByRoute = ref(route.path.split('/').slice(0, -1).join('/'));
+
 const newAccount = computed(() => {
   return store.state.extension.newAccount;
+});
+const hdPathError = computed(() => {
+  return !hdPathRegex.test(account.value) || !hdPathRegex.test(change.value) || !hdPathRegex.test(addressIndex.value);
 });
 
 const updateHdPath = () => {
@@ -72,12 +77,8 @@ const updateHdPath = () => {
       hdPath: [account.value, change.value, addressIndex.value],
     });
   }
-  router.push(route.query.previous);
+  router.push(goBackByRoute.value);
 };
-
-const hdPathError = computed(() => {
-  return !hdPathRegex.test(account.value) || !hdPathRegex.test(change.value) || !hdPathRegex.test(addressIndex.value);
-});
 
 onMounted(async () => {
   if (!newAccount.value) {

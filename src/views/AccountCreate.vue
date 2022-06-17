@@ -75,7 +75,6 @@ const nameHasSpecialCharacters = computed(() => {
 const buttonDisabled = computed(() => {
   return !name.value || error.value || nameHasSpecialCharacters.value;
 });
-
 const error = computed(() => {
   return (
     wallet.value && wallet.value.find(({ accountName }) => accountName === name.value) && !isReturningFromBackup.value
@@ -98,8 +97,8 @@ onMounted(async () => {
   const hasPassword = await store.dispatch(GlobalEmerisActionTypes.HAS_WALLET); // the wallet is encrypted with the password so the existence is equal
   if (!hasPassword) {
     router.push({
-      path: '/passwordCreate',
-      query: { returnTo: route.fullPath },
+      path: '/password-create',
+      query: { returnTo: route.path },
     });
   }
 
@@ -118,7 +117,7 @@ onMounted(async () => {
     name.value = generatedName;
     store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, {
       ...newAccount.value,
-      route: '/accountCreate',
+      route: route.path,
     });
   }
 });
@@ -145,7 +144,7 @@ const submit = async () => {
     if (newAccount.value?.setupState === AccountCreateStates.COMPLETE) {
       nextRoute = '/accountImportReady';
     } else {
-      nextRoute = '/backup?previous=/accountCreate';
+      nextRoute = `${route.path}/backup`;
     }
 
     await store.dispatch(GlobalEmerisActionTypes.SET_NEW_ACCOUNT, undefined); // remove new account from flow
