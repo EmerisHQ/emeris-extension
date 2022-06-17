@@ -1,0 +1,26 @@
+export enum GetterTypes {
+  getFirstLoad = 'getFirstLoad',
+  getPricesFirstLoad = 'getPricesFirstLoad',
+  getStakingBalancesFirstLoad = 'getStakingBalancesFirstLoad',
+  getBalancesFirstLoad = 'getBalancesFirstLoad',
+  getCorrelationId = 'getCorrelationId',
+  isSignedIn = 'isSignedIn',
+  getKeyhashes = 'getKeyhashes',
+  getKeplrAccountName = 'getKeplrAccountName',
+  isDemoAccount = 'isDemoAccount',
+  getKeplrAddress = 'getKeplrAddress',
+  isAllBalancesLoaded = 'isAllBalancesLoaded',
+}
+export enum GlobalGetterTypes {
+  getFirstLoad = 'demerisUSER/getFirstLoad',
+  getPricesFirstLoad = 'demerisUSER/getPricesFirstLoad',
+  getStakingBalancesFirstLoad = 'demerisUSER/getStakingBalancesFirstLoad',
+  getBalancesFirstLoad = 'demerisUSER/getBalancesFirstLoad',
+  getCorrelationId = 'demerisUSER/getCorrelationId',
+  isSignedIn = 'demerisUSER/isSignedIn',
+  getKeyhashes = 'demerisUSER/getKeyhashes',
+  getKeplrAccountName = 'demerisUSER/getKeplrAccountName',
+  isDemoAccount = 'demerisUSER/isDemoAccount',
+  getKeplrAddress = 'demerisUSER/getKeplrAddress',
+  isAllBalancesLoaded = 'demerisUSER/isAllBalancesLoaded',
+}
